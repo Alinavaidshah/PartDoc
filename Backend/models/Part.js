@@ -38,5 +38,5 @@ const partSchema = new mongoose.Schema(
   }
 );
 
-const Part = mongoose.model('Part', partSchema);
+const Part = mongoose.model('Part', partSchema, 'Parts');
 export default Part;

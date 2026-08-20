@@ -23,8 +23,8 @@ export const createPart = async (req, res) => {
   try {
     const { name, brand, category, description, price, countInStock } = req.body;
     
-    // Multer se aayi hui file ka path
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    // Cloudinary se aane wala secure URL path
+    const imagePath = req.file ? req.file.path : null;
 
     const part = new Part({
       name,
@@ -69,6 +69,7 @@ export const getLowStockParts = async (req, res) => {
     res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };
+
 // @desc    Update a part
 export const updatePart = async (req, res) => {
   try {
@@ -83,8 +84,9 @@ export const updatePart = async (req, res) => {
       part.price = price !== undefined ? price : part.price;
       part.countInStock = countInStock !== undefined ? countInStock : part.countInStock;
       
+      // Agar nayi image upload ki gayi hai toh Cloudinary URL update karo
       if (req.file) {
-        part.image = `/uploads/${req.file.filename}`;
+        part.image = req.file.path;
       }
 
       const updatedPart = await part.save();

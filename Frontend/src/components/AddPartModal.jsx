@@ -20,7 +20,16 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
     }
 
     try {
-      await axios.post('/api/parts', data);
+      // LocalStorage se adminInfo nikal kar token extract kiya
+      const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
+      const token = adminInfo ? adminInfo.token : null;
+
+      await axios.post('/api/parts', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setLoading(false);
       setShowSuccess(true);
       setTimeout(() => { setShowSuccess(false); onAdd(); onClose(); }, 2000);
@@ -92,4 +101,5 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
     </AnimatePresence>
   );
 };
+
 export default AddPartModal;

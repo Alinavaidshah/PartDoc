@@ -1,6 +1,5 @@
 import express from 'express';
-import { upload } from '../middleware/multer.js';
-// Naya import:
+import { uploadCloud } from '../utils/cloudinary.js'; // Utils folder se import kiya
 import { protect, admin } from '../middleware/authMiddleware.js'; 
 import { 
   getParts, 
@@ -18,11 +17,11 @@ router.route('/low-stock').get(protect, admin, getLowStockParts);
 
 router.route('/')
   .get(getParts) 
-  .post(protect, admin, upload.single('image'), createPart); // Protected
+  .post(protect, admin, uploadCloud.single('image'), createPart); // Cloudinary upload middleware
 
 router.route('/:id')
   .get(getPartById)
-  .put(protect, admin, upload.single('image'), updatePart) // Protected
-  .delete(protect, admin, deletePart); // Protected
+  .put(protect, admin, uploadCloud.single('image'), updatePart) // Cloudinary upload middleware
+  .delete(protect, admin, deletePart);
 
 export default router;

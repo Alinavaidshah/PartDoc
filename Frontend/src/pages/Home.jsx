@@ -1,862 +1,796 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchParts } from "../features/parts/partsSlice";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  ArrowRight,
+  ShieldCheck,
+  Truck,
+  Headphones,
+  Award,
+  Star,
+  Wrench,
+  Monitor,
+  Laptop,
+  Smartphone,
+  Sparkles,
+  CheckCircle2,
+  ChevronRight,
+  TrendingUp,
+  Layers,
+  Check,
+  ShoppingBag,
+  Clock,
+  Filter
+} from "lucide-react";
 
-// GSAP Imports
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
-
-const PRODUCTS = [
-  { id: 1, name: "RTX Graphics Cards", category: "Computer Parts", price: "Starting Rs 45,000", icon: "🎮" },
-  { id: 2, name: "Gaming Laptops", category: "Laptop Parts", price: "Starting Rs 120,000", icon: "💻" },
-  { id: 3, name: "Mobile Displays", category: "Mobile Parts", price: "Starting Rs 3,500", icon: "📱" },
-  { id: 4, name: "SSD Storage", category: "Computer Parts", price: "Starting Rs 6,000", icon: "⚡" },
-  { id: 5, name: "Laptop Batteries", category: "Laptop Parts", price: "Starting Rs 4,500", icon: "🔋" },
-  { id: 6, name: "Mobile Motherboards", category: "Mobile Parts", price: "Starting Rs 8,000", icon: "🔧" },
-];
-
-const FEATURES = [
-  { icon: "🖥️", title: "Computer Parts", desc: "GPUs, CPUs, RAM, Motherboards — sab kuch original aur warranty ke sath." },
-  { icon: "💻", title: "Laptop Parts", desc: "Screens, Keyboards, Batteries, Chargers — har brand ke liye available." },
-  { icon: "📱", title: "Mobile Parts", desc: "Displays, Batteries, Cameras, Charging Ports — genuine quality guaranteed." },
-];
-
-const UPCOMING_PARTS = [
+// Clean Mock Products for Light Theme Showcase
+const MOCK_PRODUCTS = [
   {
-    id: 1,
-    name: "RTX 5090 Series",
-    desc: "Next-gen 32GB GDDR7, arriving Aug 2026",
-    img: "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=500&q=80",
-    accent: "#D8973C",
+    id: "m1",
+    name: "NVIDIA GeForce RTX 4080 Super 16GB",
+    category: "Computer Parts",
+    price: 345000,
+    rating: 4.9,
+    reviewsCount: 48,
+    stock: "In Stock",
+    tag: "Top Seller",
+    image: "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80"
   },
   {
-    id: 2,
-    name: "Motherboard X870E",
-    desc: "PCIe 5.0, DDR5, Wi-Fi 7 onboard",
-    img: "https://images.unsplash.com/photo-1741392078419-c510a00b68b8?w=500&q=80",
-    accent: "#D8C99B",
+    id: "m2",
+    name: "Apple MacBook Pro 16\" M3 Liquid Retina Display",
+    category: "Laptop Parts",
+    price: 78000,
+    rating: 4.8,
+    reviewsCount: 32,
+    stock: "In Stock",
+    tag: "Original OEM",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80"
   },
   {
-    id: 3,
-    name: "RAM DDR5 Kits",
-    desc: "64GB, 6400MHz, low-latency CL30",
-    img: "https://images.unsplash.com/photo-1754331497635-314cd4daaf58?w=500&q=80",
-    accent: "#D8973C",
+    id: "m3",
+    name: "Samsung Galaxy S24 Ultra Dynamic AMOLED 2X",
+    category: "Mobile Parts",
+    price: 45000,
+    rating: 5.0,
+    reviewsCount: 64,
+    stock: "In Stock",
+    tag: "Best Value",
+    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&q=80"
   },
+  {
+    id: "m4",
+    name: "Samsung 990 PRO 2TB PCIe 4.0 NVMe M.2 SSD",
+    category: "Computer Parts",
+    price: 48000,
+    rating: 4.9,
+    reviewsCount: 95,
+    stock: "In Stock",
+    tag: "High Speed",
+    image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=600&q=80"
+  },
+  {
+    id: "m5",
+    name: "Dell XPS 15 Original 86Wh Battery",
+    category: "Laptop Parts",
+    price: 18500,
+    rating: 4.7,
+    reviewsCount: 22,
+    stock: "In Stock",
+    tag: "Genuine",
+    image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
+  },
+  {
+    id: "m6",
+    name: "iPhone 15 Pro Max Unlocked Motherboard 256GB",
+    category: "Mobile Parts",
+    price: 92000,
+    rating: 4.9,
+    reviewsCount: 19,
+    stock: "Low Stock",
+    tag: "Tested Verified",
+    image: "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=600&q=80"
+  }
 ];
 
-const CORNER_EMOJIS = [
-  { emoji: "💾", tint: "#D8973C" },
-  { emoji: "⚙️", tint: "#D8C99B" },
-  { emoji: "🎮", tint: "#D8973C" },
-  { emoji: "🔌", tint: "#D8C99B" },
+const CATEGORIES_SUMMARY = [
+  {
+    id: "Computer Parts",
+    title: "Computer Parts",
+    subtitle: "GPUs, CPUs, RAM, Motherboards & SSDs",
+    itemCount: "1,200+ Products",
+    icon: Monitor,
+    color: "from-blue-500/10 to-indigo-500/10",
+    border: "border-blue-200 hover:border-blue-400",
+    iconBg: "bg-blue-600 text-white",
+    path: "/computerparts"
+  },
+  {
+    id: "Laptop Parts",
+    title: "Laptop Parts",
+    subtitle: "Displays, Batteries, Keyboards & Chargers",
+    itemCount: "850+ Products",
+    icon: Laptop,
+    color: "from-purple-500/10 to-pink-500/10",
+    border: "border-purple-200 hover:border-purple-400",
+    iconBg: "bg-purple-600 text-white",
+    path: "/computerparts?category=laptop"
+  },
+  {
+    id: "Mobile Parts",
+    title: "Mobile Parts",
+    subtitle: "AMOLED Displays, Logic Boards & Cameras",
+    itemCount: "1,500+ Products",
+    icon: Smartphone,
+    color: "from-emerald-500/10 to-teal-500/10",
+    border: "border-emerald-200 hover:border-emerald-400",
+    iconBg: "bg-emerald-600 text-white",
+    path: "/mobileparts"
+  },
+  {
+    id: "Tools & Repair",
+    title: "Repair & Services",
+    subtitle: "Professional technician booking & repair",
+    itemCount: "24/7 Available",
+    icon: Wrench,
+    color: "from-[#D8973C]/10 to-amber-500/10",
+    border: "border-amber-200 hover:border-amber-400",
+    iconBg: "bg-[#D8973C] text-slate-900",
+    path: "/appointment"
+  }
 ];
 
 const TESTIMONIALS = [
-  { id: 1, name: "Hamza Iqbal", role: "PC Builder, Lahore", text: "Order kiya tha RTX card, packaging aur quality dono zabardast thi. Delivery bhi 2 din mein mil gayi.", rating: 5, initials: "HI" },
-  { id: 2, name: "Sana Malik", role: "Freelance Editor, Karachi", text: "Laptop battery kharab ho gayi thi, yahan se original mangwai — ab performance pehle jaisi hai.", rating: 5, initials: "SM" },
-  { id: 3, name: "Bilal Ahmed", role: "Mobile Repair Shop Owner", text: "Bulk mein mobile parts mangwata hoon, prices market se acha hain aur quality consistent rehti hai.", rating: 4, initials: "BA" },
-  { id: 4, name: "Ayesha Raza", role: "Gamer, Islamabad", text: "SSD lagane ke baad boot time half ho gaya. Genuine part tha, koi issue nahi aya.", rating: 5, initials: "AR" },
+  {
+    id: 1,
+    name: "Hamza Iqbal",
+    location: "Lahore",
+    role: "Custom PC Builder",
+    text: "Ordered an RTX 4080 Super. The packaging was top-notch and delivery took under 36 hours. 100% genuine part with official serial verification!",
+    rating: 5,
+    avatar: "HI",
+  },
+  {
+    id: 2,
+    name: "Sana Malik",
+    location: "Karachi",
+    role: "Freelance Editor",
+    text: "My MacBook battery had swollen completely. Ordered an OEM replacement screen & battery from PartDoc. Installed smoothly, performance is like new!",
+    rating: 5,
+    avatar: "SM",
+  },
+  {
+    id: 3,
+    name: "Bilal Ahmed",
+    location: "Rawalpindi",
+    role: "Repair Shop Owner",
+    text: "I buy wholesale mobile displays and motherboards from PartDoc. Market prices are competitive, zero defect rate, and fast customer response time.",
+    rating: 5,
+    avatar: "BA",
+  },
 ];
 
-const BRANDS = ["ASUS", "MSI", "Gigabyte", "Corsair", "Samsung", "Kingston", "NVIDIA", "AMD"];
+const BRANDS = [
+  "NVIDIA", "AMD", "ASUS ROG", "MSI GAMING", "GIGABYTE", "CORSAIR", "SAMSUNG", "KINGSTON", "APPLE", "DELL", "HP", "LENOVO"
+];
 
 const TRUST_BADGES = [
-  { icon: "✅", title: "100% Genuine Parts", desc: "Har product verified aur original — koi compromise nahi." },
-  { icon: "🚚", title: "Fast Nationwide Delivery", desc: "24-48 hours mein delivery, poore Pakistan mein." },
-  { icon: "🛡️", title: "Warranty Included", desc: "Manufacturer warranty ke sath har part protected." },
-  { icon: "💬", title: "24/7 Support", desc: "Kabhi bhi sawaal ho, hamari team available hai." },
+  { icon: ShieldCheck, title: "100% Genuine Guarantee", desc: "Sourced directly from authorized distributors with official serial verification." },
+  { icon: Truck, title: "Nationwide Express Shipping", desc: "Safely packaged & delivered in 24-48 hours anywhere across Pakistan." },
+  { icon: Award, title: "Official Warranty Protected", desc: "Complete peace of mind with 6 to 36 months manufacturer warranty." },
+  { icon: Headphones, title: "24/7 Expert Support", desc: "Talk directly with our technicians to check exact component compatibility." },
 ];
 
-function useInView(threshold = 0.2) {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return [ref, inView];
-}
-
-const slideStyle = (visible, delay = 0) => ({
-  transform: visible ? "translateY(0)" : "translateY(32px)",
-  opacity: visible ? 1 : 0,
-  transition: `transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, opacity 0.7s ease ${delay}s`,
-});
-
-// Updated Theme Palette with Ecru, Charcoal, and Butterscotch
-const THEME = {
-  bgCanvas: "#152227",
-  bgCanvasAlt: "#1c2e35",
-  cardBg: "linear-gradient(155deg, #273E47, #1e3037)",
-  border: "rgba(216, 201, 155, 0.15)",
-  borderHover: "#D8973C",
-  heading: "#D8C99B",
-  body: "#BAC7BE",
-  iconBg: "#1a2a30",
-  iconBgHover: "rgba(216, 151, 60, 0.12)",
-  eyebrow: "#D8973C",
-  shadow: "0 8px 32px rgba(12, 20, 23, 0.6)",
-  shadowHover: "0 24px 48px rgba(216, 151, 60, 0.2), 0 0 0 1px rgba(216, 151, 60, 0.25)",
-};
-
-function TiltCard({ product, delay }) {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
-  const cardRef = useRef(null);
-  const [sectionRef, inView] = useInView(0.15);
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const rotateX = ((e.clientY - centerY) / (rect.height / 2)) * -9;
-    const rotateY = ((e.clientX - centerX) / (rect.width / 2)) * 9;
-    setTilt({ x: rotateX, y: rotateY });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
-    setIsHovered(false);
-  };
-
-  const handleClick = () => {
-    setClicked(true);
-    setTimeout(() => setClicked(false), 350);
-  };
-
-  return (
-    <div
-      ref={(node) => {
-        cardRef.current = node;
-        sectionRef.current = node;
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
-      style={{
-        position: "relative",
-        transform: inView
-          ? `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${clicked ? 0.96 : isHovered ? 1.04 : 1}) translateY(0)`
-          : "perspective(900px) translateY(32px)",
-        opacity: inView ? 1 : 0,
-        transition: isHovered || clicked
-          ? "transform 0.15s ease"
-          : `transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, opacity 0.7s ease ${delay}s`,
-        background: THEME.cardBg,
-        border: `1px solid ${isHovered ? THEME.borderHover : THEME.border}`,
-        borderRadius: "18px",
-        padding: "28px 24px",
-        cursor: "pointer",
-        overflow: "hidden",
-        boxShadow: isHovered ? THEME.shadowHover : THEME.shadow,
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "-40%",
-          left: "-20%",
-          width: "70%",
-          height: "180%",
-          background: "linear-gradient(115deg, transparent 40%, rgba(216, 151, 60, 0.12) 50%, transparent 60%)",
-          transform: isHovered ? "translateX(220%)" : "translateX(-100%)",
-          transition: "transform 0.7s ease",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          width: "58px",
-          height: "58px",
-          borderRadius: "14px",
-          background: isHovered ? THEME.iconBgHover : THEME.iconBg,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "28px",
-          marginBottom: "18px",
-          transform: isHovered ? "rotate(-6deg) scale(1.08)" : "rotate(0deg) scale(1)",
-          transition: "all 0.3s ease",
-        }}
-      >
-        {product.icon}
-      </div>
-      <p style={{ fontSize: "11.5px", color: THEME.eyebrow, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", margin: "0 0 8px" }}>
-        {product.category}
-      </p>
-      <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "18px", fontWeight: 700, color: THEME.heading, margin: "0 0 8px" }}>
-        {product.name}
-      </h3>
-      <p style={{ fontSize: "14px", color: THEME.body, margin: 0 }}>{product.price}</p>
-    </div>
-  );
-}
-
-function MarqueeCard({ item }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: "relative",
-        flexShrink: 0,
-        width: "300px",
-        height: "220px",
-        borderRadius: "18px",
-        overflow: "hidden",
-        border: `1px solid ${hover ? "#D8973C" : THEME.border}`,
-        cursor: "pointer",
-        transition: "border-color 0.3s ease, transform 0.3s ease",
-        transform: hover ? "translateY(-4px)" : "translateY(0)",
-      }}
-    >
-      <img
-        src={item.img || item.image || "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=500&q=80"}
-        alt={item.name}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          filter: hover ? "brightness(0.35)" : "brightness(0.65)",
-          transform: hover ? "scale(1.08)" : "scale(1)",
-          transition: "filter 0.35s ease, transform 0.5s ease",
-        }}
-      />
-      <p style={{ position: "absolute", left: "18px", right: "18px", bottom: "16px", margin: 0, fontSize: "16px", fontWeight: 600, color: THEME.heading, fontFamily: "'Space Grotesk', sans-serif" }}>
-        {item.name}
-      </p>
-      <p style={{ position: "absolute", left: "18px", right: "18px", bottom: hover ? "42px" : "-30px", opacity: hover ? 1 : 0, margin: 0, fontSize: "13px", color: THEME.body, transition: "bottom 0.3s ease, opacity 0.3s ease" }}>
-        {item.desc || item.description || "Original Quality Guaranteed"}
-      </p>
-    </div>
-  );
-}
-
-function MarqueeRow({ items, reverse }) {
-  const doubled = [...items, ...items];
-  return (
-    <div style={{ overflow: "hidden", width: "100%" }}>
-      <div style={{ display: "flex", gap: "22px", width: "max-content", animation: `${reverse ? "marqueeReverse" : "marqueeForward"} 38s linear infinite` }}>
-        {doubled.map((item, i) => (
-          <MarqueeCard key={`${item.id || item._id}-${i}`} item={item} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MarqueeSkeletonRow() {
-  const skeletonItems = Array(5).fill(0);
-  return (
-    <div style={{ overflow: "hidden", width: "100%", padding: "0 8%" }}>
-      <div style={{ display: "flex", gap: "22px" }}>
-        {skeletonItems.map((_, i) => (
-          <div key={i} className="shimmer" style={{ width: "300px", height: "220px", borderRadius: "18px", background: "#273E47", border: `1px solid ${THEME.border}` }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function UpcomingCard({ item, delay }) {
-  const [hover, setHover] = useState(false);
-  const [ref, inView] = useInView(0.15);
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: "relative",
-        borderRadius: "18px",
-        padding: "22px 22px 26px",
-        background: THEME.cardBg,
-        border: `1px solid ${hover ? item.accent : THEME.border}`,
-        cursor: "pointer",
-        transition: `border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
-        transform: inView ? (hover ? "translateY(-6px)" : "translateY(0)") : "translateY(32px)",
-        opacity: inView ? 1 : 0,
-        boxShadow: hover ? `0 20px 40px ${item.accent}22` : THEME.shadow,
-      }}
-    >
-      <div style={{ width: "100%", height: "150px", borderRadius: "12px", overflow: "hidden", marginBottom: "20px", position: "relative", border: `1px solid ${item.accent}33` }}>
-        <img src={item.img} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.75)", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform 0.5s ease" }} />
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, transparent 40%, ${item.accent}22 100%)` }} />
-      </div>
-      <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "18px", fontWeight: 700, color: THEME.heading, margin: "0 0 10px" }}>
-        {item.name}
-      </h3>
-      <p style={{ fontSize: "14px", color: THEME.body, margin: 0 }}>{item.desc}</p>
-    </div>
-  );
-}
-
-function CornerEmoji({ data, style }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: "absolute",
-        width: "72px",
-        height: "72px",
-        borderRadius: "50%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "32px",
-        background: `radial-gradient(circle at 30% 25%, ${data.tint}22, rgba(39, 62, 71, 0.2) 70%)`,
-        border: `1px solid ${data.tint}33`,
-        boxShadow: hover ? `0 0 30px ${data.tint}44` : `0 0 18px ${data.tint}11`,
-        backdropFilter: "blur(6px)",
-        transform: hover ? "translateY(-4px) scale(1.06)" : "translateY(0) scale(1)",
-        transition: "all 0.35s ease",
-        zIndex: 2,
-        ...style,
-      }}
-    >
-      {data.emoji}
-    </div>
-  );
-}
-
-function UpcomingPartsSection() {
-  const [headRef, headIn] = useInView(0.3);
-  return (
-    <section style={{ padding: "90px 8%", background: THEME.bgCanvas, position: "relative", overflow: "hidden" }}>
-      <CornerEmoji data={CORNER_EMOJIS[0]} style={{ top: "40px", left: "6%" }} />
-      <CornerEmoji data={CORNER_EMOJIS[1]} style={{ top: "40px", right: "6%" }} />
-      <CornerEmoji data={CORNER_EMOJIS[2]} style={{ bottom: "40px", left: "6%" }} />
-      <CornerEmoji data={CORNER_EMOJIS[3]} style={{ bottom: "40px", right: "6%" }} />
-
-      <div ref={headRef} style={{ textAlign: "center", marginBottom: "44px", position: "relative", zIndex: 2, ...slideStyle(headIn, 0) }}>
-        <p style={{ color: "#D8C99B", fontWeight: 600, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "12px" }}>
-          On The Way
-        </p>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "32px", fontWeight: 700, margin: "0 0 10px", color: THEME.heading }}>
-          Upcoming Parts
-        </h2>
-        <p style={{ color: THEME.body, fontSize: "14.5px" }}>Next-gen tech landing soon at PartDoc</p>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "24px", maxWidth: "900px", margin: "0 auto", position: "relative", zIndex: 2 }}>
-        {UPCOMING_PARTS.map((item, i) => (
-          <UpcomingCard key={item.id} item={item} delay={i * 0.12} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function StarRating({ rating }) {
-  return (
-    <div style={{ display: "flex", gap: "3px", marginBottom: "14px" }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <span key={n} style={{ fontSize: "14px", color: n <= rating ? "#D8973C" : "rgba(216,201,155,0.2)" }}>★</span>
-      ))}
-    </div>
-  );
-}
-
-function TestimonialCard({ item, delay }) {
-  const [hover, setHover] = useState(false);
-  const [ref, inView] = useInView(0.15);
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: "relative",
-        background: THEME.cardBg,
-        border: `1px solid ${hover ? THEME.borderHover + "55" : THEME.border}`,
-        borderRadius: "18px",
-        padding: "28px 26px",
-        transform: inView ? (hover ? "translateY(-6px)" : "translateY(0)") : "translateY(32px)",
-        opacity: inView ? 1 : 0,
-        transition: `transform 0.3s ease, opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, border-color 0.3s ease, box-shadow 0.3s ease`,
-        boxShadow: hover ? THEME.shadowHover : THEME.shadow,
-      }}
-    >
-      <div style={{ position: "absolute", top: "20px", right: "24px", fontSize: "40px", color: "rgba(216,151,60,0.12)", fontFamily: "Georgia, serif", lineHeight: 1 }}>"</div>
-      <StarRating rating={item.rating} />
-      <p style={{ fontSize: "14.5px", color: THEME.body, lineHeight: 1.7, margin: "0 0 22px", position: "relative", zIndex: 1 }}>{item.text}</p>
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: hover ? THEME.iconBgHover : THEME.iconBg, border: `1px solid ${THEME.borderHover}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, color: THEME.eyebrow, transition: "all 0.3s ease" }}>
-          {item.initials}
-        </div>
-        <div>
-          <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: THEME.heading }}>{item.name}</p>
-          <p style={{ margin: 0, fontSize: "12.5px", color: THEME.body, opacity: 0.75 }}>{item.role}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TestimonialsSection() {
-  const [headRef, headIn] = useInView(0.3);
-  return (
-    <section style={{ padding: "90px 8%", background: THEME.bgCanvasAlt, position: "relative", zIndex: 2 }}>
-      <div ref={headRef} style={{ textAlign: "center", marginBottom: "48px", ...slideStyle(headIn, 0) }}>
-        <p style={{ color: "#D8973C", fontWeight: 600, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "12px" }}>Customer Voices</p>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "32px", fontWeight: 700, margin: "0 0 10px", color: "#D8C99B" }}>What People Are Saying</h2>
-        <p style={{ color: THEME.body, fontSize: "14.5px" }}>Real feedback from real customers across Pakistan</p>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: "24px", maxWidth: "1200px", margin: "0 auto" }}>
-        {TESTIMONIALS.map((t, i) => (
-          <TestimonialCard key={t.id} item={t} delay={i * 0.1} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function BrandsStrip() {
-  const [headRef, headIn] = useInView(0.3);
-  const doubled = [...BRANDS, ...BRANDS];
-  return (
-    <section style={{ padding: "60px 0", background: THEME.bgCanvas, position: "relative", zIndex: 2, overflow: "hidden" }}>
-      <div ref={headRef} style={{ textAlign: "center", marginBottom: "36px", padding: "0 8%", ...slideStyle(headIn, 0) }}>
-        <p style={{ color: THEME.body, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", fontWeight: 600, opacity: 0.7 }}>
-          Trusted Brands We Stock
-        </p>
-      </div>
-      <div style={{ overflow: "hidden", width: "100%" }}>
-        <div style={{ display: "flex", gap: "60px", width: "max-content", animation: "marqueeForward 26s linear infinite" }}>
-          {doubled.map((brand, i) => (
-            <span
-              key={`${brand}-${i}`}
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "22px",
-                fontWeight: 700,
-                color: THEME.heading,
-                opacity: 0.4,
-                whiteSpace: "nowrap",
-                letterSpacing: "0.5px",
-                transition: "opacity 0.3s ease",
-              }}
-            >
-              {brand}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TrustBadgeCard({ item, delay }) {
-  const [hover, setHover] = useState(false);
-  const [ref, inView] = useInView(0.15);
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        textAlign: "center",
-        padding: "10px",
-        transform: inView ? "translateY(0)" : "translateY(32px)",
-        opacity: inView ? 1 : 0,
-        transition: `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
-      }}
-    >
-      <div
-        style={{
-          width: "64px",
-          height: "64px",
-          margin: "0 auto 18px",
-          borderRadius: "16px",
-          background: hover ? THEME.iconBgHover : THEME.iconBg,
-          border: `1px solid ${hover ? THEME.borderHover + "55" : THEME.border}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "28px",
-          transform: hover ? "translateY(-4px) scale(1.06)" : "translateY(0) scale(1)",
-          transition: "all 0.3s ease",
-        }}
-      >
-        {item.icon}
-      </div>
-      <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "16.5px", fontWeight: 700, color: THEME.heading, margin: "0 0 8px" }}>
-        {item.title}
-      </h3>
-      <p style={{ fontSize: "13.5px", color: THEME.body, lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
-    </div>
-  );
-}
-
-function TrustSection() {
-  const [headRef, headIn] = useInView(0.3);
-  return (
-    <section style={{ padding: "80px 8%", background: THEME.bgCanvasAlt, position: "relative", zIndex: 2 }}>
-      <div ref={headRef} style={{ textAlign: "center", marginBottom: "48px", ...slideStyle(headIn, 0) }}>
-        <p style={{ color: "#D8973C", fontWeight: 600, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "12px" }}>Why PartDoc</p>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "32px", fontWeight: 700, margin: 0, color: "#D8C99B" }}>Built On Trust</h2>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "30px", maxWidth: "1100px", margin: "0 auto" }}>
-        {TRUST_BADGES.map((b, i) => (
-          <TrustBadgeCard key={i} item={b} delay={i * 0.1} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function NewsletterSection() {
-  const [ref, inView] = useInView(0.3);
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (!email) return;
-    setSubscribed(true);
-    setTimeout(() => {
-      setSubscribed(false);
-      setEmail("");
-    }, 3000);
-  };
-
-  return (
-    <section style={{ padding: "90px 8%", background: THEME.bgCanvas, position: "relative", zIndex: 2, overflow: "hidden" }}>
-      <div
-        ref={ref}
-        style={{
-          maxWidth: "780px",
-          margin: "0 auto",
-          textAlign: "center",
-          background: THEME.cardBg,
-          border: `1px solid ${THEME.border}`,
-          borderRadius: "24px",
-          padding: "56px 40px",
-          position: "relative",
-          overflow: "hidden",
-          ...slideStyle(inView, 0),
-        }}
-      >
-        <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(216,151,60,0.12), transparent 70%)" }} />
-        <div style={{ position: "absolute", bottom: "-60px", left: "-60px", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(216,201,155,0.08), transparent 70%)" }} />
-        <p style={{ color: "#D8973C", fontWeight: 600, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "14px", position: "relative", zIndex: 1 }}>
-          Stay Updated
-        </p>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "30px", fontWeight: 700, margin: "0 0 12px", color: "#D8C99B", position: "relative", zIndex: 1 }}>
-          Get Notified On New Parts & Deals
-        </h2>
-        <p style={{ color: THEME.body, fontSize: "14.5px", marginBottom: "32px", position: "relative", zIndex: 1 }}>
-          Subscribe to our newsletter aur sabse pehle discounts aur new arrivals ka pata karo.
-        </p>
-        <form onSubmit={handleSubscribe} style={{ display: "flex", gap: "12px", maxWidth: "440px", margin: "0 auto", flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1 }}>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            style={{
-              flex: "1 1 240px",
-              padding: "14px 18px",
-              borderRadius: "10px",
-              border: `1px solid ${THEME.border}`,
-              background: "rgba(21, 34, 39, 0.6)",
-              color: THEME.heading,
-              fontSize: "14.5px",
-              outline: "none",
-            }}
-          />
-          <button
-            type="submit"
-            className="glow-btn"
-            style={{
-              padding: "14px 26px",
-              borderRadius: "10px",
-              border: "none",
-              background: subscribed ? "#4CAF50" : "#D8973C",
-              color: "#152227",
-              fontWeight: 600,
-              fontSize: "14.5px",
-              cursor: "pointer",
-              transition: "all 0.25s ease",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {subscribed ? "Subscribed ✓" : "Subscribe →"}
-          </button>
-        </form>
-      </div>
-    </section>
-  );
-}
-
-function StatCounter({ end, label, suffix = "" }) {
-  const [count, setCount] = useState(0);
-  const [ref, inView] = useInView(0.4);
-
-  useEffect(() => {
-    if (!inView) return;
-    const cappedEnd = Math.min(end, 999);
-    let start = 0;
-    const duration = 1400;
-    const stepTime = Math.max(Math.floor(duration / cappedEnd), 15);
-    const timer = setInterval(() => {
-      start += 1;
-      setCount(start);
-      if (start >= cappedEnd) clearInterval(timer);
-    }, stepTime);
-    return () => clearInterval(timer);
-  }, [end, inView]);
-
-  return (
-    <div ref={ref} style={{ textAlign: "center" }}>
-      <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "32px", fontWeight: 700, color: "#D8973C", margin: "0 0 4px" }}>
-        {count}{suffix}
-      </p>
-      <p style={{ fontSize: "13px", color: THEME.body, margin: 0 }}>{label}</p>
-    </div>
-  );
-}
-
-function FeatureCard({ feature, delay }) {
-  const [hover, setHover] = useState(false);
-  const [ref, inView] = useInView(0.15);
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        background: THEME.cardBg,
-        border: `1px solid ${hover ? THEME.borderHover + "55" : THEME.border}`,
-        borderRadius: "18px",
-        padding: "32px 26px",
-        transform: inView ? (hover ? "translateY(-6px)" : "translateY(0)") : "translateY(32px)",
-        opacity: inView ? 1 : 0,
-        transition: `transform 0.3s ease, opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, border-color 0.3s ease, box-shadow 0.3s ease`,
-        boxShadow: hover ? THEME.shadowHover : THEME.shadow,
-      }}
-    >
-      <div style={{ fontSize: "30px", width: "58px", height: "58px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "14px", background: hover ? THEME.iconBgHover : THEME.iconBg, marginBottom: "20px", transition: "all 0.3s ease" }}>
-        {feature.icon}
-      </div>
-      <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "19px", fontWeight: 700, color: THEME.heading, margin: "0 0 10px" }}>
-        {feature.title}
-      </h3>
-      <p style={{ fontSize: "14.5px", lineHeight: 1.6, color: THEME.body, margin: 0 }}>{feature.desc}</p>
-    </div>
-  );
-}
-
-function DeviceCluster() {
-  const [rotY, setRotY] = useState(15);
-  const [rotX, setRotX] = useState(10);
-  const clusterRef = useRef(null);
-
-  const handleMouseMove = (e) => {
-    if (!clusterRef.current) return;
-    const rect = clusterRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const rotateY = ((e.clientX - centerX) / (rect.width / 2)) * 25;
-    const rotateX = ((e.clientY - centerY) / (rect.height / 2)) * -20;
-    setRotY(rotateY);
-    setRotX(rotateX);
-  };
-
-  const handleMouseLeave = () => {
-    setRotY(15);
-    setRotX(10);
-  };
-
-  return (
-    <div
-      ref={clusterRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        position: "relative",
-        width: "500px",
-        height: "460px",
-        perspective: "1500px",
-        cursor: "pointer",
-        touchAction: "none",
-        flexShrink: 0,
-        zIndex: 2,
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
-          transformStyle: "preserve-3d",
-          transform: `rotateY(${rotY}deg) rotateX(${rotX}deg)`,
-          transition: "transform 0.1s cubic-bezier(0.25, 1, 0.5, 1)"
-        }}
-      >
-        <div style={{ position: "absolute", width: "138px", height: "250px", top: "50%", left: "50%", marginTop: "-125px", marginLeft: "-69px", transform: "translateZ(88px)", borderRadius: "17px", background: "linear-gradient(160deg, #273E47, #152227)", border: "1px solid rgba(216, 201, 155, 0.3)", boxShadow: "0 30px 60px rgba(216, 151, 60, 0.15)", overflow: "hidden", pointerEvents: "none" }}>
-          <div style={{ position: "absolute", left: "12px", top: "12px", bottom: "12px", width: "7px", borderRadius: "3.5px", background: "linear-gradient(180deg, #D8973C, #D8C99B, #273E47, #D8973C)", backgroundSize: "100% 300%", animation: "rgbFlow 3s linear infinite", boxShadow: "0 0 12px rgba(216, 151, 60, 0.6)" }} />
-          <div style={{ position: "absolute", right: "20px", top: "44px", width: "64px", height: "64px", borderRadius: "50%", border: "3px solid #D8973C", boxShadow: "0 0 20px rgba(216, 151, 60, 0.5)", animation: "spinCW 3s linear infinite, rgbGlow 2.5s ease-in-out infinite" }} />
-          <div style={{ position: "absolute", right: "27px", top: "134px", width: "52px", height: "52px", borderRadius: "50%", border: "3px solid #D8C99B", boxShadow: "0 0 18px rgba(216, 201, 155, 0.5)", animation: "spinCCW 2.5s linear infinite, rgbGlow 2.5s ease-in-out infinite 0.5s" }} />
-        </div>
-        <div style={{ position: "absolute", width: "188px", height: "123px", top: "50%", left: "50%", marginTop: "22px", marginLeft: "-256px", transform: "rotateY(32deg) translateZ(12px)", transformOrigin: "right center", pointerEvents: "none" }}>
-          <div style={{ width: "100%", height: "68%", borderRadius: "9px 9px 0 0", background: "linear-gradient(160deg, #273E47, #152227)", border: "1px solid rgba(216, 201, 155, 0.2)", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", inset: "7px", borderRadius: "5px", background: "linear-gradient(120deg, #152227, rgba(216, 151, 60, 0.15), #152227)", backgroundSize: "200% 200%", animation: "screenGlow 2.5s ease-in-out infinite" }} />
-          </div>
-          <div style={{ width: "100%", height: "32%", borderRadius: "0 0 9px 9px", background: "linear-gradient(160deg, #1e3037, #273E47)", border: "1px solid rgba(216, 201, 155, 0.2)", borderTop: "none" }} />
-        </div>
-        <div style={{ position: "absolute", width: "80px", height: "170px", top: "50%", left: "50%", marginTop: "-48px", marginLeft: "169px", transform: "rotateY(-28deg) translateZ(12px)", transformOrigin: "left center", borderRadius: "18px", background: "linear-gradient(160deg, #273E47, #152227)", border: "1px solid rgba(216, 201, 155, 0.2)", boxShadow: "0 20px 40px rgba(216, 201, 155, 0.15)", overflow: "hidden", pointerEvents: "none" }}>
-          <div style={{ position: "absolute", inset: "6px", borderRadius: "13px", background: "linear-gradient(160deg, #152227, rgba(216, 151, 60, 0.08))" }} />
-          <div style={{ position: "absolute", top: "11px", left: "50%", transform: "translateX(-50%)", width: "7px", height: "7px", borderRadius: "50%", background: "#D8973C", boxShadow: "0 0 8px 2px rgba(216, 151, 60, 0.7)", animation: "rgbGlow 2.5s ease-in-out infinite" }} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
-  const container = useRef(); 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { items: marqueeParts, loading } = useSelector((state) => state.parts);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  // Estimator Widget State
+  const [calcDevice, setCalcDevice] = useState("Computer");
+  const [calcPart, setCalcPart] = useState("GPU");
 
   useEffect(() => {
     dispatch(fetchParts());
   }, [dispatch]);
 
-  // GSAP Animation Logic 
-  useGSAP(() => {
-    const tl = gsap.timeline();
-    tl.fromTo(".hero-animate", 
-      { y: 40, opacity: 0 }, 
-      { y: 0, opacity: 1, duration: 0.85, stagger: 0.12, ease: "power4.out" }
-    );
-  }, { scope: container });
+  const displayParts = (marqueeParts && marqueeParts.length > 0) ? marqueeParts : MOCK_PRODUCTS;
 
-  const [featuresHeadRef, featuresHeadIn] = useInView(0.3);
-  const [marqueeHeadRef, marqueeHeadIn] = useInView(0.3);
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/computerparts?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    setSubscribed(true);
+    setTimeout(() => {
+      setSubscribed(false);
+      setNewsletterEmail("");
+    }, 3500);
+  };
+
+  // Estimator Data
+  const ESTIMATOR_DATA = {
+    Computer: {
+      GPU: { price: "Rs. 45,000 - 450,000", time: "Same Day Dispatch", warranty: "1-3 Years Warranty" },
+      CPU: { price: "Rs. 22,000 - 180,000", time: "24h Express Ship", warranty: "3 Years Warranty" },
+      RAM: { price: "Rs. 6,500 - 48,000", time: "Instant Stock", warranty: "Lifetime Warranty" },
+      Storage: { price: "Rs. 8,000 - 65,000", time: "Same Day Ship", warranty: "5 Years Warranty" },
+    },
+    Laptop: {
+      Display: { price: "Rs. 12,500 - 55,000", time: "24-48h Delivery", warranty: "6 Months Warranty" },
+      Battery: { price: "Rs. 5,500 - 24,000", time: "In Stock", warranty: "6 Months Warranty" },
+      Keyboard: { price: "Rs. 3,200 - 12,000", time: "In Stock", warranty: "3 Months Warranty" },
+      Charger: { price: "Rs. 3,800 - 14,500", time: "Same Day Ship", warranty: "6 Months Warranty" },
+    },
+    Mobile: {
+      Display: { price: "Rs. 4,500 - 75,000", time: "Original OEM Grade", warranty: "Tested & Verified" },
+      Battery: { price: "Rs. 2,800 - 16,000", time: "100% Health Cell", warranty: "3 Months Warranty" },
+      Motherboard: { price: "Rs. 12,000 - 110,000", time: "Tested & Unlocked", warranty: "Tested Verified" },
+      Camera: { price: "Rs. 3,500 - 28,000", time: "Original Pulls", warranty: "7 Days Replacement" },
+    }
+  };
+
+  const currentEst = ESTIMATOR_DATA[calcDevice]?.[calcPart] || { price: "Rs. 5,000+", time: "24 Hours", warranty: "Warranty Included" };
+
+  const filteredProducts = displayParts.filter((item) => {
+    if (activeCategory === "all") return true;
+    return item.category?.toLowerCase() === activeCategory.toLowerCase();
+  });
 
   return (
-    <div ref={container} style={{ fontFamily: "'Inter', sans-serif", background: THEME.bgCanvas, color: THEME.body, minHeight: "100vh", overflowX: "hidden" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap');
-        * { box-sizing: border-box; }
-        .glow-btn:hover { box-shadow: 0 0 25px rgba(216,151,60,0.5); transform: translateY(-2px); }
-        .outline-btn:hover { background: rgba(216, 201, 155, 0.08); border-color: #D8C99B; }
-        @keyframes pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
-        @keyframes rgbFlow { 0% { background-position: 0% 0%; } 100% { background-position: 0% 300%; } }
-        @keyframes rgbGlow {
-          0%, 100% { box-shadow: 0 0 8px 2px rgba(216,151,60,0.7); }
-          50% { box-shadow: 0 0 10px 3px rgba(216,201,155,0.7); }
-        }
-        @keyframes spinCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes spinCCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
-        @keyframes screenGlow { 0%, 100% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } }
-        @keyframes marqueeForward { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes marqueeReverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-        @keyframes shimmerAnimation { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .shimmer { background: linear-gradient(90deg, #273E47 25%, #35535f 50%, #273E47 75%); background-size: 200% 100%; animation: shimmerAnimation 1.5s infinite linear; }
-      `}</style>
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-[#D8973C] selection:text-white">
+      
+      {/* Top Banner Announcement Strip */}
+      <div className="bg-slate-900 text-slate-300 text-xs py-2 px-4 text-center font-medium flex items-center justify-center gap-3">
+        <span className="bg-[#D8973C] text-slate-950 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Fast Shipping</span>
+        <span>Free Express Delivery Across Pakistan On Orders Above Rs. 15,000 | 100% Genuine Guaranteed</span>
+      </div>
 
-      {/* ===== HERO SECTION ===== */}
-      <section style={{ minHeight: "92vh", display: "flex", alignItems: "center", justifyContent: "center", gap: "40px", padding: "100px 8% 40px", position: "relative", flexWrap: "wrap", overflow: "hidden" }}>
-        <div style={{ maxWidth: "480px", flex: "1 1 420px", position: "relative", zIndex: 2 }}>
-          <span className="hero-animate" style={{ display: "inline-block", padding: "6px 16px", borderRadius: "999px", background: "rgba(216, 151, 60, 0.08)", border: "1px solid rgba(216, 151, 60, 0.25)", color: "#D8973C", fontSize: "13px", fontWeight: 600, marginBottom: "22px", animation: "pulse 2.5s infinite" }}>
-            ⚡ Pakistan's #1 Tech Parts Store
-          </span>
-          <h1 className="hero-animate" style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "46px", fontWeight: 700, lineHeight: 1.15, margin: "0 0 18px", color: "#D8C99B" }}>
-            Upgrade Your Tech<br />With <span style={{ color: "#D8973C" }}>Genuine</span> Parts
-          </h1>
-          <p className="hero-animate" style={{ fontSize: "16.5px", color: "#BAC7BE", lineHeight: 1.7, marginBottom: "30px" }}>
-            Computer, Laptop, aur Mobile parts — sab kuch ek jagah, best price aur original quality ke sath. Fast delivery across Pakistan.
-          </p>
-          <div className="hero-animate" style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginBottom: "40px" }}>
-            <button className="glow-btn" style={{ padding: "14px 30px", borderRadius: "10px", border: "none", background: "#D8973C", color: "#152227", fontWeight: 600, fontSize: "15px", cursor: "pointer", transition: "all 0.25s ease" }}>Shop Now →</button>
-            <button className="outline-btn" style={{ padding: "14px 30px", borderRadius: "10px", border: "1px solid rgba(216, 201, 155, 0.3)", background: "transparent", color: "#D8C99B", fontWeight: 600, fontSize: "15px", cursor: "pointer", transition: "all 0.25s ease" }}>Explore Parts</button>
-          </div>
-          <div className="hero-animate" style={{ display: "flex", gap: "36px" }}>
-            <StatCounter end={999} suffix="+" label="Parts Sold" />
-            <StatCounter end={98} suffix="%" label="Happy Customers" />
-            <StatCounter end={24} suffix="hr" label="Fast Delivery" />
-          </div>
-        </div>
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION (CLEAN LIGHT THEME) */}
+      {/* ========================================================================= */}
+      <section className="relative pt-12 pb-20 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Hero Content */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7 flex flex-col items-start"
+          >
+            {/* Trust Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold mb-6 shadow-sm">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              <span>Official Tech & Repair Spare Parts Store</span>
+            </div>
 
-        <div className="hero-animate" style={{ flex: "1 1 460px", display: "flex", justifyContent: "center" }}>
-          <DeviceCluster />
+            {/* Main Headline */}
+            <h1 className="font-grotesk text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-6">
+              Your One-Stop Shop For <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-indigo-700 to-[#D8973C]">
+                Original & Genuine
+              </span> Tech Parts
+            </h1>
+
+            {/* Sub-headline */}
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
+              Computer GPUs, CPUs, SSDs, Laptop screens, batteries, and mobile spare parts — verified serial numbers with official warranty across Pakistan.
+            </p>
+
+            {/* Clean Quick Search Form */}
+            <form onSubmit={handleSearchSubmit} className="w-full max-w-xl mb-8">
+              <div className="relative flex items-center shadow-lg rounded-2xl bg-white border border-slate-200 p-1.5 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                <Search className="w-5 h-5 text-slate-400 ml-3 mr-2" />
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search e.g. 'RTX 4080', 'MacBook Screen', 'Samsung Battery'..."
+                  className="w-full bg-transparent text-slate-900 text-sm placeholder-slate-400 focus:outline-none py-2 pr-2"
+                />
+                <button 
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-xl flex items-center gap-2 transition-colors shadow-md"
+                >
+                  Search
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Popular Tags */}
+              <div className="flex flex-wrap items-center gap-2 mt-3 text-xs text-slate-500">
+                <span className="font-semibold text-slate-400">Popular:</span>
+                {["RTX GPUs", "MacBook Battery", "Samsung Display", "NVMe SSD"].map((tag) => (
+                  <button 
+                    key={tag}
+                    type="button"
+                    onClick={() => setSearchQuery(tag)}
+                    className="bg-slate-200/60 hover:bg-indigo-50 hover:text-indigo-600 px-2.5 py-1 rounded-md text-slate-600 transition-colors"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </form>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Link 
+                to="/computerparts" 
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-7 py-3.5 rounded-xl text-sm flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              >
+                <ShoppingBag className="w-4 h-4 text-[#D8973C]" />
+                <span>Explore Shop Catalog</span>
+              </Link>
+
+              <Link 
+                to="/appointment" 
+                className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-7 py-3.5 rounded-xl text-sm flex items-center gap-2 transition-all shadow-sm"
+              >
+                <Wrench className="w-4 h-4 text-indigo-600" />
+                <span>Book Repair Appointment</span>
+              </Link>
+            </div>
+
+          </motion.div>
+
+          {/* Right Visual Product Cards (Replacing heavy 3D model with crisp clean cards) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-5 relative"
+          >
+            {/* Background Decorative Blob */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-100/70 rounded-full blur-3xl -z-10" />
+
+            {/* Main Featured Light Card */}
+            <div className="bg-white rounded-3xl p-6 shadow-2xl border border-slate-100 relative">
+              
+              {/* Product Badge Header */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>In Stock & Ready To Ship</span>
+                </span>
+                <span className="text-xs font-bold text-slate-400">ID: #PD-4090</span>
+              </div>
+
+              {/* Product Image */}
+              <div className="w-full h-56 rounded-2xl bg-slate-100 overflow-hidden mb-5 relative group">
+                <img 
+                  src="https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80" 
+                  alt="RTX Graphics Card"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-xs font-bold text-slate-900 shadow-md">
+                  ⭐ 4.9 (48 Reviews)
+                </div>
+              </div>
+
+              {/* Product Info */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-indigo-600">Computer Parts</div>
+                  <h3 className="font-grotesk font-extrabold text-slate-900 text-lg">NVIDIA GeForce RTX 4080</h3>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-slate-400">Official Price</div>
+                  <div className="font-grotesk text-xl font-extrabold text-slate-900">Rs. 345,000</div>
+                </div>
+              </div>
+
+              {/* Trust Status Strip */}
+              <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-2 gap-3">
+                <div className="bg-indigo-50/70 p-2.5 rounded-xl border border-indigo-100 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                    🚚
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-900 leading-tight">Express Delivery</div>
+                    <div className="text-[10px] text-slate-500">Shipped in 24-48h</div>
+                  </div>
+                </div>
+
+                <div className="bg-amber-50/70 p-2.5 rounded-xl border border-amber-100 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                    🛡️
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-900 leading-tight">100% Genuine</div>
+                    <div className="text-[10px] text-slate-500">Official Warranty</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </motion.div>
+
         </div>
       </section>
 
-      {/* ===== FEATURES SECTION ===== */}
-      <section style={{ padding: "90px 8%", background: THEME.bgCanvasAlt, position: "relative", zIndex: 2 }}>
-        <div ref={featuresHeadRef} style={{ textAlign: "center", marginBottom: "48px", ...slideStyle(featuresHeadIn, 0) }}>
-          <p style={{ color: "#D8973C", fontWeight: 600, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "12px" }}>What We Offer</p>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "32px", fontWeight: 700, margin: 0, color: "#D8C99B" }}>Every Part You Need</h2>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
-          {FEATURES.map((f, i) => <FeatureCard key={i} feature={f} delay={i * 0.12} />)}
+
+      {/* ========================================================================= */}
+      {/* 2. CATEGORY TILES (APPLE & BEST BUY STYLE) */}
+      {/* ========================================================================= */}
+      <section className="py-12 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {CATEGORIES_SUMMARY.map((cat) => {
+            const Icon = cat.icon;
+            return (
+              <Link 
+                key={cat.id} 
+                to={cat.path}
+                className={`bg-white rounded-2xl p-6 border ${cat.border} shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-xl ${cat.iconBg} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">
+                      {cat.itemCount}
+                    </span>
+                  </div>
+
+                  <h3 className="font-grotesk text-xl font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
+                    {cat.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-4">
+                    {cat.subtitle}
+                  </p>
+                </div>
+
+                <div className="flex items-center text-xs font-bold text-indigo-600 group-hover:translate-x-1 transition-transform">
+                  <span>Browse Category</span>
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      {/* ===== MARQUEE SECTION WITH REDUX DATA FLOW ===== */}
-      <section style={{ padding: "90px 0", background: THEME.bgCanvas, overflow: "hidden", position: "relative", zIndex: 2 }}>
-        <div ref={marqueeHeadRef} style={{ textAlign: "center", marginBottom: "44px", padding: "0 8%", ...slideStyle(marqueeHeadIn, 0) }}>
-          <p style={{ color: "#D8973C", fontWeight: 600, fontSize: "13px", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "12px" }}>Trending This Week</p>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "32px", fontWeight: 700, margin: "0 0 10px", color: "#D8C99B" }}>High Demand Right Now</h2>
-          <p style={{ color: "#BAC7BE", fontSize: "14.5px" }}>Hover any part to see the details</p>
-        </div>
 
-        {loading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
-            <MarqueeSkeletonRow />
+      {/* ========================================================================= */}
+      {/* 3. INSTANT REPAIR & PART FINDER ESTIMATOR WIDGET */}
+      {/* ========================================================================= */}
+      <section className="py-12 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-slate-200 relative overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <div className="lg:col-span-5">
+              <span className="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5 mb-3">
+                <Wrench className="w-3.5 h-3.5" />
+                <span>Instant Estimator</span>
+              </span>
+              <h2 className="font-grotesk text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">
+                Find Exact Part & Repair Cost
+              </h2>
+              <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                Select your device and required part to calculate price estimate and book an appointment with our expert technicians.
+              </p>
+              <div className="flex flex-col gap-2.5 text-xs font-semibold text-slate-700">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Free Compatibility Consultation</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Original Parts With Serial Warranty</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+              
+              {/* Select Device */}
+              <div className="mb-5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">1. Select Device</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { type: "Computer", icon: Monitor },
+                    { type: "Laptop", icon: Laptop },
+                    { type: "Mobile", icon: Smartphone }
+                  ].map(({ type, icon: Icon }) => (
+                    <button
+                      key={type}
+                      onClick={() => {
+                        setCalcDevice(type);
+                        setCalcPart(Object.keys(ESTIMATOR_DATA[type])[0]);
+                      }}
+                      className={`p-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                        calcDevice === type
+                          ? "bg-indigo-600 text-white shadow-md"
+                          : "bg-white text-slate-700 border border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{type}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Select Component */}
+              <div className="mb-5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">2. Select Component</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {Object.keys(ESTIMATOR_DATA[calcDevice]).map((partKey) => (
+                    <button
+                      key={partKey}
+                      onClick={() => setCalcPart(partKey)}
+                      className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                        calcPart === partKey
+                          ? "bg-slate-900 text-white font-bold"
+                          : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                      }`}
+                    >
+                      {partKey}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Estimator Result Box */}
+              <div className="bg-white p-4 rounded-xl border border-indigo-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                <div>
+                  <div className="text-xs text-slate-400 font-medium">Estimated Price Range</div>
+                  <div className="font-grotesk text-xl font-extrabold text-indigo-700">{currentEst.price}</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">
+                    ⏱️ {currentEst.time} • 🛡️ {currentEst.warranty}
+                  </div>
+                </div>
+
+                <Link 
+                  to={`/appointment?device=${calcDevice}&part=${calcPart}`}
+                  className="w-full sm:w-auto bg-[#D8973C] hover:bg-amber-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1 shadow-md transition-all whitespace-nowrap"
+                >
+                  <span>Book Appointment</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+            </div>
+
           </div>
-        ) : marqueeParts && marqueeParts.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
-            <MarqueeRow items={marqueeParts} reverse={false} />
-            <MarqueeRow items={[...marqueeParts].reverse()} reverse={true} />
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", color: THEME.body, fontSize: "14px", padding: "20px" }}>
-            No products available at the moment.
-          </div>
-        )}
+        </div>
       </section>
 
-      {/* ===== UPCOMING SECTION ===== */}
-      <UpcomingPartsSection />
 
-      {/* ===== TRUST BADGES SECTION ===== */}
-      <TrustSection />
+      {/* ========================================================================= */}
+      {/* 4. FEATURED PRODUCTS CATALOG GRID */}
+      {/* ========================================================================= */}
+      <section className="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 block mb-1">Genuine Catalog</span>
+            <h2 className="font-grotesk text-3xl font-extrabold text-slate-900">Featured & Trending Parts</h2>
+          </div>
 
-      {/* ===== BRANDS STRIP ===== */}
-      <BrandsStrip />
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: "all", label: "All Parts" },
+              { id: "Computer Parts", label: "Computer" },
+              { id: "Laptop Parts", label: "Laptop" },
+              { id: "Mobile Parts", label: "Mobile" }
+            ].map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setActiveCategory(id)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  activeCategory === id
+                    ? "bg-indigo-600 text-white shadow-md"
+                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* ===== TESTIMONIALS SECTION ===== */}
-      <TestimonialsSection />
+        {/* Product Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProducts.slice(0, 6).map((item) => (
+            <div 
+              key={item.id || item._id}
+              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
+            >
+              <div>
+                {/* Image Container */}
+                <div className="w-full h-48 rounded-xl bg-slate-100 overflow-hidden mb-4 relative">
+                  <img 
+                    src={item.image || item.img || "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80"} 
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
+                  <span className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-md">
+                    {item.tag || item.stock || "In Stock"}
+                  </span>
+                </div>
 
-      {/* ===== NEWSLETTER / CTA SECTION ===== */}
-      <NewsletterSection />
+                {/* Info */}
+                <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
+                  {item.category}
+                </div>
+                <h3 className="font-grotesk font-bold text-slate-900 text-base mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                  {item.name}
+                </h3>
+
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                  <span className="text-xs text-slate-500 font-medium ml-1">
+                    ({item.rating || 4.9})
+                  </span>
+                </div>
+              </div>
+
+              {/* Price & Action */}
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase font-medium">Price</span>
+                  <span className="font-grotesk text-lg font-extrabold text-slate-900">
+                    {typeof item.price === 'number' ? `Rs. ${item.price.toLocaleString()}` : item.price}
+                  </span>
+                </div>
+
+                <Link 
+                  to={`/product/${item._id || item.id}`}
+                  className="bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white p-3 rounded-xl transition-all font-bold text-xs flex items-center justify-center"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Link 
+            to="/computerparts" 
+            className="inline-flex items-center gap-2 bg-slate-900 text-white hover:bg-slate-800 px-8 py-3.5 rounded-xl text-sm font-bold shadow-md transition-all"
+          >
+            <span>View Full Inventory</span>
+            <ArrowRight className="w-4 h-4 text-[#D8973C]" />
+          </Link>
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 5. TRUST BADGES (4 PILLARS) */}
+      {/* ========================================================================= */}
+      <section className="py-16 bg-white border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {TRUST_BADGES.map(({ icon: Icon, title, desc }, idx) => (
+              <div key={idx} className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-grotesk font-bold text-slate-900 text-base mb-1">{title}</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 6. BRANDS TICKER */}
+      {/* ========================================================================= */}
+      <section className="py-10 bg-slate-50 border-b border-slate-200 overflow-hidden">
+        <div className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">
+          Authorized Brands We Stock
+        </div>
+        <div className="flex overflow-hidden">
+          <div className="flex gap-10 whitespace-nowrap animate-marquee">
+            {[...BRANDS, ...BRANDS].map((brand, i) => (
+              <span key={`${brand}-${i}`} className="font-grotesk text-xl font-bold text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer tracking-wider">
+                {brand}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 7. CUSTOMER TESTIMONIALS */}
+      {/* ========================================================================= */}
+      <section className="py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="text-center max-w-xl mx-auto mb-12">
+          <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block mb-1">Customer Reviews</span>
+          <h2 className="font-grotesk text-3xl font-extrabold text-slate-900 mb-3">Trusted Across Pakistan</h2>
+          <p className="text-sm text-slate-600">Read what PC builders and tech repair owners say about our genuine parts.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {TESTIMONIALS.map((t) => (
+            <div key={t.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(t.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed mb-6 italic">"{t.text}"</p>
+              </div>
+
+              <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center">
+                  {t.avatar}
+                </div>
+                <div>
+                  <h4 className="font-grotesk font-bold text-slate-900 text-sm">{t.name}</h4>
+                  <div className="text-[11px] text-slate-500">{t.role} • {t.location}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 8. NEWSLETTER & CTA */}
+      {/* ========================================================================= */}
+      <section className="py-16 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+          <div className="max-w-xl mx-auto relative z-10">
+            <h2 className="font-grotesk text-3xl sm:text-4xl font-extrabold mb-3">
+              Subscribe For Exclusive Deals & Stock Alerts
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 mb-6">
+              Get notified immediately when rare GPU stock, displays, or laptop batteries arrive in Pakistan.
+            </p>
+
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input 
+                type="email"
+                required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                placeholder="Enter your email..."
+                className="flex-1 px-4 py-3 rounded-xl bg-slate-800 text-white text-sm placeholder-slate-400 border border-slate-700 focus:outline-none focus:border-[#D8973C]"
+              />
+              <button 
+                type="submit"
+                className={`px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+                  subscribed 
+                    ? "bg-emerald-500 text-white" 
+                    : "bg-[#D8973C] text-slate-950 hover:bg-amber-500"
+                }`}
+              >
+                {subscribed ? "Subscribed ✓" : "Subscribe"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
