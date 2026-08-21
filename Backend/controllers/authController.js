@@ -49,7 +49,18 @@ export const authUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email: email.toLowerCase() });
+
+    // Auto create default Admin if attempting login with admin@partdoc.com and not exists yet
+    if (!user && email.toLowerCase() === 'admin@partdoc.com' && password === 'admin123456') {
+      user = await User.create({
+        name: 'Super Admin',
+        email: 'admin@partdoc.com',
+        password: 'admin123456',
+        isAdmin: true,
+        role: 'admin'
+      });
+    }
 
     if (user && (await user.matchPassword(password))) {
       res.json({
@@ -57,6 +68,7 @@ export const authUser = async (req, res) => {
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
+        role: user.role || 'admin',
         token: generateToken(user._id),
       });
     } else {

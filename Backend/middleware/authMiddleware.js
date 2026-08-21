@@ -1,23 +1,32 @@
-// Login user check middleware with automatic fallback
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+
+// Login user check middleware
 export const protect = async (req, res, next) => {
+  let token;
+
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      const token = req.headers.authorization.split(' ')[1];
+      token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'byteforge_super_secret_key_123');
       req.user = await User.findById(decoded.id).select('-password');
+      return next();
     } catch (error) {
-      console.warn("Token verification fallback active");
+      console.error("Token error:", error.message);
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
 
-  // Fallback admin user object for direct management
-  if (!req.user) {
-    req.user = { name: 'Admin', isAdmin: true, role: 'admin' };
+  if (!token) {
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
-  next();
 };
 
-// Direct admin access middleware
+// Admin access check middleware
 export const admin = (req, res, next) => {
-  next();
+  if (req.user && (req.user.isAdmin || req.user.role === 'admin')) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized as an admin' });
+  }
 };
