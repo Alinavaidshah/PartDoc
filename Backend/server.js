@@ -61,7 +61,11 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Ensure DB is connected before handling requests in serverless environment
 app.use(async (req, res, next) => {
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error("Database connection middleware error:", err);
+  }
   next();
 });
 
