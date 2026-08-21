@@ -24,8 +24,8 @@ function ComputerParts() {
     const filterCat = categoryFilter.toLowerCase().trim();
     const search = searchTerm.toLowerCase().trim();
 
-    const isComputerOrLaptop = (cat === 'computer' || cat === 'laptop' || !cat);
-    const matchesCategory = (filterCat === 'all') || (subCat === filterCat);
+    const isComputerOrLaptop = (!cat || cat.includes('computer') || cat.includes('laptop') || cat !== 'mobile');
+    const matchesCategory = (filterCat === 'all') || (subCat === filterCat) || (cat === filterCat);
     const matchesSearch = part.name?.toLowerCase().includes(search);
 
     return isComputerOrLaptop && matchesCategory && matchesSearch;
