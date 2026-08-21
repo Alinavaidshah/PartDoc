@@ -2,14 +2,13 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
+import mongoose from 'mongoose';
 import connectDB from './config/db.js';
 import User from './models/User.js'; 
 import rateLimit from 'express-rate-limit';
 
 // Security Imports
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
 
 // Routes Import
 import authRoutes from './routes/authRoutes.js';
@@ -94,14 +93,18 @@ app.post('/api/users/sync', strictLimiter, async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.status(200).send('Byteforge Backend Server is running and Secure!');
+  res.status(200).json({
+    status: 'success',
+    message: 'Byteforge Backend Server is running and Secure!',
+    dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+  });
 });
 
 app.use(notFound);
 app.use(errorHandler);
 
 // --- VERCEL COMPATIBILITY ---
-if (process.env.NODE_ENV !== 'production') {
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 }
