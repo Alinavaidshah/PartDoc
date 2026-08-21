@@ -4,16 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, ArrowRight, Star, CheckCircle2 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../features/cart/cartSlice';
+import { getImageUrl } from '../api/axiosConfig';
 
 const PartCard = ({ part }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [added, setAdded] = useState(false);
-
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80';
-    return imagePath.startsWith('http') ? imagePath : `http://localhost:5000${imagePath}`;
-  };
 
   const handleAddToCart = (e) => {
     e.stopPropagation();

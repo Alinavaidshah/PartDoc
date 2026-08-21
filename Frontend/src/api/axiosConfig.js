@@ -1,9 +1,16 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80';
+  if (imagePath.startsWith('http')) return imagePath;
+  const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  return `${API_URL}${path}`;
+};
 
 const api = axios.create({
-  baseURL: API_URL, // Yahan baseURL mein API_URL daalna zaroori hai!
+  baseURL: API_URL,
 });
 
 // Add a request interceptor to attach Admin Auth Token if present

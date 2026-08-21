@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api, { API_URL as BASE_API_URL } from '../../api/axiosConfig';
 
 // Backend API URL
-const API_URL = 'http://localhost:5000/api/parts';
+const API_URL = `${BASE_API_URL}/api/parts`;
 
 // Async thunk to fetch parts (category optional hai)
 export const fetchParts = createAsyncThunk('parts/fetchParts', async (category = '', thunkAPI) => {

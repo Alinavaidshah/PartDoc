@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
 import { Users, Trash2, Loader2, AlertTriangle, Mail, ShieldCheck } from 'lucide-react';
+import { API_URL } from '../../api/axiosConfig';
 
 const AdminCustomers = () => {
   const [customers, setCustomers] = useState([]);
@@ -19,7 +20,7 @@ const AdminCustomers = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users');
+      const res = await fetch(`${API_URL}/api/users`);
       const data = await res.json();
       setCustomers(data);
       setLoading(false);
@@ -43,7 +44,7 @@ const AdminCustomers = () => {
   const confirmDelete = async () => {
     setDeleting(true);
     try {
-      await fetch(`http://localhost:5000/api/users/${userIdToDelete}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/api/users/${userIdToDelete}`, { method: 'DELETE' });
       setCustomers(customers.filter(c => c._id !== userIdToDelete));
       setShowModal(false);
       setUserIdToDelete(null);

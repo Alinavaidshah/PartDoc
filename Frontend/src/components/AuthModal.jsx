@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Lock, Mail, Chrome } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; // Import navigate hook
 import Toast from './Toast';
+import { API_URL } from '../api/axiosConfig';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,7 +18,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     
     try {
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

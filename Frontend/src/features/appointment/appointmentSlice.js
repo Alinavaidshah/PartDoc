@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_URL as BASE_API_URL } from '../../api/axiosConfig';
 
-const API_URL = 'http://localhost:5000/api/appointments';
+const API_URL = `${BASE_API_URL}/api/appointments`;
 
 // 1. Async Thunk: Appointment Book karne ke liye
 export const bookAppointment = createAsyncThunk(

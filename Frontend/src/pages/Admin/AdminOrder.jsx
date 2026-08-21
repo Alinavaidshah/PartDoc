@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
-import api from '../../api/axiosConfig'; 
+import api, { getImageUrl } from '../../api/axiosConfig'; 
 import { Package, User, Phone, MapPin, Landmark, CreditCard, X, Eye, ClipboardList, CheckCircle2, Truck, XCircle, Clock3, Image as ImageIcon } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -170,8 +170,8 @@ const AdminOrders = () => {
             {selectedOrder.receiptImage && (
               <div className="mt-6 border-t pt-4">
                 <p className="font-semibold text-gray-700 mb-2 flex items-center gap-2"><ImageIcon size={16} /> Payment Receipt:</p>
-                <a href={`http://localhost:5000/${selectedOrder.receiptImage}`} target="_blank" rel="noopener noreferrer" className="block">
-                  <img src={`http://localhost:5000/${selectedOrder.receiptImage}`} alt="Payment Proof" className="w-full h-48 object-contain rounded-lg border shadow-sm hover:opacity-90 transition-opacity bg-gray-50" />
+                <a href={getImageUrl(selectedOrder.receiptImage)} target="_blank" rel="noopener noreferrer" className="block">
+                  <img src={getImageUrl(selectedOrder.receiptImage)} alt="Payment Proof" className="w-full h-48 object-contain rounded-lg border shadow-sm hover:opacity-90 transition-opacity bg-gray-50" />
                   <p className="text-xs text-blue-600 mt-2 text-center underline">Click to view full image</p>
                 </a>
               </div>

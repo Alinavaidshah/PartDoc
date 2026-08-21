@@ -7,6 +7,7 @@ import Topbar from "../../components/Topbar";
 import { TOKENS } from "../../constants";
 import AddPartModal from "../../components/AddPartModal";
 import EditPartModal from "../../components/EditPartModal"; // Ye file honi chahiye
+import { getImageUrl } from "../../api/axiosConfig";
 
 const CustomDropdown = ({ options, value, onChange, label }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -96,7 +97,7 @@ const AdminInventory = () => {
               {processedParts.map(part => (
                 <motion.div key={part._id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} style={{ background: TOKENS.panel, padding: 20, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
                   <img 
-                    src={part.image && part.image.startsWith('http') ? part.image : `http://localhost:5000${part.image}`} 
+                    src={getImageUrl(part.image)} 
                     alt={part.name} 
                     style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 12, marginBottom: 15 }} 
                     onError={(e) => e.target.src = 'https://via.placeholder.com/160'}

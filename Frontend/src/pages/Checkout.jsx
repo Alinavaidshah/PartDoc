@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from "@clerk/clerk-react";
 import { clearCart } from '../features/cart/cartSlice';
+import { API_URL } from '../api/axiosConfig';
 import { MapPin, Truck, Smartphone, CreditCard, Upload, Loader2, ShoppingBag, ShieldCheck, Receipt, CheckCircle2, ChevronRight, Lock } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -99,7 +100,7 @@ export default function Checkout() {
     setStripeIntentLoading(true);
     try {
       const token = await getToken();
-      const res = await fetch('http://localhost:5000/api/payments/create-payment-intent', {
+      const res = await fetch(`${API_URL}/api/payments/create-payment-intent`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -155,7 +156,7 @@ export default function Checkout() {
 
     try {
       const token = await getToken();
-      const res = await fetch('http://localhost:5000/api/orders', {
+      const res = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
         body: formDataPayload,
         headers: { 'Authorization': `Bearer ${token}` }
