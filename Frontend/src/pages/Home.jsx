@@ -247,11 +247,13 @@ export default function Home() {
 
   const filteredProducts = displayParts.filter((item) => {
     if (activeCategory === "all") return true;
-    return item.category?.toLowerCase() === activeCategory.toLowerCase();
+    const cat = item.category?.toLowerCase() || '';
+    const act = activeCategory.toLowerCase();
+    return cat.includes(act) || act.includes(cat);
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-[#D8973C] selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-[#D8973C] selection:text-white pt-20 sm:pt-24">
       
       {/* Top Banner Announcement Strip */}
       <div className="bg-slate-900 text-slate-300 text-xs py-2 px-4 text-center font-medium flex items-center justify-center gap-3">
@@ -262,7 +264,7 @@ export default function Home() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION (CLEAN LIGHT THEME) */}
       {/* ========================================================================= */}
-      <section className="relative pt-12 pb-20 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden">
+      <section className="relative pt-6 pb-20 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Hero Content */}

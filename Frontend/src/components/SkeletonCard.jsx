@@ -2,14 +2,17 @@ import React from 'react';
 
 const SkeletonCard = () => {
   return (
-    <div className="w-full bg-[#1a2d33] rounded-[32px] p-6 flex flex-col shadow-lg border border-white/5 h-[420px] animate-pulse">
-      <div className="h-48 bg-white/5 rounded-2xl mb-4" />
+    <div className="w-full bg-white rounded-2xl p-4 flex flex-col shadow-sm border border-slate-200 h-[380px] animate-pulse">
+      <div className="h-44 bg-slate-200 rounded-xl mb-4" />
       <div className="space-y-3">
-        <div className="h-4 bg-white/10 w-2/3 rounded-full" />
-        <div className="h-6 bg-white/10 w-full rounded-lg" />
-        <div className="h-4 bg-white/10 w-1/2 rounded-full" />
+        <div className="h-3 bg-slate-200 w-1/3 rounded-md" />
+        <div className="h-5 bg-slate-200 w-full rounded-md" />
+        <div className="h-4 bg-slate-200 w-1/2 rounded-md" />
       </div>
-      <div className="mt-auto h-12 bg-white/10 rounded-full w-full" />
+      <div className="mt-auto flex gap-2 pt-4 border-t border-slate-100">
+        <div className="h-9 bg-slate-200 rounded-xl w-1/2" />
+        <div className="h-9 bg-slate-200 rounded-xl w-1/2" />
+      </div>
     </div>
   );
 };
