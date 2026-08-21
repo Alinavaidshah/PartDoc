@@ -7,12 +7,13 @@ import {
   createPart, 
   updatePart, 
   deletePart,
-  getLowStockParts 
+  getLowStockParts,
+  seedParts
 } from '../controllers/partController.js';
 
 const router = express.Router();
 
-// GET routes public rakh sakte ho agar website par parts dikhane hain
+router.get('/seed', seedParts);
 router.route('/low-stock').get(protect, admin, getLowStockParts);
 
 router.route('/')

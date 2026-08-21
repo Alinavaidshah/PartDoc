@@ -2,6 +2,63 @@ import Part from '../models/Part.js';
 
 console.log("--- PART CONTROLLER LOADED ---");
 
+const sampleParts = [
+  {
+    name: "NVIDIA GeForce RTX 4080 Super 16GB",
+    brand: "NVIDIA",
+    category: "Computer",
+    description: "Ultra-fast graphics card for high-end gaming and 4K rendering.",
+    price: 345000,
+    countInStock: 10,
+    image: "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80"
+  },
+  {
+    name: "Intel Core i9-14900K Desktop Processor",
+    brand: "Intel",
+    category: "Computer",
+    description: "24 cores and 32 threads for extreme desktop performance.",
+    price: 185000,
+    countInStock: 15,
+    image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=600&q=80"
+  },
+  {
+    name: "Samsung 990 PRO 2TB PCIe 4.0 NVMe SSD",
+    brand: "Samsung",
+    category: "Computer",
+    description: "Read speeds up to 7450 MB/s for blazing fast load times.",
+    price: 48000,
+    countInStock: 25,
+    image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=600&q=80"
+  },
+  {
+    name: "Corsair Vengeance RGB 32GB DDR5 RAM",
+    brand: "Corsair",
+    category: "Computer",
+    description: "6000MHz CL36 high-speed desktop memory with dynamic RGB.",
+    price: 38000,
+    countInStock: 30,
+    image: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=600&q=80"
+  },
+  {
+    name: "iPhone 15 Pro Max Dynamic OLED Screen Assembly",
+    brand: "Apple",
+    category: "Mobile",
+    description: "Original Super Retina XDR OLED display assembly.",
+    price: 65000,
+    countInStock: 8,
+    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&q=80"
+  },
+  {
+    name: "Samsung Galaxy S24 Ultra Original Battery 5000mAh",
+    brand: "Samsung",
+    category: "Mobile",
+    description: "Authentic replacement battery with 100% health grade.",
+    price: 14500,
+    countInStock: 20,
+    image: "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=600&q=80"
+  }
+];
+
 // @desc    Get all parts
 export const getParts = async (req, res) => {
   try {
@@ -10,11 +67,32 @@ export const getParts = async (req, res) => {
     if (name) query.name = { $regex: new RegExp(name, 'i') };
     if (category) query.category = { $regex: new RegExp(category, 'i') };
 
-    const parts = await Part.find(query);
+    let parts = await Part.find(query);
+
+    // Auto seed initial parts if DB is empty
+    if (parts.length === 0 && !name && !category) {
+      const count = await Part.countDocuments();
+      if (count === 0) {
+        console.log("Seeding sample parts into empty MongoDB database...");
+        parts = await Part.insertMany(sampleParts);
+      }
+    }
+
     res.json(parts);
   } catch (error) {
-    console.error("--- ERROR in getParts: ---", error); // DEBUGGING LINE
+    console.error("--- ERROR in getParts: ---", error);
     res.status(500).json({ message: 'Server Error: ' + error.message });
+  }
+};
+
+// @desc Seed sample parts
+export const seedParts = async (req, res) => {
+  try {
+    await Part.deleteMany({});
+    const createdParts = await Part.insertMany(sampleParts);
+    res.json({ message: "Seeded successfully", count: createdParts.length, parts: createdParts });
+  } catch (error) {
+    res.status(500).json({ message: "Seed failed: " + error.message });
   }
 };
 
