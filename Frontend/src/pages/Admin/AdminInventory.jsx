@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api, { getImageUrl } from "../../api/axiosConfig";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, Trash2, Edit2, ChevronDown } from 'lucide-react';
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 import { TOKENS } from "../../constants";
 import AddPartModal from "../../components/AddPartModal";
-import EditPartModal from "../../components/EditPartModal"; // Ye file honi chahiye
-import { getImageUrl } from "../../api/axiosConfig";
+import EditPartModal from "../../components/EditPartModal";
 
 const CustomDropdown = ({ options, value, onChange, label }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,16 +44,26 @@ const AdminInventory = () => {
 
   const fetchParts = async () => {
     try {
-      const { data } = await axios.get('/api/parts');
-      setParts(data);
-    } catch (err) { console.error("Error fetching:", err); }
+      const response = await api.get('/parts');
+      const data = response.data;
+      if (Array.isArray(data)) {
+        setParts(data);
+      } else if (data && Array.isArray(data.parts)) {
+        setParts(data.parts);
+      } else {
+        setParts([]);
+      }
+    } catch (err) { 
+      console.error("Error fetching:", err); 
+      setParts([]);
+    }
   };
 
   const deletePart = async (id) => {
     if (window.confirm("Are you sure you want to delete this part?")) {
       try {
         const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-        await axios.delete(`/api/parts/${id}`, { headers: { Authorization: `Bearer ${adminInfo.token}` } });
+        await api.delete(`/parts/${id}`, { headers: { Authorization: `Bearer ${adminInfo?.token}` } });
         fetchParts();
       } catch (err) { console.error(err); }
     }
@@ -65,16 +74,18 @@ const AdminInventory = () => {
     setIsEditModalOpen(true);
   };
 
-  const processedParts = parts
-    .filter(p => (filter === "All" ? true : p.category === filter))
-    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => sortBy === "Price" ? a.price - b.price : a.name.localeCompare(b.name));
+  // Safe processing check so it never throws .filter is not a function
+  const safeParts = Array.isArray(parts) ? parts : [];
+  const processedParts = safeParts
+    .filter(p => (filter === "All" ? true : p?.category === filter))
+    .filter(p => (p?.name || "").toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => sortBy === "Price" ? (a?.price || 0) - (b?.price || 0) : (a?.name || '').localeCompare(b?.name || ''));
 
   return (
     <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
       <Sidebar />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Topbar title="Inventory Manager" adminName="Ali Navaid Shah" />
+        <Topbar title="Inventory Manager" />
         <main style={{ padding: 30 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
             <h2 style={{ fontSize: 24, fontWeight: 700 }}>Manage Inventory ({processedParts.length})</h2>
@@ -95,20 +106,20 @@ const AdminInventory = () => {
           <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
             <AnimatePresence>
               {processedParts.map(part => (
-                <motion.div key={part._id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} style={{ background: TOKENS.panel, padding: 20, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+                <motion.div key={part?._id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} style={{ background: TOKENS.panel, padding: 20, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
                   <img 
-                    src={getImageUrl(part.image)} 
-                    alt={part.name} 
+                    src={getImageUrl(part?.image)} 
+                    alt={part?.name} 
                     style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 12, marginBottom: 15 }} 
                     onError={(e) => e.target.src = 'https://via.placeholder.com/160'}
                   />
-                  <h3 style={{ fontSize: 17, marginBottom: 5 }}>{part.name}</h3>
-                  <p style={{ fontSize: 13, color: '#666', marginBottom: 15 }}>{part.category} • ${part.price}</p>
+                  <h3 style={{ fontSize: 17, marginBottom: 5 }}>{part?.name}</h3>
+                  <p style={{ fontSize: 13, color: '#666', marginBottom: 15 }}>{part?.category} • ${part?.price}</p>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 700 }}>Stock: {part.countInStock}</span>
+                    <span style={{ fontWeight: 700 }}>Stock: {part?.countInStock}</span>
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button onClick={() => openEditModal(part)} style={{ background: '#f0f4f8', border: 'none', padding: 8, borderRadius: 8, cursor: 'pointer', color: TOKENS.blueish }}><Edit2 size={16} /></button>
-                      <button onClick={() => deletePart(part._id)} style={{ background: '#fff0f0', border: 'none', padding: 8, borderRadius: 8, cursor: 'pointer', color: '#d32f2f' }}><Trash2 size={16} /></button>
+                      <button onClick={() => deletePart(part?._id)} style={{ background: '#fff0f0', border: 'none', padding: 8, borderRadius: 8, cursor: 'pointer', color: '#d32f2f' }}><Trash2 size={16} /></button>
                     </div>
                   </div>
                 </motion.div>
@@ -122,4 +133,5 @@ const AdminInventory = () => {
     </div>
   );
 };
+
 export default AdminInventory;
