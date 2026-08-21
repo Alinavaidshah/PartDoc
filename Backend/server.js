@@ -60,6 +60,12 @@ const standardLimiter = rateLimit({
 // Static folder
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
+// Ensure DB is connected before handling requests in serverless environment
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
 // --- ROUTES ---
 app.use(standardLimiter);
 app.use('/api/orders', strictLimiter, orderRoutes);
@@ -88,14 +94,11 @@ app.post('/api/users/sync', strictLimiter, async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Byteforge Backend Server is running and Secure!');
+  res.status(200).send('Byteforge Backend Server is running and Secure!');
 });
 
 app.use(notFound);
 app.use(errorHandler);
-
-// --- DATABASE CONNECTION ---
-connectDB(); 
 
 // --- VERCEL COMPATIBILITY ---
 if (process.env.NODE_ENV !== 'production') {
