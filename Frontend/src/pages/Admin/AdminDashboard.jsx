@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api/axiosConfig';
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 import { TOKENS, FONT_BODY } from "../../constants";
@@ -13,36 +13,23 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-        
-        // Agar token nahi hai, toh redirect karo
-        if (!adminInfo || !adminInfo.token) {
-          window.location.href = '/login';
-          return;
-        }
+        const [apptRes, stockRes, partsRes] = await Promise.all([
+          api.get('/appointments/stats').catch(() => ({ data: {} })),
+          api.get('/parts/low-stock').catch(() => ({ data: [] })),
+          api.get('/parts').catch(() => ({ data: [] }))
+        ]);
 
-        const config = {
-          headers: {
-            Authorization: `Bearer ${adminInfo.token}`,
-          },
-        };
-
-        const { data: appt } = await axios.get('/api/appointments/stats', config);
-        const { data: stock } = await axios.get('/api/parts/low-stock', config);
-        const { data: parts } = await axios.get('/api/parts', config);
+        const apptData = apptRes.data?.appointments || (Array.isArray(apptRes.data) ? apptRes.data : []);
+        const stockData = Array.isArray(stockRes.data) ? stockRes.data : [];
+        const partsData = Array.isArray(partsRes.data) ? partsRes.data : [];
         
         setData({ 
-          appointments: appt.appointments || [], 
-          lowStock: stock || [], 
-          allParts: parts || [] 
+          appointments: apptData, 
+          lowStock: stockData, 
+          allParts: partsData 
         });
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
-        // Agar error 401 hai toh logout kar do
-        if (err.response && err.response.status === 401) {
-          localStorage.removeItem('adminInfo');
-          window.location.href = '/admin/login';
-        }
       } finally {
         setTimeout(() => setLoaded(true), 100);
       }
@@ -51,9 +38,13 @@ const AdminDashboard = () => {
   }, []);
 
   const today = new Date().toLocaleDateString();
-  const pending = data.appointments.filter(a => a.status === 'Pending');
+  const appointmentsArr = Array.isArray(data.appointments) ? data.appointments : [];
+  const lowStockArr = Array.isArray(data.lowStock) ? data.lowStock : [];
+  const allPartsArr = Array.isArray(data.allParts) ? data.allParts : [];
 
-  const categoryMap = data.allParts.reduce((acc, part) => {
+  const pending = appointmentsArr.filter(a => a.status === 'Pending');
+
+  const categoryMap = allPartsArr.reduce((acc, part) => {
     const cat = part.category ? part.category.trim() : 'Uncategorized';
     acc[cat] = (acc[cat] || 0) + 1;
     return acc;
