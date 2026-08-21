@@ -1,5 +1,5 @@
 import express from 'express';
-import { uploadCloud } from '../utils/cloudinary.js'; // Utils folder se import kiya
+import { uploadCloud } from '../utils/Cloudinary.js';
 import { protect, admin } from '../middleware/authMiddleware.js'; 
 import { 
   getParts, 
