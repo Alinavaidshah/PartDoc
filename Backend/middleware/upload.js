@@ -1,11 +1,16 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
-// 1. Folder check: Agar public/images folder nahi hai, toh automatic bana dega
-const uploadDir = 'public/images/';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// 1. Folder check: Serverless (/tmp) vs Local (public/images/)
+const uploadDir = process.env.VERCEL ? os.tmpdir() : path.join(process.cwd(), 'public', 'images');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn("Upload directory check notice:", err.message);
 }
 
 // 2. Storage Configuration
