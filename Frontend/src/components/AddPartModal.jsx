@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, CheckCircle, Loader2, ChevronDown } from 'lucide-react';
-import api from "../../api/axiosConfig";
+import api from "../api/axiosConfig";
 import { TOKENS } from "../constants";
 
 const AddPartModal = ({ isOpen, onClose, onAdd }) => {
