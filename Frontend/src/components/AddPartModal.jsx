@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, CheckCircle, Loader2, ChevronDown } from 'lucide-react';
-import axios from 'axios';
+import api from "../../api/axiosConfig";
 import { TOKENS } from "../constants";
 
 const AddPartModal = ({ isOpen, onClose, onAdd }) => {
@@ -20,23 +20,18 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
     }
 
     try {
-      // LocalStorage se adminInfo nikal kar token extract kiya
-      const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-      const token = adminInfo ? adminInfo.token : null;
-
-      await axios.post('/api/parts', data, {
+      await api.post('/parts', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
         },
       });
       setLoading(false);
       setShowSuccess(true);
       setTimeout(() => { setShowSuccess(false); onAdd(); onClose(); }, 2000);
-    } catch (err) {
-      console.error("Upload error:", err);
+  } catch (err) {
+      console.error("Full Upload error details:", err.response || err);
       setLoading(false);
-      alert("Error adding part. Check your backend!");
+      alert(`Error adding part: ${err.response?.data?.message || err.message}`);
     }
   };
 
@@ -74,7 +69,6 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
 
                 <motion.input whileFocus={{ scale: 1.02, borderColor: TOKENS.rust }} placeholder="Brand" style={inputStyle} onChange={(e) => setFormData({...formData, brand: e.target.value})} required />
 
-                {/* Animated Dropdown UI */}
                 <motion.div style={{ position: 'relative' }} whileTap={{ scale: 0.98 }}>
                   <select style={{ ...inputStyle, appearance: 'none', cursor: 'pointer', paddingRight: '40px' }} onChange={(e) => setFormData({...formData, category: e.target.value})} required>
                     <option value="Mobile">Mobile Parts</option>

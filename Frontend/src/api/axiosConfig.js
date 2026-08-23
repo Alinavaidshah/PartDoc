@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+export const API_URL = (import.meta.env.VITE_API_URL || 'https://part-doc-five.vercel.app').replace(/\/$/, '');
 
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80';
@@ -10,7 +10,7 @@ export const getImageUrl = (imagePath) => {
 };
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_URL}/api`,
 });
 
 // Add a request interceptor to attach Admin Auth Token if present
