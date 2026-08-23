@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../../api/axiosConfig"; // <-- Configured api import kiya
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, Trash2, Check, Loader2, Calendar, Clock, Phone, Mail, Smartphone, FileText, Inbox } from 'lucide-react';
 import Sidebar from "../../components/Sidebar";
@@ -18,17 +18,10 @@ const AdminAppointment = () => {
   const [selectedAppt, setSelectedAppt] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null);
 
-  const getConfig = () => {
-    const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-    return {
-      headers: { Authorization: `Bearer ${adminInfo?.token}` }
-    };
-  };
-
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const { data } = await axios.get('/api/appointments', getConfig());
+        const { data } = await api.get('/appointments'); // <-- api instance use kiya
         setAppointments(Array.isArray(data) ? data : (data.appointments || []));
       } catch (err) {
         console.error("Fetch Error:", err);
@@ -45,9 +38,9 @@ const AdminAppointment = () => {
 
     try {
       if (type === 'delete') {
-        await axios.delete(`/api/appointments/${id}`, getConfig());
+        await api.delete(`/appointments/${id}`); // <-- api instance use kiya
       } else {
-        await axios.put(`/api/appointments/${id}/status`, { status }, getConfig());
+        await api.put(`/appointments/${id}/status`, { status }); // <-- api instance use kiya
       }
 
       setConfirmModal(prev => ({ ...prev, loading: false, success: true }));

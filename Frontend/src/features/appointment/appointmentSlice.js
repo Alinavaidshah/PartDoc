@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { API_URL as BASE_API_URL } from '../../api/axiosConfig';
-
-const API_URL = `${BASE_API_URL}/api/appointments`;
+import api from '../../api/axiosConfig';
 
 // 1. Async Thunk: Appointment Book karne ke liye
 export const bookAppointment = createAsyncThunk(
   'appointment/bookAppointment',
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post(API_URL, formData);
+      const response = await api.post('/appointments', formData);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -24,7 +21,7 @@ export const checkAppointmentStatus = createAsyncThunk(
   'appointment/checkAppointmentStatus',
   async ({ appointmentId, name }, thunkAPI) => {
     try {
-      const response = await axios.get(`${API_URL}/${appointmentId}?name=${name}`);
+      const response = await api.get(`/appointments/${appointmentId}?name=${name}`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
