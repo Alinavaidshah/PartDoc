@@ -57,6 +57,9 @@ const AdminDashboard = () => {
 
   const CATEGORY_COLORS = [TOKENS.amber, TOKENS.blueish, TOKENS.teal, TOKENS.rust, '#8884d8', '#82ca9d', '#ffc658'];
 
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: FONT_BODY }}>
       <style>{`
@@ -145,9 +148,9 @@ const AdminDashboard = () => {
         }
       `}</style>
 
-      <Sidebar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Topbar title="PartDoc Console" adminName="Ali Navaid Shah" />
+        <Topbar title="PartDoc Console" adminName="Ali Navaid Shah" onMenuClick={() => setMobileOpen(true)} />
         <main style={{ padding: 24 }}>
           <div style={{ marginBottom: 28, animation: 'fadeSlideUp 0.5s ease both', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>

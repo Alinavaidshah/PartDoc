@@ -18,6 +18,10 @@ const AdminAppointment = () => {
   const [selectedAppt, setSelectedAppt] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null);
 
+  // Sidebar collapse states
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -74,9 +78,9 @@ const AdminAppointment = () => {
 
   return (
     <div style={{ display: 'flex', background: '#f8fafc', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
-      <Sidebar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Topbar title="Manage Appointments" />
+        <Topbar title="Manage Appointments" onMenuClick={() => setMobileOpen(true)} />
         <div style={{ padding: '24px' }}>
 
           <motion.div

@@ -17,6 +17,10 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
+  // Sidebar collapse states
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -72,9 +76,9 @@ const AdminOrders = () => {
         .order-row:hover .status-badge { transform: scale(1.03); }
       `}</style>
 
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Topbar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <div className="flex-1 flex flex-col min-w-0">
+        <Topbar title="Orders & Fulfillment" onMenuClick={() => setMobileOpen(true)} />
         <main className="flex-1 p-8 overflow-y-auto">
           <div className="flex items-center justify-between mb-6" style={{ animation: 'fadeSlideUp 0.45s ease both' }}>
             <div>

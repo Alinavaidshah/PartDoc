@@ -9,6 +9,10 @@ const AdminCustomers = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Sidebar collapse states
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   // Modal states
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
@@ -70,9 +74,9 @@ const AdminCustomers = () => {
 
   return (
     <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
-      <Sidebar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Topbar />
+        <Topbar onMenuClick={() => setMobileOpen(true)} />
 
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-7xl mx-auto">

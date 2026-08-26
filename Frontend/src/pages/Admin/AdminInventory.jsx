@@ -36,6 +36,10 @@ const AdminInventory = () => {
   const [sortBy, setSortBy] = useState("Name");
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  // Sidebar collapse states
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   // Edit State
   const [editPart, setEditPart] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -83,9 +87,9 @@ const AdminInventory = () => {
 
   return (
     <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
-      <Sidebar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Topbar title="Inventory Manager" />
+        <Topbar title="Inventory Manager" onMenuClick={() => setMobileOpen(true)} />
         <main style={{ padding: 30 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
             <h2 style={{ fontSize: 24, fontWeight: 700 }}>Manage Inventory ({processedParts.length})</h2>
