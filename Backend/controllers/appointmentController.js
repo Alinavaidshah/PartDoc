@@ -78,6 +78,19 @@ export const createAppointment = async (req, res) => {
       }
     }
 
+    // Send Initial WhatsApp Notification on Appointment Submission
+    if (phone) {
+      const isFaultTracing = serviceType === 'Fault Tracing';
+      const serviceName = isFaultTracing ? 'Doorstep Fault Tracing' : 'Standard Appointment';
+      const whatsappMsg = `📌 *PartDoc Appointment Request Received!*\n\n*Ticket Reference ID:* #${createdAppointment._id}\n*Customer Name:* ${name}\n*Service:* ${serviceName}\n*Device:* ${deviceModel}\n*Requested Slot:* ${appointmentDate} at ${appointmentTime}\n*Status:* PENDING CONFIRMATION\n\nOur team will review your request and contact you soon.`;
+
+      try {
+        await sendWhatsAppMessage(phone, whatsappMsg);
+      } catch (waErr) {
+        console.error('❌ Initial appointment WhatsApp notification failed:', waErr.message);
+      }
+    }
+
     res.status(201).json(createdAppointment);
   } catch (error) {
     res.status(400).json({ message: 'Invalid data: ' + error.message });
