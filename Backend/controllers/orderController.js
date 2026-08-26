@@ -60,6 +60,17 @@ export const addOrderItems = async (req, res) => {
       }
     }
 
+    // WhatsApp Notification on Order Placement
+    if (shippingAddress?.phone) {
+      const orderIdShort = createdOrder._id.toString().slice(-6).toUpperCase();
+      const whatsappMsg = `📌 *PartDoc Order Placed Successfully!*\n\n*Order ID:* #${orderIdShort}\n*Customer Name:* ${shippingAddress.fullName || 'Customer'}\n*Total Price:* PKR ${createdOrder.totalPrice}\n*Payment Method:* ${paymentMethod}\n*Status:* Order Received & Being Prepared\n\nOur team will contact you soon.`;
+      try {
+        await sendWhatsAppMessage(shippingAddress.phone, whatsappMsg);
+      } catch (waErr) {
+        console.error("Order placement WhatsApp failed:", waErr.message);
+      }
+    }
+
     res.status(201).json(createdOrder);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -110,9 +121,9 @@ export const updateOrderStatus = async (req, res) => {
 
     // 1. WhatsApp Notification
     if (order.shippingAddress?.phone) {
-      const message = `Salam! PartDoc se aapka order #${orderIdShort} ka status update hokar "${orderStatus}" ho gaya hai.`;
+      const whatsappMsg = `📌 *PartDoc Order Status Update*\n\n*Order ID:* #${orderIdShort}\n*Customer Name:* ${order.shippingAddress.fullName || 'Customer'}\n*Updated Status:* ${orderStatus}\n\nOur team will contact you soon.`;
       try {
-        await sendWhatsAppMessage(order.shippingAddress.phone, message);
+        await sendWhatsAppMessage(order.shippingAddress.phone, whatsappMsg);
       } catch (err) {
         console.error("WhatsApp notification failed:", err.message);
       }
