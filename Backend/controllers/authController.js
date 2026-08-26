@@ -51,18 +51,26 @@ export const authUser = async (req, res) => {
 
     let user = await User.findOne({ email: email.toLowerCase() });
 
-    // Auto create default Admin if attempting login with admin@partdoc.com and not exists yet
-    if (!user && email.toLowerCase() === 'admin@partdoc.com' && password === 'admin123456') {
+    // Auto create default Admin if attempting login with admin@partdoc.com or alinavaid010@gmail.com and not exists yet
+    const normalizedEmail = email.toLowerCase();
+    if (!user && (normalizedEmail === 'admin@partdoc.com' || normalizedEmail === 'alinavaid010@gmail.com')) {
       user = await User.create({
-        name: 'Super Admin',
-        email: 'admin@partdoc.com',
-        password: 'admin123456',
+        name: 'Ali Navaid Shah',
+        email: normalizedEmail,
+        password: password,
         isAdmin: true,
         role: 'admin'
       });
     }
 
     if (user && (await user.matchPassword(password))) {
+      // Auto promote to admin if email matches designated admin emails
+      if (!user.isAdmin && (normalizedEmail === 'admin@partdoc.com' || normalizedEmail === 'alinavaid010@gmail.com')) {
+        user.isAdmin = true;
+        user.role = 'admin';
+        await user.save();
+      }
+
       res.json({
         _id: user._id,
         name: user.name,
