@@ -6,6 +6,7 @@ import { addToCart } from "../features/cart/cartSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import AestheticLoader from "../components/AestheticLoader";
 import Toast from "../components/Toast";
+import PartCard from "../components/PartCard";
 import { getImageUrl } from "../api/axiosConfig";
 import {
   Search,
@@ -565,62 +566,10 @@ export default function Home() {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 justify-items-center">
           {filteredProducts.slice(0, 3).map((item, idx) => (
-            <div
-              key={item._id || idx}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
-            >
-              <div>
-                <div className="w-full h-44 rounded-xl bg-slate-100 overflow-hidden mb-4 relative">
-                  <img
-                    src={getImageUrl(item.image)}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80'}
-                  />
-                  <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-200">
-                    {item.category || "Part"}
-                  </span>
-                </div>
-
-                <h3 className="font-grotesk font-extrabold text-slate-900 text-base mb-1 truncate">
-                  {item.name}
-                </h3>
-                <p className="text-slate-500 text-xs line-clamp-2 mb-4 leading-relaxed">
-                  {item.description || "Original grade replacement component."}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase">In Stock</div>
-                  <div className="font-grotesk font-extrabold text-base text-slate-900">
-                    PKR {Number(item.price).toLocaleString()}
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Link
-                    to={`/product/${item._id}`}
-                    className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors"
-                  >
-                    Details
-                  </Link>
-
-                  <button
-                    onClick={() => handleAddToCart(item)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                      addedItem === item._id
-                        ? "bg-emerald-600 text-white shadow-sm"
-                        : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
-                    }`}
-                  >
-                    {addedItem === item._id ? <Check size={14} /> : <ShoppingBag size={14} />}
-                    <span>{addedItem === item._id ? "Added" : "Add"}</span>
-                  </button>
-                </div>
-              </div>
+            <div key={item._id || idx} className="w-full flex justify-center">
+              <PartCard part={item} />
             </div>
           ))}
         </div>
