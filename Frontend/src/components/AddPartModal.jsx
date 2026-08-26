@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, CheckCircle, Loader2, ChevronDown, Layers, Palette, X, Plus } from 'lucide-react';
+import { Upload, CheckCircle, Loader2, ChevronDown, Layers, Palette, X } from 'lucide-react';
 import api from "../api/axiosConfig";
-import { TOKENS } from "../constants";
 
 const PRESET_COLORS = [
   'Space Black', 'Silver', 'Space Gray', 'Midnight Blue', 'Gold', 'Rose Gold', 'Alpine White', 'Titanium', 'Red'
 ];
 
 const AddPartModal = ({ isOpen, onClose, onAdd }) => {
-  const [formData, setFormData] = useState({ 
+  const initialFormState = { 
     name: '', brand: '', category: 'Mobile', price: '', countInStock: '', image: null, description: '',
     hasGrades: true, refurbishedPrice: '', brandNewPrice: '',
     hasColors: false
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormState);
   const [selectedColors, setSelectedColors] = useState(['Space Black', 'Silver']);
   const [customColorInput, setCustomColorInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const resetForm = () => {
+    setFormData(initialFormState);
+    setSelectedColors(['Space Black', 'Silver']);
+    setCustomColorInput('');
+    setShowSuccess(false);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   const toggleColor = (color) => {
     if (selectedColors.includes(color)) {
@@ -42,7 +54,9 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
     const data = new FormData();
 
     for (let key in formData) {
-      data.append(key, formData[key]);
+      if (formData[key] !== null) {
+        data.append(key, formData[key]);
+      }
     }
 
     data.append('colors', JSON.stringify(selectedColors));
@@ -56,8 +70,8 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
       setLoading(false);
       setShowSuccess(true);
       setTimeout(() => {
-        setShowSuccess(false);
-        onAdd();
+        resetForm();
+        if (onAdd) onAdd();
         onClose();
       }, 1500);
     } catch (err) {
@@ -76,19 +90,41 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyCenter: 'center', padding: '16px', overflowY: 'auto' }}>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 16px' }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleClose}
             style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(8px)', zIndex: -1 }} />
 
           <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            style={{ background: '#ffffff', padding: '30px', borderRadius: '24px', width: '100%', maxWidth: '580px', margin: 'auto', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', border: '1px solid #e2e8f0' }}>
+            style={{ 
+              background: '#ffffff', padding: '28px', borderRadius: '24px', width: '100%', maxWidth: '580px', 
+              maxHeight: '88vh', overflowY: 'auto', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', 
+              border: '1px solid #e2e8f0' 
+            }}
+            className="custom-admin-scroll"
+          >
+            <style>{`
+              .custom-admin-scroll::-webkit-scrollbar {
+                width: 6px;
+              }
+              .custom-admin-scroll::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 8px;
+              }
+              .custom-admin-scroll::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 8px;
+              }
+              .custom-admin-scroll::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+              }
+            `}</style>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', sticky: 'top', background: '#fff' }}>
               <div>
                 <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#0f172a', fontFamily: 'sans-serif' }}>Add New Catalog Part</h2>
                 <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748b' }}>Configure pricing, grade options, and color variants.</p>
               </div>
-              <button onClick={onClose} style={{ border: 'none', background: '#f1f5f9', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <button onClick={handleClose} style={{ border: 'none', background: '#f1f5f9', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <X size={18} color="#64748b" />
               </button>
             </div>
@@ -135,7 +171,7 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
                 {/* IMAGE UPLOAD */}
                 <div>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#475569', marginBottom: '4px', textTransform: 'uppercase' }}>Product Image *</label>
-                  <label style={{ ...inputStyle, border: '2px dashed #cbd5e1', textAlign: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyCenter: 'center', gap: '8px', background: '#f8fafc' }}>
+                  <label style={{ ...inputStyle, border: '2px dashed #cbd5e1', textAlign: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#f8fafc' }}>
                     <Upload size={16} color="#6366f1" />
                     <span style={{ fontSize: '12px', color: '#475569' }}>{formData.image ? formData.image.name : "Choose Part Image File"}</span>
                     <input type="file" onChange={(e) => setFormData({...formData, image: e.target.files[0]})} hidden required />
@@ -144,8 +180,8 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
 
                 {/* BASE PRICE & GRADE OPTIONS TOGGLE */}
                 <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ display: 'flex', itemsCenter: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', itemsCenter: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#0f172a' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#0f172a' }}>
                       <Layers size={16} color="#6366f1" />
                       <span>Grade Options (Refurbished vs Brand New)</span>
                     </div>
@@ -178,8 +214,8 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
 
                 {/* COLOR OPTIONS TOGGLE & PALETTE */}
                 <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ display: 'flex', itemsCenter: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', itemsCenter: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#0f172a' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#0f172a' }}>
                       <Palette size={16} color="#6366f1" />
                       <span>Color Variants Selection</span>
                     </div>
@@ -243,7 +279,7 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
 
                 {/* SUBMIT BUTTON */}
                 <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading}
-                  style={{ background: '#6366f1', color: 'white', padding: '14px', borderRadius: '14px', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 10px 15px -3px rgba(99,102,241,0.3)' }}>
+                  style={{ background: '#6366f1', color: 'white', padding: '14px', borderRadius: '14px', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '800', display: 'flex', alignItems: 'center', justifyCenter: 'center', gap: '8px', boxShadow: '0 10px 15px -3px rgba(99,102,241,0.3)' }}>
                   {loading ? <Loader2 className="animate-spin" size={18} /> : "Publish Part To Catalog"}
                 </motion.button>
               </form>
