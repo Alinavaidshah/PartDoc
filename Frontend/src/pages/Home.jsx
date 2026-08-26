@@ -267,51 +267,13 @@ export default function Home() {
             {/* Main Headline */}
             <h1 className="font-grotesk text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12] mb-5">
               Original Tech Parts & <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-indigo-700 to-amber-500">
-                Professional Repair
-              </span> Services
+              <span className="text-indigo-600">Professional Repair</span> Services
             </h1>
 
             {/* Sub-headline */}
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
               Computer GPUs, CPUs, SSDs, screens, batteries, and logic boards — verified serial numbers with official warranty across Pakistan.
             </p>
-
-            {/* Clean Quick Search Form */}
-            <form onSubmit={handleSearchSubmit} className="w-full max-w-xl mb-8">
-              <div className="relative flex items-center bg-white border border-slate-300 rounded-2xl p-1.5 shadow-lg focus-within:border-indigo-600 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
-                <Search className="w-5 h-5 text-slate-400 ml-3 mr-2 flex-shrink-0" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search parts e.g. 'RTX 4080', 'iPhone Screen'..."
-                  className="w-full bg-transparent text-slate-900 text-sm placeholder-slate-400 focus:outline-none py-2 pr-2"
-                />
-                <button
-                  type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-xl flex items-center gap-1.5 transition-colors shadow-md flex-shrink-0"
-                >
-                  Search
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Popular Tags */}
-              <div className="flex flex-wrap items-center gap-2 mt-3 text-xs text-slate-500">
-                <span className="font-semibold text-slate-400">Popular:</span>
-                {["RTX GPUs", "MacBook Battery", "Samsung Display", "NVMe SSD"].map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => setSearchQuery(tag)}
-                    className="bg-slate-200/60 hover:bg-indigo-50 hover:text-indigo-600 px-2.5 py-1 rounded-md text-slate-600 transition-colors"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </form>
 
             {/* Action CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 mb-8">
