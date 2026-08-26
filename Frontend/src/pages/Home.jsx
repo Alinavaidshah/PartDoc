@@ -311,18 +311,18 @@ export default function Home() {
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-5 shadow-sm">
               <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span>Official Tech Spare Parts & Priority Repair Portal</span>
+              <span>Original Spare Parts & Priority Repair Services</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="font-grotesk text-3xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-5">
-              Original Tech Parts & <br className="hidden sm:inline" />
-              <span className="text-indigo-600">Professional Hardware & Software Diagnostic</span> Services
+              Genuine Tech Parts & <br className="hidden sm:inline" />
+              <span className="text-indigo-600">Hardware & Software Diagnostic</span> Services
             </h1>
 
             {/* Sub-headline */}
             <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
-              Computer GPUs, CPUs, SSDs, screens, batteries, and logic boards — verified serial numbers with official warranty across Pakistan.
+              GPUs, CPUs, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Warranty across Pakistan.
             </p>
 
             {/* Action CTA Buttons */}
@@ -332,7 +332,7 @@ export default function Home() {
                 className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all flex-1 sm:flex-none"
               >
                 <ShoppingBag className="w-4 h-4 text-amber-400" />
-                <span>Explore Shop Catalog</span>
+                <span>Explore Catalog</span>
               </Link>
 
               <Link
@@ -340,7 +340,7 @@ export default function Home() {
                 className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all flex-1 sm:flex-none"
               >
                 <Wrench className="w-4 h-4 text-indigo-600" />
-                <span>Book Repair Appointment</span>
+                <span>Book Appointment</span>
               </Link>
             </div>
 
@@ -352,7 +352,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="font-grotesk font-extrabold text-lg sm:text-xl text-indigo-600">100%</div>
-                <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Serial Verified</div>
+                <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Genuine Guaranteed</div>
               </div>
               <div>
                 <div className="font-grotesk font-extrabold text-lg sm:text-xl text-slate-900">24-48h</div>

@@ -184,7 +184,7 @@ const Appointment = () => {
                 <div className="flex flex-col items-center justify-center py-16 space-y-4">
                   <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
                   <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">Submitting Appointment Request...</h3>
-                  <p className="text-xs text-slate-500">Syncing ticket details with repair lab server.</p>
+                  <p className="text-xs text-slate-500">Please wait while your ticket is being created.</p>
                 </div>
               ) : bookingSuccess ? (
                 
