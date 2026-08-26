@@ -36,6 +36,19 @@ const appointmentSchema = new mongoose.Schema(
       required: true,
       default: 'Pending',
     },
+    serviceType: {
+      type: String,
+      enum: ['Normal', 'Fault Tracing'],
+      default: 'Normal',
+    },
+    price: {
+      type: Number,
+      default: 0,
+    },
+    address: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

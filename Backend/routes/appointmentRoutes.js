@@ -5,13 +5,21 @@ import {
   updateAppointmentStatus,
   getAppointmentStatus,
   deleteAppointment,
-  getDashboardStats 
+  getDashboardStats,
+  getAppointmentSettings,
+  updateAppointmentSettings
 } from '../controllers/appointmentController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
-import { validate } from '../middleware/validate.js'; // Tumhara naya file
-import { appointmentSchema } from '../middleware/validationSchemas.js'; //
+import { validate } from '../middleware/validate.js'; 
+import { appointmentSchema } from '../middleware/validationSchemas.js'; 
 
 const router = express.Router();
+
+// Settings routes
+router.route('/settings')
+  .get(getAppointmentSettings)
+  .put(protect, admin, updateAppointmentSettings);
+
 router.post('/book', validate(appointmentSchema), createAppointment);
 
 // 1. Stats sirf admin dekh sake (Protected)

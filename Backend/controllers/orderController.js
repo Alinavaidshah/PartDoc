@@ -29,26 +29,29 @@ export const addOrderItems = async (req, res) => {
 
     const createdOrder = await order.save();
 
-    // Email Confirmation (Sirf COD aur Card ke liye)
-    if (paymentMethod === 'COD' || paymentMethod === 'Card') {
+    // Email Confirmation (For all payment methods if email provided)
+    if (shippingAddress?.email) {
       try {
         const itemsHtml = createdOrder.orderItems.map(item => `
-          <li style="margin-bottom: 5px;">
-            <b>${item.name}</b> - Qty: ${item.qty} - Rs ${item.price * item.qty}
+          <li style="margin-bottom: 6px; padding: 6px; background: #f8fafc; border-radius: 6px;">
+            <b>${item.name}</b> - Quantity: ${item.qty} - Rs ${item.price * item.qty}
           </li>
         `).join('');
 
         await sendEmail({
           email: shippingAddress.email,
-          subject: 'Order Confirmed - PartDoc',
+          subject: 'Order Placed Successfully - PartDoc',
           html: `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-              <h2 style="color: #D8973C;">Shukriya! Aapka order place ho gaya hai.</h2>
-              <p>Order ID: <b>#${createdOrder._id.toString().slice(-6).toUpperCase()}</b></p>
-              <h3>Items ordered:</h3>
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+              <h2 style="color: #4f46e5;">Thank you! Your order has been placed successfully.</h2>
+              <p>Dear <b>${shippingAddress.fullName || 'Customer'}</b>,</p>
+              <p>Your order has been received and is currently <b>Pending Confirmation</b>.</p>
+              <p><b>Order ID:</b> #${createdOrder._id.toString().slice(-6).toUpperCase()}</p>
+              <p><b>Order Status:</b> Pending</p>
+              <h3 style="margin-top: 15px;">Ordered Items:</h3>
               <ul style="list-style-type: none; padding: 0;">${itemsHtml}</ul>
-              <p><b>Total Amount: Rs ${createdOrder.totalPrice}</b></p>
-              <p>Hum jald hi aapke order par kaam shuru karenge.</p>
+              <p style="font-size: 16px;"><b>Total Price: Rs ${createdOrder.totalPrice}</b></p>
+              <p style="font-weight: bold; color: #4f46e5; margin-top: 20px;">Our team will contact you soon.</p>
             </div>
           `
         });
@@ -115,23 +118,25 @@ export const updateOrderStatus = async (req, res) => {
       }
     }
 
-    // 2. Email Notification
-    try {
-      await sendEmail({
-        email: order.shippingAddress.email,
-        subject: `Order Update: ${orderStatus}`,
-        html: `
-          <div style="font-family: Arial, sans-serif;">
-            <h2>Salam ${order.shippingAddress.fullName},</h2>
-            <p>Aapke order ka status update kar diya gaya hai.</p>
-            <p><strong>Order ID:</strong> #${orderIdShort}</p>
-            <p><strong>New Status:</strong> ${orderStatus}</p>
-            <p>Visit PartDoc for more details.</p>
-          </div>
-        `
-      });
-    } catch (err) {
-      console.error("Email notification failed:", err.message);
+    // 2. Email Notification (English)
+    if (order.shippingAddress?.email) {
+      try {
+        await sendEmail({
+          email: order.shippingAddress.email,
+          subject: `Order Status Update - PartDoc`,
+          html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+              <h2 style="color: #4f46e5;">Order Status Update</h2>
+              <p>Dear <b>${order.shippingAddress.fullName || 'Customer'}</b>,</p>
+              <p>The status of your order <b>#${orderIdShort}</b> has been updated to: <b>${orderStatus}</b>.</p>
+              <p>Thank you for shopping with PartDoc!</p>
+              <p style="font-weight: bold; color: #4f46e5; margin-top: 20px;">Our team will contact you soon.</p>
+            </div>
+          `
+        });
+      } catch (err) {
+        console.error("Email notification failed:", err.message);
+      }
     }
 
     res.json(updatedOrder);

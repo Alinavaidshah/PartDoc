@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import api from '../api/axiosConfig';
 import {
   bookAppointment,
   checkAppointmentStatus,
@@ -9,7 +10,8 @@ import {
 } from '../features/appointment/appointmentSlice';
 import {
   Calendar, Clock, User, Phone, Mail, Laptop, ClipboardList,
-  CheckCircle, Search, Key, ShieldCheck, Clock3, XCircle, ChevronLeft, ChevronRight, Wrench, Sparkles, CheckCircle2
+  CheckCircle, Search, Key, ShieldCheck, Clock3, XCircle, ChevronLeft, ChevronRight, Wrench, Sparkles, CheckCircle2,
+  MapPin, Tag, Lock
 } from 'lucide-react';
 
 const Appointment = () => {
@@ -27,15 +29,28 @@ const Appointment = () => {
   } = useSelector((state) => state.appointment);
 
   const [activeTab, setActiveTab] = useState('book');
+  const [faultTracingPrice, setFaultTracingPrice] = useState(899);
   const [formData, setFormData] = useState({
     name: '', phone: '', customerEmail: '', deviceModel: '',
-    issueDescription: '', appointmentDate: '', appointmentTime: ''
+    issueDescription: '', appointmentDate: '', appointmentTime: '',
+    serviceType: 'Normal', address: ''
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState({ appointmentId: '', name: '' });
+
+  // Fetch dynamic fault tracing price from backend settings
+  useEffect(() => {
+    api.get('/appointments/settings')
+      .then(res => {
+        if (res.data?.faultTracingPrice) {
+          setFaultTracingPrice(res.data.faultTracingPrice);
+        }
+      })
+      .catch(err => console.error("Error loading settings:", err));
+  }, []);
 
   // Auto-fill from URL query params (e.g. from Home page estimator widget)
   useEffect(() => {
@@ -56,11 +71,20 @@ const Appointment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(bookAppointment(formData)).then((result) => {
+    const payload = {
+      ...formData,
+      price: formData.serviceType === 'Fault Tracing' ? faultTracingPrice : 0,
+      issueDescription: formData.serviceType === 'Fault Tracing' && !formData.issueDescription
+        ? 'Fault Tracing Of Your Device At Your Door Step'
+        : formData.issueDescription
+    };
+
+    dispatch(bookAppointment(payload)).then((result) => {
       if (result.meta.requestStatus === 'fulfilled') {
         setFormData({
           name: '', phone: '', customerEmail: '', deviceModel: '',
-          issueDescription: '', appointmentDate: '', appointmentTime: ''
+          issueDescription: '', appointmentDate: '', appointmentTime: '',
+          serviceType: 'Normal', address: ''
         });
       }
     });
@@ -199,6 +223,74 @@ const Appointment = () => {
                 
                 /* MAIN FORM */
                 <form onSubmit={handleSubmit} className="space-y-5">
+
+                  {/* SERVICE TYPE SELECTION */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-600">Select Service Option</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, serviceType: 'Normal' })}
+                        className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                          formData.serviceType === 'Normal'
+                            ? 'bg-indigo-50/80 border-indigo-600 ring-2 ring-indigo-500/20'
+                            : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-extrabold text-slate-900">Standard Lab Appointment</span>
+                          {formData.serviceType === 'Normal' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                        </div>
+                        <span className="text-[11px] text-slate-500">Bring device to our lab for priority diagnostic</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, serviceType: 'Fault Tracing' })}
+                        className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                          formData.serviceType === 'Fault Tracing'
+                            ? 'bg-indigo-50/80 border-indigo-600 ring-2 ring-indigo-500/20'
+                            : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-extrabold text-indigo-900 flex items-center gap-1">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                            Fault Tracing At Your Door Step
+                          </span>
+                          {formData.serviceType === 'Fault Tracing' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                        </div>
+                        <span className="text-[11px] text-slate-500">Technician visits your doorstep for complete fault tracing</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* FAULT TRACING PRICE DISPLAY (NON-EDITABLE FOR USER) */}
+                  {formData.serviceType === 'Fault Tracing' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700">
+                          <Tag className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-extrabold text-slate-900">Doorstep Fault Tracing Fixed Fee</div>
+                          <div className="text-[11px] text-slate-500 flex items-center gap-1">
+                            <Lock className="w-3 h-3 text-slate-400" />
+                            Official rate (Fixed by Admin Panel)
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-lg font-extrabold text-indigo-600 font-grotesk">Rs {faultTracingPrice}</span>
+                      </div>
+                    </motion.div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
                       <User className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
@@ -221,9 +313,17 @@ const Appointment = () => {
                     <input type="text" name="deviceModel" required placeholder="Device Model (e.g. MacBook Pro M1, iPhone 14 Pro, Custom Gaming PC)" value={formData.deviceModel} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all" />
                   </div>
 
+                  {/* COMPLETE ADDRESS FIELD FOR DOORSTEP FAULT TRACING */}
+                  {formData.serviceType === 'Fault Tracing' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
+                      <MapPin className="absolute left-4 top-3.5 w-4 h-4 text-amber-500" />
+                      <textarea name="address" required rows="2" placeholder="Complete Doorstep Address (Street, House No, Area, City)..." value={formData.address} onChange={handleChange} className="w-full bg-slate-50 border border-amber-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
+                    </motion.div>
+                  )}
+
                   <div className="relative">
                     <ClipboardList className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
-                    <textarea name="issueDescription" required rows="3" placeholder="Describe the hardware issue or component service required..." value={formData.issueDescription} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
+                    <textarea name="issueDescription" required={formData.serviceType !== 'Fault Tracing'} rows="3" placeholder={formData.serviceType === 'Fault Tracing' ? "Optional: Describe device symptoms or issues observed..." : "Describe the hardware issue or component service required..."} value={formData.issueDescription} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
                   </div>
 
                   {/* DATE & TIME PICKERS */}

@@ -227,26 +227,26 @@ export default function Home() {
   // Estimator Data
   const ESTIMATOR_DATA = {
     Computer: {
-      GPU: { price: "PKR 45,000 - 450,000", time: "Same Day Dispatch", warranty: "1-3 Years Warranty" },
-      CPU: { price: "PKR 22,000 - 180,000", time: "24h Express Ship", warranty: "3 Years Warranty" },
-      RAM: { price: "PKR 6,500 - 48,000", time: "Instant Stock", warranty: "Lifetime Warranty" },
-      Storage: { price: "PKR 8,000 - 65,000", time: "Same Day Ship", warranty: "5 Years Warranty" },
+      GPU: { price: "PKR 45,000 - 450,000", time: "Same Day Dispatch", warranty: "1 Year Warranty" },
+      CPU: { price: "PKR 22,000 - 180,000", time: "24h Express Ship", warranty: "1 Year Warranty" },
+      RAM: { price: "PKR 6,500 - 48,000", time: "Instant Stock", warranty: "1 Year Warranty" },
+      Storage: { price: "PKR 8,000 - 65,000", time: "Same Day Ship", warranty: "1 Year Warranty" },
     },
     Laptop: {
-      Display: { price: "PKR 12,500 - 55,000", time: "24-48h Delivery", warranty: "6 Months Warranty" },
-      Battery: { price: "PKR 5,500 - 24,000", time: "In Stock", warranty: "6 Months Warranty" },
-      Keyboard: { price: "PKR 3,200 - 12,000", time: "In Stock", warranty: "3 Months Warranty" },
-      Charger: { price: "PKR 3,800 - 14,500", time: "Same Day Ship", warranty: "6 Months Warranty" },
+      Display: { price: "PKR 12,500 - 55,000", time: "24-48h Delivery", warranty: "1 Year Warranty" },
+      Battery: { price: "PKR 5,500 - 24,000", time: "In Stock", warranty: "1 Year Warranty" },
+      Keyboard: { price: "PKR 3,200 - 12,000", time: "In Stock", warranty: "1 Year Warranty" },
+      Charger: { price: "PKR 3,800 - 14,500", time: "Same Day Ship", warranty: "1 Year Warranty" },
     },
     Mobile: {
-      Display: { price: "PKR 4,500 - 75,000", time: "Original OEM Grade", warranty: "Tested & Verified" },
-      Battery: { price: "PKR 2,800 - 16,000", time: "100% Health Cell", warranty: "3 Months Warranty" },
-      Motherboard: { price: "PKR 12,000 - 110,000", time: "Tested & Unlocked", warranty: "Tested Verified" },
-      Camera: { price: "PKR 3,500 - 28,000", time: "Original Pulls", warranty: "7 Days Replacement" },
+      Display: { price: "PKR 4,500 - 75,000", time: "Original OEM Grade", warranty: "1 Year Warranty" },
+      Battery: { price: "PKR 2,800 - 16,000", time: "100% Health Cell", warranty: "1 Year Warranty" },
+      Motherboard: { price: "PKR 12,000 - 110,000", time: "Tested & Unlocked", warranty: "1 Year Warranty" },
+      Camera: { price: "PKR 3,500 - 28,000", time: "Original Pulls", warranty: "1 Year Warranty" },
     }
   };
 
-  const currentEst = ESTIMATOR_DATA[calcDevice]?.[calcPart] || { price: "PKR 5,000+", time: "24 Hours", warranty: "Warranty Included" };
+  const currentEst = ESTIMATOR_DATA[calcDevice]?.[calcPart] || { price: "PKR 5,000+", time: "24 Hours", warranty: "1 Year Warranty" };
 
   const filteredProducts = displayParts.filter((item) => {
     if (activeCategory === "all") return true;
@@ -294,7 +294,7 @@ export default function Home() {
             {/* Main Headline */}
             <h1 className="font-grotesk text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12] mb-5">
               Original Tech Parts & <br />
-              <span className="text-indigo-600">Professional Repair</span> Services
+              <span className="text-indigo-600">Professional Hardware & Software Diagnostic</span> Services
             </h1>
 
             {/* Sub-headline */}
@@ -414,34 +414,34 @@ export default function Home() {
       {/* 2. CATEGORY CARDS */}
       {/* ========================================================================= */}
       <section className="py-12 px-4 sm:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
               <Link
                 key={cat.id}
                 to={cat.path}
-                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group flex flex-col justify-between"
+                className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                      <Icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                    <span className="text-[10px] sm:text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md">
                       {cat.count}
                     </span>
                   </div>
 
-                  <h3 className="font-grotesk font-extrabold text-slate-900 text-lg mb-1 group-hover:text-indigo-600 transition-colors">
+                  <h3 className="font-grotesk font-extrabold text-slate-900 text-sm sm:text-lg mb-1 group-hover:text-indigo-600 transition-colors">
                     {cat.title}
                   </h3>
-                  <p className="text-slate-500 text-xs leading-relaxed">{cat.desc}</p>
+                  <p className="text-slate-500 text-[11px] sm:text-xs leading-relaxed line-clamp-2 sm:line-clamp-none">{cat.desc}</p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600">
-                  <span>Explore Parts</span>
-                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs font-bold text-indigo-600">
+                  <span>{cat.id === "Repair" ? "Book Appointment" : "Explore Parts"}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </div>
               </Link>
             );

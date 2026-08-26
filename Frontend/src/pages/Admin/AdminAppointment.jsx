@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import api from "../../api/axiosConfig"; // <-- Configured api import kiya
+import api from "../../api/axiosConfig";
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Trash2, Check, Loader2, Calendar, Clock, Phone, Mail, Smartphone, FileText, Inbox } from 'lucide-react';
+import { CheckCircle2, XCircle, Trash2, Check, Loader2, Calendar, Clock, Phone, Mail, Smartphone, FileText, Inbox, Sparkles, MapPin, Tag, Save } from 'lucide-react';
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 
@@ -18,23 +18,59 @@ const AdminAppointment = () => {
   const [selectedAppt, setSelectedAppt] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null);
 
+  // Price Setting State
+  const [faultTracingPrice, setFaultTracingPrice] = useState(899);
+  const [priceInput, setPriceInput] = useState(899);
+  const [savingPrice, setSavingPrice] = useState(false);
+  const [priceNotice, setPriceNotice] = useState('');
+
   // Sidebar collapse states
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const { data } = await api.get('/appointments'); // <-- api instance use kiya
-        setAppointments(Array.isArray(data) ? data : (data.appointments || []));
-      } catch (err) {
-        console.error("Fetch Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAppointments();
+    fetchSettings();
   }, []);
+
+  const fetchAppointments = async () => {
+    try {
+      const { data } = await api.get('/appointments');
+      setAppointments(Array.isArray(data) ? data : (data.appointments || []));
+    } catch (err) {
+      console.error("Fetch Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const { data } = await api.get('/appointments/settings');
+      if (data?.faultTracingPrice) {
+        setFaultTracingPrice(data.faultTracingPrice);
+        setPriceInput(data.faultTracingPrice);
+      }
+    } catch (err) {
+      console.error("Error fetching settings:", err);
+    }
+  };
+
+  const handleUpdatePrice = async (e) => {
+    e.preventDefault();
+    setSavingPrice(true);
+    setPriceNotice('');
+    try {
+      const { data } = await api.put('/appointments/settings', { faultTracingPrice: Number(priceInput) });
+      setFaultTracingPrice(data.faultTracingPrice);
+      setPriceNotice('Price updated successfully!');
+      setTimeout(() => setPriceNotice(''), 3000);
+    } catch (err) {
+      alert("Failed to update price: " + (err.response?.data?.message || err.message));
+    } finally {
+      setSavingPrice(false);
+    }
+  };
 
   const handleAction = async () => {
     const { id, type, status } = confirmModal;
@@ -42,9 +78,9 @@ const AdminAppointment = () => {
 
     try {
       if (type === 'delete') {
-        await api.delete(`/appointments/${id}`); // <-- api instance use kiya
+        await api.delete(`/appointments/${id}`);
       } else {
-        await api.put(`/appointments/${id}/status`, { status }); // <-- api instance use kiya
+        await api.put(`/appointments/${id}/status`, { status });
       }
 
       setConfirmModal(prev => ({ ...prev, loading: false, success: true }));
@@ -82,6 +118,79 @@ const AdminAppointment = () => {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Topbar title="Manage Appointments" onMenuClick={() => setMobileOpen(true)} />
         <div style={{ padding: '24px' }}>
+
+          {/* ADMIN FAULT TRACING PRICE CONTROL BAR */}
+          <div style={{
+            background: '#fff',
+            padding: '16px 24px',
+            borderRadius: 16,
+            border: '1px solid #e2e8f0',
+            marginBottom: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 16,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Sparkles size={20} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a' }}>Doorstep Fault Tracing Fixed Price</div>
+                <div style={{ fontSize: 12, color: '#64748b' }}>Configure the price customers see for doorstep fault tracing appointments</div>
+              </div>
+            </div>
+
+            <form onSubmit={handleUpdatePrice} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <span style={{ position: 'absolute', left: 12, fontSize: 13, fontWeight: 700, color: '#64748b' }}>Rs</span>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  value={priceInput}
+                  onChange={(e) => setPriceInput(e.target.value)}
+                  style={{
+                    padding: '8px 12px 8px 36px',
+                    borderRadius: 10,
+                    border: '1px solid #cbd5e1',
+                    fontSize: 14,
+                    fontWeight: 700,
+                    width: 120,
+                    outline: 'none',
+                    color: '#0f172a'
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingPrice}
+                style={{
+                  background: '#4f46e5',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 10,
+                  padding: '8px 16px',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+              >
+                {savingPrice ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                <span>Save Price</span>
+              </button>
+
+              {priceNotice && (
+                <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>{priceNotice}</span>
+              )}
+            </form>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -135,6 +244,8 @@ const AdminAppointment = () => {
               <AnimatePresence mode="popLayout">
                 {filtered.map(a => {
                   const s = statusStyles[a.status] || statusStyles.Pending;
+                  const isFaultTracing = a.serviceType === 'Fault Tracing';
+
                   return (
                     <motion.div
                       key={a._id}
@@ -144,33 +255,74 @@ const AdminAppointment = () => {
                       whileHover={{ y: -3, boxShadow: '0 8px 20px -8px rgba(0,0,0,0.12)' }}
                       onClick={() => setSelectedAppt(a)}
                       style={{
-                        background: '#fff',
+                        background: isFaultTracing ? '#fffbeb' : '#fff',
                         padding: '16px 24px',
                         borderRadius: 12,
-                        border: '1px solid #e2e8f0',
+                        border: isFaultTracing ? '2px solid #f59e0b' : '1px solid #e2e8f0',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        position: 'relative'
                       }}
                     >
                       <div>
-                        <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                           {a.name}
-                          <span style={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            padding: '2px 10px',
-                            borderRadius: 999,
-                            background: s.bg,
-                            color: s.text,
-                            border: `1px solid ${s.border}`
-                          }}>
-                            {a.status}
-                          </span>
+
+                          {/* FAULT TRACING HIGHLIGHTED BADGE */}
+                          {isFaultTracing ? (
+                            <span style={{
+                              fontSize: 11,
+                              fontWeight: 800,
+                              padding: '3px 10px',
+                              borderRadius: 999,
+                              background: '#fef3c7',
+                              color: '#b45309',
+                              border: '1px solid #fde68a',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4
+                            }}>
+                              <Sparkles size={12} color="#b45309" /> Doorstep Fault Tracing (Rs {a.price || faultTracingPrice})
+                            </span>
+                          ) : (
+                            <span style={{
+                              fontSize: 11,
+                              fontWeight: 600,
+                              padding: '2px 10px',
+                              borderRadius: 999,
+                              background: s.bg,
+                              color: s.text,
+                              border: `1px solid ${s.border}`
+                            }}>
+                              {a.status}
+                            </span>
+                          )}
+
+                          {isFaultTracing && (
+                            <span style={{
+                              fontSize: 11,
+                              fontWeight: 600,
+                              padding: '2px 10px',
+                              borderRadius: 999,
+                              background: s.bg,
+                              color: s.text,
+                              border: `1px solid ${s.border}`
+                            }}>
+                              {a.status}
+                            </span>
+                          )}
                         </div>
-                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <Calendar size={12} /> {a.appointmentDate}
+
+                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Calendar size={12} /> {a.appointmentDate}</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> {a.appointmentTime}</span>
+                          {a.address && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#d97706', fontWeight: 600 }}>
+                              <MapPin size={12} /> {a.address}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: 16 }}>
@@ -227,17 +379,28 @@ const AdminAppointment = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 10 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              style={{ background: '#fff', padding: 32, borderRadius: 20, width: '400px', maxHeight: '85vh', overflowY: 'auto' }}
+              style={{ background: '#fff', padding: 32, borderRadius: 20, width: '420px', maxHeight: '85vh', overflowY: 'auto' }}
               onClick={e => e.stopPropagation()}
             >
-              <h3 style={{ margin: '0 0 20px' }}>Appointment Details</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <h3 style={{ margin: 0 }}>Appointment Details</h3>
+                {selectedAppt.serviceType === 'Fault Tracing' && (
+                  <span style={{ fontSize: 11, fontWeight: 800, background: '#fef3c7', color: '#b45309', padding: '3px 8px', borderRadius: 6 }}>
+                    ⚡ Fault Tracing
+                  </span>
+                )}
+              </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
+                  { l: 'Service Type', v: selectedAppt.serviceType === 'Fault Tracing' ? 'Doorstep Fault Tracing' : 'Standard Lab Appointment', icon: <Sparkles size={12} /> },
+                  ...(selectedAppt.serviceType === 'Fault Tracing' ? [{ l: 'Fixed Fee', v: `Rs ${selectedAppt.price || faultTracingPrice}`, icon: <Tag size={12} /> }] : []),
+                  ...(selectedAppt.address ? [{ l: 'Doorstep Address', v: selectedAppt.address, icon: <MapPin size={12} /> }] : []),
                   { l: 'Name', v: selectedAppt.name, icon: <Smartphone size={12} /> },
                   { l: 'Phone', v: selectedAppt.phone, icon: <Phone size={12} /> },
                   { l: 'Email', v: selectedAppt.customerEmail, icon: <Mail size={12} /> },
                   { l: 'Device', v: selectedAppt.deviceModel, icon: <Smartphone size={12} /> },
-                  { l: 'Issue', v: selectedAppt.issueDescription, icon: <FileText size={12} /> },
+                  { l: 'Issue / Notes', v: selectedAppt.issueDescription, icon: <FileText size={12} /> },
                   { l: 'Date', v: selectedAppt.appointmentDate, icon: <Calendar size={12} /> },
                   { l: 'Time', v: selectedAppt.appointmentTime, icon: <Clock size={12} /> }
                 ].map((item, idx) => (
