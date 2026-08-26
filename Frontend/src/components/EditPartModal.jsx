@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -13,10 +13,7 @@ const EditPartModal = ({ isOpen, onClose, part, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-      await axios.put(`/api/parts/${part._id}`, formData, {
-        headers: { Authorization: `Bearer ${adminInfo.token}` }
-      });
+      await api.put(`/parts/${part._id}`, formData);
       onUpdate();
       onClose();
     } catch (err) { console.error(err); }

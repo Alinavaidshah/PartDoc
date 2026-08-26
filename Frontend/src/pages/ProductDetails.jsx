@@ -5,6 +5,7 @@ import { addToCart } from '../features/cart/cartSlice';
 import { Truck, ShieldCheck, Star, Package, RefreshCw, Loader2, Minus, Plus, Heart, Share2, ShoppingBag, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
+import api, { getImageUrl } from '../api/axiosConfig';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -20,9 +21,8 @@ export default function ProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/parts/${id}`);
-        const data = await response.json();
-        setPart(data);
+        const response = await api.get(`/parts/${id}`);
+        setPart(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -97,7 +97,7 @@ export default function ProductDetails() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                src={part.image.startsWith('http') ? part.image : `/api${part.image}`}
+                src={getImageUrl(part.image)}
                 alt={part.name}
                 className="w-full h-[400px] object-contain transition-transform duration-500 group-hover:scale-110"
               />
