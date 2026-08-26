@@ -24,7 +24,7 @@ const Toast = ({ message, type = 'success', isOpen, onClose }) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.9 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className={`fixed top-24 right-6 z-[100] p-4 rounded-2xl shadow-2xl flex items-start gap-3 max-w-sm w-full border backdrop-blur-xl ${
+          className={`fixed top-20 sm:top-24 left-4 right-4 sm:left-auto sm:right-6 z-[100] p-4 rounded-2xl shadow-2xl flex items-start gap-3 max-w-sm w-auto mx-auto sm:mx-0 border backdrop-blur-xl ${
             isError
               ? 'bg-rose-950/90 border-rose-500/40 text-rose-100'
               : 'bg-slate-900/95 border-emerald-500/40 text-white'

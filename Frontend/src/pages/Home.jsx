@@ -566,7 +566,7 @@ export default function Home() {
 
         {/* Product Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((item, idx) => (
+          {filteredProducts.slice(0, 3).map((item, idx) => (
             <div
               key={item._id || idx}
               className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
