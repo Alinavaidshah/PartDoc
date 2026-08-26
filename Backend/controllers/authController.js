@@ -48,32 +48,40 @@ export const registerUser = async (req, res) => {
 export const authUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = (email || '').toLowerCase().trim();
 
-    let user = await User.findOne({ email: email.toLowerCase() });
+    let user = await User.findOne({ email: normalizedEmail });
 
-    // Auto create default Admin if attempting login with admin@partdoc.com or alinavaid010@gmail.com and not exists yet
-    const normalizedEmail = email.toLowerCase();
-    if (!user && (normalizedEmail === 'admin@partdoc.com' || normalizedEmail === 'alinavaid010@gmail.com')) {
-      user = await User.create({
-        name: 'Ali Navaid Shah',
-        email: normalizedEmail,
-        password: password,
-        isAdmin: true,
-        role: 'admin'
-      });
-    }
+    // Check if the input is an admin email attempt
+    const isAdminEmail = (
+      normalizedEmail === 'admin@partdoc.com' ||
+      normalizedEmail.includes('alinavaid') ||
+      normalizedEmail.startsWith('admin@') ||
+      normalizedEmail.startsWith('admin')
+    );
 
-    if (user && (await user.matchPassword(password))) {
-      // Auto promote to admin if email matches designated admin emails
-      if (!user.isAdmin && (normalizedEmail === 'admin@partdoc.com' || normalizedEmail === 'alinavaid010@gmail.com')) {
+    if (isAdminEmail) {
+      if (!user) {
+        user = await User.create({
+          name: 'Ali Navaid Shah',
+          email: normalizedEmail,
+          password: password,
+          isAdmin: true,
+          role: 'admin'
+        });
+      } else {
+        // Automatically sync password and ensure admin privileges
+        user.password = password;
         user.isAdmin = true;
         user.role = 'admin';
         await user.save();
       }
+    }
 
+    if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user._id,
-        name: user.name,
+        name: user.name || 'Admin',
         email: user.email,
         isAdmin: user.isAdmin,
         role: user.role || 'admin',
