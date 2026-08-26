@@ -238,10 +238,10 @@ const Appointment = () => {
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-extrabold text-slate-900">Standard Lab Appointment</span>
+                          <span className="text-xs font-extrabold text-slate-900">Standard</span>
                           {formData.serviceType === 'Normal' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
                         </div>
-                        <span className="text-[11px] text-slate-500">Bring device to our lab for priority diagnostic</span>
+                        <span className="text-[11px] text-slate-500 leading-normal">Standard replacement, hardware & software issues at doorstep. Prices are situation wise.</span>
                       </button>
 
                       <button
@@ -256,11 +256,11 @@ const Appointment = () => {
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs font-extrabold text-indigo-900 flex items-center gap-1">
                             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            Fault Tracing At Your Door Step
+                            Fault Tracing Of Your Device At Your Door Step
                           </span>
                           {formData.serviceType === 'Fault Tracing' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
                         </div>
-                        <span className="text-[11px] text-slate-500">Technician visits your doorstep for complete fault tracing</span>
+                        <span className="text-[11px] text-slate-500 leading-normal">Technician visits your doorstep for complete fault tracing & detailed diagnosis</span>
                       </button>
                     </div>
                   </div>
@@ -313,13 +313,11 @@ const Appointment = () => {
                     <input type="text" name="deviceModel" required placeholder="Device Model (e.g. MacBook Pro M1, iPhone 14 Pro, Custom Gaming PC)" value={formData.deviceModel} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all" />
                   </div>
 
-                  {/* COMPLETE ADDRESS FIELD FOR DOORSTEP FAULT TRACING */}
-                  {formData.serviceType === 'Fault Tracing' && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
-                      <MapPin className="absolute left-4 top-3.5 w-4 h-4 text-amber-500" />
-                      <textarea name="address" required rows="2" placeholder="Complete Doorstep Address (Street, House No, Area, City)..." value={formData.address} onChange={handleChange} className="w-full bg-slate-50 border border-amber-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
-                    </motion.div>
-                  )}
+                  {/* COMPLETE ADDRESS FIELD FOR ALL DOORSTEP & LAB APPOINTMENTS */}
+                  <div className="relative">
+                    <MapPin className="absolute left-4 top-3.5 w-4 h-4 text-indigo-500" />
+                    <textarea name="address" required rows="2" placeholder="Complete Doorstep Address (House/Office No, Street, Area, City)..." value={formData.address} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
+                  </div>
 
                   <div className="relative">
                     <ClipboardList className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />

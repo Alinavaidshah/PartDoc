@@ -69,6 +69,7 @@ export default function MobileParts() {
             <option value="Apple">Apple</option>
             <option value="Samsung">Samsung</option>
             <option value="Xiaomi">Xiaomi</option>
+            <option value="OnePlus">OnePlus</option>
           </select>
 
           <select 

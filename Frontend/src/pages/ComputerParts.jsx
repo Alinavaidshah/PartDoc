@@ -19,14 +19,15 @@ function ComputerParts() {
   }, [dispatch]);
 
   const filteredData = items.filter(part => {
-    const cat = part.category?.toLowerCase().trim();
-    const subCat = part.subCategory?.toLowerCase().trim();
+    const cat = (part.category || '').toLowerCase().trim();
+    const subCat = (part.subCategory || '').toLowerCase().trim();
+    const name = (part.name || '').toLowerCase().trim();
     const filterCat = categoryFilter.toLowerCase().trim();
     const search = searchTerm.toLowerCase().trim();
 
     const isComputerOrLaptop = (!cat || cat.includes('computer') || cat.includes('laptop') || cat !== 'mobile');
-    const matchesCategory = (filterCat === 'all') || (subCat === filterCat) || (cat === filterCat);
-    const matchesSearch = part.name?.toLowerCase().includes(search);
+    const matchesCategory = (filterCat === 'all') || subCat.includes(filterCat) || cat.includes(filterCat) || name.includes(filterCat);
+    const matchesSearch = name.includes(search) || cat.includes(search) || subCat.includes(search);
 
     return isComputerOrLaptop && matchesCategory && matchesSearch;
   }).sort((a, b) => {
@@ -84,8 +85,12 @@ function ComputerParts() {
             className="bg-slate-50 text-slate-800 font-semibold px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-500 cursor-pointer shadow-sm"
           >
             <option value="All">All Categories</option>
-            <option value="Motherboard">Motherboard</option>
-            <option value="Casing">PC Casing</option>
+            <option value="GPU">Graphics Cards (GPU)</option>
+            <option value="CPU">Processors (CPU)</option>
+            <option value="RAM">Memory (RAM)</option>
+            <option value="Storage">Storage (SSD/HDD)</option>
+            <option value="Motherboard">Motherboards</option>
+            <option value="Casing">PC Casings</option>
             <option value="Mouse">Mouse</option>
             <option value="Keyboard">Keyboard</option>
           </select>

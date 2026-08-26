@@ -186,6 +186,29 @@ export default function Home() {
 
   const displayParts = (fetchedParts && fetchedParts.length > 0) ? fetchedParts : MOCK_PRODUCTS;
 
+  // Dynamic calculations for Hero showcase & Category counts
+  const heroPart = displayParts.find(p => p.category?.toLowerCase().includes('computer') || p.name?.toLowerCase().includes('amd') || p.name?.toLowerCase().includes('gpu')) || displayParts[0] || {
+    _id: "m1",
+    name: "AMD Radeon RX 7900 XTX 24GB",
+    category: "Computer",
+    price: 315000,
+    rating: 4.9,
+    countInStock: 8,
+    image: "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80",
+    description: "Extreme gaming GPU with 24GB GDDR6 VRAM and RDNA 3 architecture."
+  };
+
+  const computerCount = displayParts.filter(p => (p.category?.toLowerCase() || '').includes('computer')).length;
+  const laptopCount = displayParts.filter(p => (p.category?.toLowerCase() || '').includes('laptop')).length;
+  const mobileCount = displayParts.filter(p => (p.category?.toLowerCase() || '').includes('mobile')).length;
+
+  const getCategoryCount = (id) => {
+    if (id === 'Computer') return computerCount > 0 ? `${computerCount} Parts` : '1,200+ Parts';
+    if (id === 'Laptop') return laptopCount > 0 ? `${laptopCount} Parts` : '850+ Parts';
+    if (id === 'Mobile') return mobileCount > 0 ? `${mobileCount} Parts` : '1,500+ Parts';
+    return '24/7 Available';
+  };
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -283,7 +306,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-7 flex flex-col items-start"
+            className="lg:col-span-7 flex flex-col items-start text-left"
           >
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-5 shadow-sm">
@@ -292,21 +315,21 @@ export default function Home() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-grotesk text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12] mb-5">
-              Original Tech Parts & <br />
+            <h1 className="font-grotesk text-3xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-5">
+              Original Tech Parts & <br className="hidden sm:inline" />
               <span className="text-indigo-600">Professional Hardware & Software Diagnostic</span> Services
             </h1>
 
             {/* Sub-headline */}
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
+            <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
               Computer GPUs, CPUs, SSDs, screens, batteries, and logic boards — verified serial numbers with official warranty across Pakistan.
             </p>
 
             {/* Action CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 mb-8">
+            <div className="flex flex-wrap items-center gap-3.5 mb-8 w-full sm:w-auto">
               <Link
                 to="/computerparts"
-                className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-7 py-3.5 rounded-xl text-sm flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all flex-1 sm:flex-none"
               >
                 <ShoppingBag className="w-4 h-4 text-amber-400" />
                 <span>Explore Shop Catalog</span>
@@ -314,7 +337,7 @@ export default function Home() {
 
               <Link
                 to="/appointment"
-                className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-7 py-3.5 rounded-xl text-sm flex items-center gap-2 shadow-sm transition-all"
+                className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all flex-1 sm:flex-none"
               >
                 <Wrench className="w-4 h-4 text-indigo-600" />
                 <span>Book Repair Appointment</span>
@@ -324,16 +347,16 @@ export default function Home() {
             {/* Quick Metrics Bar */}
             <div className="pt-6 border-t border-slate-200 w-full grid grid-cols-3 gap-4">
               <div>
-                <div className="font-grotesk font-extrabold text-xl text-slate-900">10,000+</div>
-                <div className="text-xs text-slate-500 mt-0.5">Parts Shipped</div>
+                <div className="font-grotesk font-extrabold text-lg sm:text-xl text-slate-900">10,000+</div>
+                <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Parts Shipped</div>
               </div>
               <div>
-                <div className="font-grotesk font-extrabold text-xl text-indigo-600">100%</div>
-                <div className="text-xs text-slate-500 mt-0.5">Serial Verified</div>
+                <div className="font-grotesk font-extrabold text-lg sm:text-xl text-indigo-600">100%</div>
+                <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Serial Verified</div>
               </div>
               <div>
-                <div className="font-grotesk font-extrabold text-xl text-slate-900">24-48h</div>
-                <div className="text-xs text-slate-500 mt-0.5">Express Delivery</div>
+                <div className="font-grotesk font-extrabold text-lg sm:text-xl text-slate-900">24-48h</div>
+                <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Express Delivery</div>
               </div>
             </div>
 
@@ -349,39 +372,43 @@ export default function Home() {
             {/* Background Soft Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-100 rounded-full blur-3xl -z-10" />
 
-            {/* Featured Light Card */}
-            <div className="bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 relative">
+            {/* Featured Dynamic Product Card */}
+            <Link
+              to={`/product/${heroPart._id}`}
+              className="block bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 relative group hover:border-indigo-300 transition-all"
+            >
               
               {/* Product Badge Header */}
               <div className="flex items-center justify-between mb-4">
                 <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>In Stock & Ready To Ship</span>
+                  <span>{heroPart.countInStock > 0 ? "In Stock & Ready To Ship" : "Available On Request"}</span>
                 </span>
-                <span className="text-xs font-mono font-bold text-slate-400">SKU: #PD-4080S</span>
+                <span className="text-xs font-mono font-bold text-slate-400">SKU: #PD-{heroPart._id?.slice(-5)?.toUpperCase() || 'GPU79'}</span>
               </div>
 
               {/* Product Image */}
-              <div className="w-full h-56 rounded-2xl bg-slate-100 overflow-hidden mb-5 relative group">
+              <div className="w-full h-56 rounded-2xl bg-slate-100 overflow-hidden mb-5 relative">
                 <img
-                  src="https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80"
-                  alt="RTX Graphics Card"
+                  src={getImageUrl(heroPart.image)}
+                  alt={heroPart.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80'; }}
                 />
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-xs font-bold text-slate-900 shadow-md">
-                  ⭐ 4.9 (48 Reviews)
+                  ⭐ {heroPart.rating || 4.9} (Verified)
                 </div>
               </div>
 
               {/* Product Info */}
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-indigo-600">Computer Parts</div>
-                  <h3 className="font-grotesk font-extrabold text-slate-900 text-lg">RTX 4080 Super 16GB</h3>
+                  <div className="text-xs font-bold uppercase tracking-wider text-indigo-600">{heroPart.category || 'Computer Parts'}</div>
+                  <h3 className="font-grotesk font-extrabold text-slate-900 text-base sm:text-lg line-clamp-1">{heroPart.name}</h3>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex-shrink-0 ml-2">
                   <div className="text-xs text-slate-400">Official Price</div>
-                  <div className="font-grotesk text-xl font-extrabold text-slate-900">PKR 345,000</div>
+                  <div className="font-grotesk text-lg sm:text-xl font-extrabold text-slate-900">PKR {Number(heroPart.price).toLocaleString()}</div>
                 </div>
               </div>
 
@@ -404,7 +431,7 @@ export default function Home() {
                 </div>
               </div>
 
-            </div>
+            </Link>
           </motion.div>
 
         </div>
@@ -429,7 +456,7 @@ export default function Home() {
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <span className="text-[10px] sm:text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md">
-                      {cat.count}
+                      {getCategoryCount(cat.id)}
                     </span>
                   </div>
 
@@ -547,16 +574,16 @@ export default function Home() {
             <p className="text-slate-500 text-xs mt-1">Authentic replacement parts in stock.</p>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
-            {["all", "Computer", "Mobile"].map((cat) => (
+          {/* Filter Tabs - Scrollable Bar Fix for Mobile */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 w-full sm:w-auto bg-white border border-slate-200 p-1.5 rounded-xl shadow-sm">
+            {["all", "Computer", "Laptop", "Mobile"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 ${
                   activeCategory === cat
                     ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
                 {cat === "all" ? "All Parts" : cat}
@@ -567,7 +594,7 @@ export default function Home() {
 
         {/* Product Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 justify-items-center">
-          {filteredProducts.slice(0, 3).map((item, idx) => (
+          {filteredProducts.slice(0, 6).map((item, idx) => (
             <div key={item._id || idx} className="w-full flex justify-center">
               <PartCard part={item} />
             </div>
