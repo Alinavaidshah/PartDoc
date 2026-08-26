@@ -154,9 +154,22 @@ export default function Home() {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: "", role: "Customer", location: "Pakistan", text: "", rating: 5 });
 
+  // One-Time Loader Per Session
+  const [showInitialLoader, setShowInitialLoader] = useState(() => {
+    return !sessionStorage.getItem('hasSeenInitialLoader');
+  });
+
   useEffect(() => {
     dispatch(fetchParts());
     fetchLiveReviews();
+
+    if (showInitialLoader) {
+      const timer = setTimeout(() => {
+        setShowInitialLoader(false);
+        sessionStorage.setItem('hasSeenInitialLoader', 'true');
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
   }, [dispatch]);
 
   const fetchLiveReviews = async () => {
@@ -241,8 +254,8 @@ export default function Home() {
     return cat.includes(act) || act.includes(cat);
   });
 
-  if (loading) {
-    return <AestheticLoader text="Loading Catalog..." />;
+  if (showInitialLoader) {
+    return <AestheticLoader text="Loading PartDoc Experience..." />;
   }
 
   return (
