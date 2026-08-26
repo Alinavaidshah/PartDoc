@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api, { getImageUrl } from '../api/axiosConfig';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Layers, Palette, Loader2, CheckCircle2, Upload, ChevronDown } from 'lucide-react';
+import { playSuccessSound } from '../utils/soundUtils';
 
 const PRESET_COLORS = [
   'Space Black', 'Silver', 'Space Gray', 'Midnight Blue', 'Gold', 'Rose Gold', 'Alpine White', 'Titanium', 'Red'
@@ -75,6 +76,7 @@ const EditPartModal = ({ isOpen, onClose, part, onUpdate }) => {
       });
       setLoading(false);
       setShowSuccess(true);
+      playSuccessSound();
       setTimeout(() => {
         setShowSuccess(false);
         if (onUpdate) onUpdate();

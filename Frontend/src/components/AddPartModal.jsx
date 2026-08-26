@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, CheckCircle, Loader2, ChevronDown, Layers, Palette, X } from 'lucide-react';
 import api from "../api/axiosConfig";
+import { playSuccessSound } from '../utils/soundUtils';
 
 const PRESET_COLORS = [
   'Space Black', 'Silver', 'Space Gray', 'Midnight Blue', 'Gold', 'Rose Gold', 'Alpine White', 'Titanium', 'Red'
@@ -69,6 +70,7 @@ const AddPartModal = ({ isOpen, onClose, onAdd }) => {
       });
       setLoading(false);
       setShowSuccess(true);
+      playSuccessSound();
       setTimeout(() => {
         resetForm();
         if (onAdd) onAdd();

@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, X } from 'lucide-react';
+import { playPopSound } from '../utils/soundUtils';
 
 const Toast = ({ message, type = 'success', isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
+      playPopSound();
       const timer = setTimeout(() => {
         onClose();
       }, 3500);
