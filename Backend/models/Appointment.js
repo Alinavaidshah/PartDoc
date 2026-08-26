@@ -49,6 +49,10 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    declineReason: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

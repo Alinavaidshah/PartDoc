@@ -475,6 +475,11 @@ const Appointment = () => {
                   </div>
                   <div className="text-xs text-slate-700">Device: <b>{statusData.deviceModel}</b></div>
                   <div className="text-xs text-slate-500">Date: {statusData.appointmentDate} at {statusData.appointmentTime}</div>
+                  {statusData.status === 'Denied' && statusData.declineReason && (
+                    <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl font-medium">
+                      <strong>Reason for Decline:</strong> {statusData.declineReason}
+                    </div>
+                  )}
                   <div className={`p-3 rounded-xl text-xs flex items-center gap-2 border ${getStatusDetails(statusData.status).color}`}>
                     {getStatusDetails(statusData.status).icon}
                     <span>{getStatusDetails(statusData.status).msg}</span>

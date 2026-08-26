@@ -24,6 +24,11 @@ const AdminAppointment = () => {
   const [savingPrice, setSavingPrice] = useState(false);
   const [priceNotice, setPriceNotice] = useState('');
 
+  // Decline Reason Modal State
+  const [declineModal, setDeclineModal] = useState(null); // { id, name, deviceModel }
+  const [declineReasonInput, setDeclineReasonInput] = useState('');
+  const [declining, setDeclining] = useState(false);
+
   // Sidebar collapse states
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -32,6 +37,26 @@ const AdminAppointment = () => {
     fetchAppointments();
     fetchSettings();
   }, []);
+
+  const handleConfirmDecline = async () => {
+    if (!declineModal) return;
+    setDeclining(true);
+    try {
+      const finalReason = declineReasonInput.trim() || 'Schedule or slot unavailability';
+      await api.put(`/appointments/${declineModal.id}/status`, {
+        status: 'Denied',
+        reason: finalReason
+      });
+
+      setAppointments(prev => prev.map(a => a._id === declineModal.id ? { ...a, status: 'Denied', declineReason: finalReason } : a));
+      setDeclineModal(null);
+      setDeclineReasonInput('');
+    } catch (err) {
+      alert("Failed to update status: " + (err.response?.data?.message || err.message));
+    } finally {
+      setDeclining(false);
+    }
+  };
 
   const fetchAppointments = async () => {
     try {
@@ -324,6 +349,12 @@ const AdminAppointment = () => {
                             </span>
                           )}
                         </div>
+
+                        {a.status === 'Denied' && a.declineReason && (
+                          <div style={{ marginTop: 8, fontSize: 11, background: '#fef2f2', color: '#991b1b', borderLeft: '3px solid #ef4444', padding: '4px 8px', borderRadius: 4 }}>
+                            <strong>Decline Reason:</strong> {a.declineReason}
+                          </div>
+                        )}
                       </div>
                       <div style={{ display: 'flex', gap: 16 }}>
                         {a.status !== 'Approved' && (
@@ -342,7 +373,11 @@ const AdminAppointment = () => {
                               size={22}
                               color="#ef4444"
                               style={{ cursor: 'pointer' }}
-                              onClick={(e) => { e.stopPropagation(); setConfirmModal({ id: a._id, type: 'status', status: 'Denied', color: '#ef4444', label: 'Deny' }); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeclineReasonInput('');
+                                setDeclineModal({ id: a._id, name: a.name, deviceModel: a.deviceModel });
+                              }}
                             />
                           </motion.div>
                         )}
@@ -402,7 +437,8 @@ const AdminAppointment = () => {
                   { l: 'Device', v: selectedAppt.deviceModel, icon: <Smartphone size={12} /> },
                   { l: 'Issue / Notes', v: selectedAppt.issueDescription, icon: <FileText size={12} /> },
                   { l: 'Date', v: selectedAppt.appointmentDate, icon: <Calendar size={12} /> },
-                  { l: 'Time', v: selectedAppt.appointmentTime, icon: <Clock size={12} /> }
+                  { l: 'Time', v: selectedAppt.appointmentTime, icon: <Clock size={12} /> },
+                  ...(selectedAppt.declineReason ? [{ l: 'Decline Reason', v: selectedAppt.declineReason, icon: <XCircle size={12} /> }] : [])
                 ].map((item, idx) => (
                   <motion.div
                     key={item.l}
@@ -413,9 +449,7 @@ const AdminAppointment = () => {
                     <div style={{ fontSize: 11, color: '#94a3b8', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
                       {item.icon} {item.l}
                     </div>
-                    <div style={{ padding: '8px 10px', background: '#f1f5f9', borderRadius: 8, fontSize: 14, color: '#1e293b' }}>
-                      {item.v || '—'}
-                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: item.l === 'Decline Reason' ? '#ef4444' : '#0f172a' }}>{item.v}</div>
                   </motion.div>
                 ))}
               </div>

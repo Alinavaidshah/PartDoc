@@ -1,6 +1,7 @@
 import Appointment from '../models/Appointment.js';
 import Settings from '../models/Settings.js';
 import sendEmail from '../utils/sendEmail.js';
+import sendWhatsAppMessage from '../utils/sendWhatsupp.js';
 
 // @desc    Create new appointment (Customer)
 // @route   POST /api/appointments
@@ -122,14 +123,17 @@ export const deleteAppointment = async (req, res) => {
 // @route   PUT /api/appointments/:id/status
 export const updateAppointmentStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, reason, declineReason } = req.body;
     const appointment = await Appointment.findById(req.params.id);
 
     if (appointment) {
       appointment.status = status || appointment.status;
+      if (reason || declineReason) {
+        appointment.declineReason = reason || declineReason;
+      }
       const updatedAppointment = await appointment.save();
 
-      // Email notification logic in complete English
+      // Send Email notification in complete English
       if (appointment.customerEmail) {
         let subject = '';
         let messageHtml = '';
@@ -141,7 +145,8 @@ export const updateAppointmentStatus = async (req, res) => {
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
               <h2 style="color: #16a34a;">Appointment Confirmed & Approved</h2>
               <p>Dear <b>${appointment.name}</b>,</p>
-              <p>Your appointment request for <b>${appointment.deviceModel}</b> on <b>${appointment.appointmentDate}</b> at <b>${appointment.appointmentTime}</b> has been <b>APPROVED</b>.</p>
+              <p>Your appointment request (Ticket <b>#${appointment._id}</b>) for <b>${appointment.deviceModel}</b> on <b>${appointment.appointmentDate}</b> at <b>${appointment.appointmentTime}</b> has been <b>APPROVED</b>.</p>
+              <p><b>Reported Issue:</b> ${appointment.issueDescription || 'Hardware/Software Check'}</p>
               ${isFaultTracing ? `<p><b>Service Type:</b> Doorstep Fault Tracing (Rs ${appointment.price})</p>` : ''}
               ${appointment.address ? `<p><b>Doorstep Address:</b> ${appointment.address}</p>` : ''}
               <p>Thank you for choosing PartDoc!</p>
@@ -149,13 +154,16 @@ export const updateAppointmentStatus = async (req, res) => {
             </div>
           `;
         } else if (status === 'Denied') {
-          subject = 'Appointment Status Update - PartDoc';
+          subject = 'Appointment Request Status Update - PartDoc';
           messageHtml = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #dc2626;">Appointment Request Update</h2>
+              <h2 style="color: #dc2626;">Appointment Request Declined</h2>
               <p>Dear <b>${appointment.name}</b>,</p>
-              <p>We regret to inform you that your appointment request for <b>${appointment.deviceModel}</b> on <b>${appointment.appointmentDate}</b> could not be approved at this time due to schedule or slot unavailability.</p>
-              <p>Please feel free to submit another time slot through our portal.</p>
+              <p>We regret to inform you that your appointment request (Ticket <b>#${appointment._id}</b>) for <b>${appointment.deviceModel}</b> has been <b>DECLINED</b>.</p>
+              <p style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 10px; margin: 15px 0;">
+                <b>Reason for Decline:</b> ${appointment.declineReason || 'Schedule or slot unavailability at selected date/time.'}
+              </p>
+              <p>Please feel free to submit another appointment request or contact our support team.</p>
               <p style="font-weight: bold; color: #4f46e5; margin-top: 20px;">Our team will contact you soon.</p>
             </div>
           `;
@@ -173,6 +181,15 @@ export const updateAppointmentStatus = async (req, res) => {
             console.error('❌ Email send fail :', emailError.message);
           }
         }
+      }
+
+      // Send WhatsApp Notification to customer's registered phone
+      if (appointment.phone) {
+        const whatsappMsg = status === 'Approved'
+          ? `📌 *PartDoc Appointment Approved!*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Date & Time:* ${appointment.appointmentDate} at ${appointment.appointmentTime}\n*Status:* APPROVED\n\nOur team will contact you soon.`
+          : `📌 *PartDoc Appointment Status Update*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Status:* DECLINED\n*Reason:* ${appointment.declineReason || 'Slot or technician unavailability'}\n\nOur team will contact you soon.`;
+
+        await sendWhatsAppMessage(appointment.phone, whatsappMsg);
       }
 
       res.json(updatedAppointment);
