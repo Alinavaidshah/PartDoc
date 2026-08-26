@@ -194,12 +194,30 @@ export const deletePart = async (req, res) => {
   }
 };
 
-// @desc    Create new review for a part
+// @desc    Create new review for a part or store
 // @route   POST /api/parts/:id/reviews
 export const createPartReview = async (req, res) => {
   try {
     const { name, rating, comment } = req.body;
-    const part = await Part.findById(req.params.id);
+    let partId = req.params.id;
+
+    let part;
+    if (!partId || partId === 'store' || partId === 'general') {
+      part = await Part.findOne();
+      if (!part) {
+        part = await Part.create({
+          name: 'PartDoc Store Feedback',
+          image: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80',
+          brand: 'PartDoc',
+          category: 'Service',
+          description: 'General store feedback & customer reviews',
+          price: 0,
+          countInStock: 99
+        });
+      }
+    } else {
+      part = await Part.findById(partId);
+    }
 
     if (part) {
       const review = {
@@ -218,6 +236,7 @@ export const createPartReview = async (req, res) => {
       res.status(404).json({ message: 'Part not found' });
     }
   } catch (error) {
+    console.error("Error creating review:", error);
     res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };

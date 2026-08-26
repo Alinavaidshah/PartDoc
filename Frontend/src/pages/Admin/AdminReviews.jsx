@@ -4,15 +4,20 @@ import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
 import { Star, Trash2, Loader2, AlertTriangle, MessageSquare, ExternalLink } from 'lucide-react';
 import api, { getImageUrl } from '../../api/axiosConfig';
+import { TOKENS, FONT_HEAD, FONT_BODY } from '../../constants';
 import { Link } from 'react-router-dom';
 
 const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Sidebar collapse states
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   // Delete modal state
   const [showModal, setShowModal] = useState(false);
-  const [targetReview, setTargetReview] = useState(null); // { partId, reviewId }
+  const [targetReview, setTargetReview] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
@@ -57,116 +62,115 @@ const AdminReviews = () => {
     : '5.0';
 
   return (
-    <div className="flex min-h-screen bg-slate-900 text-slate-100 font-sans">
-      <Sidebar />
+    <div style={{ display: "flex", minHeight: "100vh", background: TOKENS.bg, color: TOKENS.text, fontFamily: FONT_BODY }}>
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <Topbar title="Reviews & Moderation" />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+        <Topbar title="Reviews & Moderation" onMenuClick={() => setMobileOpen(true)} />
 
-        <main className="p-6 max-w-7xl w-full mx-auto space-y-6">
+        <main style={{ padding: 24, maxWidth: 1280, width: "100%", margin: "0 auto" }}>
           
           {/* Header & Metrics */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <div>
-              <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
-                <Star className="text-amber-400 fill-amber-400" size={24} />
-                Product Customer Reviews
+              <h1 style={{ fontFamily: FONT_HEAD, fontSize: 22, fontWeight: 700, margin: 0, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}>
+                <Star size={22} color={TOKENS.amber} fill={TOKENS.amber} />
+                Customer Product Reviews
               </h1>
-              <p className="text-slate-400 text-xs mt-1">Manage and moderate reviews submitted across all catalog products.</p>
+              <p style={{ fontSize: 12, color: TOKENS.textSub, margin: "4px 0 0 0" }}>Manage and moderate live reviews submitted across catalog products.</p>
             </div>
           </div>
 
           {/* Metric Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl">
-              <div className="text-xs text-slate-400 font-medium">Total Store Reviews</div>
-              <div className="text-2xl font-extrabold text-white mt-1">{totalReviews}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
+            <div style={{ background: TOKENS.cardBg, border: `1px solid ${TOKENS.cardBorder}`, padding: 18, borderRadius: 12 }}>
+              <div style={{ fontSize: 11, color: TOKENS.textSub, textTransform: "uppercase", fontWeight: 600 }}>Total Store Reviews</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginTop: 4, fontFamily: FONT_HEAD }}>{totalReviews}</div>
             </div>
 
-            <div className="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl">
-              <div className="text-xs text-slate-400 font-medium">5-Star Positive Ratings</div>
-              <div className="text-2xl font-extrabold text-emerald-400 mt-1">{fiveStarCount}</div>
+            <div style={{ background: TOKENS.cardBg, border: `1px solid ${TOKENS.cardBorder}`, padding: 18, borderRadius: 12 }}>
+              <div style={{ fontSize: 11, color: TOKENS.textSub, textTransform: "uppercase", fontWeight: 600 }}>5-Star Ratings</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: TOKENS.emerald, marginTop: 4, fontFamily: FONT_HEAD }}>{fiveStarCount}</div>
             </div>
 
-            <div className="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl">
-              <div className="text-xs text-slate-400 font-medium">Average Store Rating</div>
-              <div className="text-2xl font-extrabold text-amber-400 mt-1">{avgRating} / 5.0</div>
+            <div style={{ background: TOKENS.cardBg, border: `1px solid ${TOKENS.cardBorder}`, padding: 18, borderRadius: 12 }}>
+              <div style={{ fontSize: 11, color: TOKENS.textSub, textTransform: "uppercase", fontWeight: 600 }}>Average Rating</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: TOKENS.amber, marginTop: 4, fontFamily: FONT_HEAD }}>{avgRating} / 5.0</div>
             </div>
           </div>
 
-          {/* Reviews Table */}
-          <div className="bg-slate-800/90 border border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+          {/* Table Container */}
+          <div style={{ background: TOKENS.cardBg, border: `1px solid ${TOKENS.cardBorder}`, borderRadius: 14, overflow: "hidden", boxShadow: "0 8px 24px rgba(0,0,0,0.3)" }}>
             {loading ? (
-              <div className="flex items-center justify-center py-20 text-slate-400 gap-2 text-sm">
-                <Loader2 className="animate-spin" size={20} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 60, color: TOKENS.textSub, gap: 8, fontSize: 13 }}>
+                <Loader2 className="animate-spin" size={18} />
                 Loading Product Reviews...
               </div>
             ) : reviews.length === 0 ? (
-              <div className="py-20 text-center text-slate-400 text-sm">
-                <MessageSquare className="mx-auto mb-2 text-slate-500" size={32} />
+              <div style={{ textAlign: "center", padding: 60, color: TOKENS.textSub, fontSize: 13 }}>
+                <MessageSquare style={{ margin: "0 auto 8px auto", opacity: 0.5 }} size={32} />
                 No customer reviews submitted yet.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-900/60 border-b border-slate-700 text-slate-400 uppercase font-mono">
-                    <tr>
-                      <th className="py-3.5 px-4">Product</th>
-                      <th className="py-3.5 px-4">Customer Name</th>
-                      <th className="py-3.5 px-4">Rating</th>
-                      <th className="py-3.5 px-4">Review Comment</th>
-                      <th className="py-3.5 px-4">Date</th>
-                      <th className="py-3.5 px-4 text-right">Action</th>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ background: "rgba(0,0,0,0.3)", borderBottom: `1px solid ${TOKENS.cardBorder}`, color: TOKENS.textSub, fontSize: 11, textTransform: "uppercase", fontFamily: FONT_HEAD }}>
+                      <th style={{ padding: "14px 16px" }}>Product</th>
+                      <th style={{ padding: "14px 16px" }}>Customer Name</th>
+                      <th style={{ padding: "14px 16px" }}>Rating</th>
+                      <th style={{ padding: "14px 16px" }}>Review Comment</th>
+                      <th style={{ padding: "14px 16px" }}>Date</th>
+                      <th style={{ padding: "14px 16px", textAlign: "right" }}>Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-700/50 font-medium">
+                  <tbody>
                     {reviews.map((rev) => (
-                      <tr key={rev._id} className="hover:bg-slate-700/30 transition-colors">
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
+                      <tr key={rev._id} style={{ borderBottom: `1px solid ${TOKENS.sidebarLine}` }}>
+                        <td style={{ padding: "14px 16px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                             <img
                               src={getImageUrl(rev.partImage)}
                               alt={rev.partName}
-                              className="w-10 h-10 rounded-lg bg-slate-900 object-cover border border-slate-700"
-                              onError={(e) => e.target.src = 'https://via.placeholder.com/40'}
+                              style={{ width: 38, height: 38, borderRadius: 8, objectFit: "cover", background: "#000", border: `1px solid ${TOKENS.cardBorder}` }}
+                              onError={(e) => e.target.src = 'https://via.placeholder.com/38'}
                             />
                             <div>
-                              <Link to={`/product/${rev.partId}`} target="_blank" className="font-bold text-white hover:text-amber-400 flex items-center gap-1">
+                              <Link to={`/product/${rev.partId}`} target="_blank" style={{ color: "#fff", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
                                 {rev.partName}
-                                <ExternalLink size={12} className="text-slate-500" />
+                                <ExternalLink size={12} style={{ opacity: 0.6 }} />
                               </Link>
-                              <span className="text-[10px] text-slate-500 font-mono">ID: #{rev.partId?.slice(-6)}</span>
                             </div>
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 font-bold text-white">
+                        <td style={{ padding: "14px 16px", color: "#fff", fontWeight: 600 }}>
                           {rev.name}
                         </td>
 
-                        <td className="py-3.5 px-4">
-                          <div className="flex text-amber-400 gap-0.5">
+                        <td style={{ padding: "14px 16px" }}>
+                          <div style={{ display: "flex", color: TOKENS.amber, gap: 2 }}>
                             {[1, 2, 3, 4, 5].map(s => (
-                              <Star key={s} size={12} className={s <= rev.rating ? "fill-amber-400" : "text-slate-600"} />
+                              <Star key={s} size={13} fill={s <= rev.rating ? TOKENS.amber : "none"} color={s <= rev.rating ? TOKENS.amber : "#4A4E58"} />
                             ))}
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 max-w-xs text-slate-300 leading-relaxed">
+                        <td style={{ padding: "14px 16px", color: TOKENS.textSub, maxWidth: 300 }}>
                           "{rev.comment}"
                         </td>
 
-                        <td className="py-3.5 px-4 text-slate-400 font-mono text-[11px]">
+                        <td style={{ padding: "14px 16px", color: TOKENS.textSub, fontSize: 11, fontFamily: "monospace" }}>
                           {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'N/A'}
                         </td>
 
-                        <td className="py-3.5 px-4 text-right">
+                        <td style={{ padding: "14px 16px", textAlign: "right" }}>
                           <button
                             onClick={() => openDeleteModal(rev.partId, rev._id)}
-                            className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors"
+                            style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)", color: "#EF4444", padding: "6px 10px", borderRadius: 8, cursor: "pointer" }}
                             title="Delete Review"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                           </button>
                         </td>
                       </tr>
@@ -183,17 +187,17 @@ const AdminReviews = () => {
       {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowModal(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative z-10 bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-2xl max-w-sm w-full">
-              <div className="flex items-center gap-3 text-rose-400 mb-3">
-                <AlertTriangle size={24} />
-                <h3 className="font-bold text-white text-base">Delete Review?</h3>
+          <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowModal(false)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }} />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} style={{ position: "relative", zIndex: 10, background: TOKENS.cardBg, border: `1px solid ${TOKENS.cardBorder}`, padding: 24, borderRadius: 16, maxWidth: 360, width: "100%", boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#EF4444", marginBottom: 12 }}>
+                <AlertTriangle size={22} />
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff", fontFamily: FONT_HEAD }}>Delete Review?</h3>
               </div>
-              <p className="text-slate-300 text-xs mb-6">Are you sure you want to delete this review? This action cannot be undone.</p>
-              <div className="flex gap-3 justify-end">
-                <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-600">Cancel</button>
-                <button onClick={confirmDelete} disabled={deleting} className="px-4 py-2 bg-rose-600 text-white text-xs font-bold rounded-xl hover:bg-rose-700 flex items-center gap-1.5">
+              <p style={{ fontSize: 13, color: TOKENS.textSub, margin: "0 0 20px 0", lineHeight: 1.5 }}>Are you sure you want to delete this customer review? This action cannot be undone.</p>
+              <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                <button onClick={() => setShowModal(false)} style={{ background: TOKENS.sidebarSoft, border: "none", color: "#fff", padding: "9px 16px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+                <button onClick={confirmDelete} disabled={deleting} style={{ background: "#EF4444", border: "none", color: "#fff", padding: "9px 16px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
                   {deleting ? <Loader2 className="animate-spin" size={14} /> : <Trash2 size={14} />}
                   <span>{deleting ? 'Deleting...' : 'Delete'}</span>
                 </button>

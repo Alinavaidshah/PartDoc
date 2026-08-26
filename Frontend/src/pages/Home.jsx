@@ -150,13 +150,25 @@ export default function Home() {
   const [calcPart, setCalcPart] = useState("GPU");
 
   // Reviews State
-  const [reviewsList, setReviewsList] = useState(INITIAL_REVIEWS);
+  const [reviewsList, setReviewsList] = useState([]);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: "", role: "Customer", location: "Pakistan", text: "", rating: 5 });
 
   useEffect(() => {
     dispatch(fetchParts());
+    fetchLiveReviews();
   }, [dispatch]);
+
+  const fetchLiveReviews = async () => {
+    try {
+      const res = await api.get('/parts/reviews/all');
+      if (Array.isArray(res.data)) {
+        setReviewsList(res.data);
+      }
+    } catch (err) {
+      console.error("Error fetching live reviews:", err);
+    }
+  };
 
   const displayParts = (fetchedParts && fetchedParts.length > 0) ? fetchedParts : MOCK_PRODUCTS;
 
@@ -175,26 +187,27 @@ export default function Home() {
     setTimeout(() => setAddedItem(null), 1800);
   };
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!newReview.name || !newReview.text) return;
 
-    const initials = newReview.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U';
-    const createdReview = {
-      id: Date.now(),
-      name: newReview.name,
-      location: newReview.location || "Pakistan",
-      role: newReview.role || "Verified Customer",
-      text: newReview.text,
-      rating: Number(newReview.rating),
-      avatar: initials
-    };
+    try {
+      await api.post('/parts/store/reviews', {
+        name: newReview.name,
+        rating: Number(newReview.rating),
+        comment: newReview.text
+      });
 
-    setReviewsList([createdReview, ...reviewsList]);
-    setReviewModalOpen(false);
-    setNewReview({ name: "", role: "Customer", location: "Pakistan", text: "", rating: 5 });
-    setToastMsg("Thank you! Your review has been published.");
-    setShowToast(true);
+      setReviewModalOpen(false);
+      setNewReview({ name: "", role: "Customer", location: "Pakistan", text: "", rating: 5 });
+      setToastMsg("Thank you! Your review has been saved and published.");
+      setShowToast(true);
+
+      // Refresh live reviews from DB
+      fetchLiveReviews();
+    } catch (err) {
+      alert("Error posting review: " + (err.response?.data?.message || err.message));
+    }
   };
 
   // Estimator Data
@@ -625,30 +638,42 @@ export default function Home() {
         </div>
 
         {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {reviewsList.map((rev) => (
-            <div key={rev.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-              <div>
-                <div className="flex gap-1 text-amber-400 mb-3">
-                  {[...Array(rev.rating)].map((_, i) => (
-                    <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-slate-600 text-xs leading-relaxed mb-6">"{rev.text}"</p>
-              </div>
+        {reviewsList.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 text-slate-500 text-xs">
+            No live customer reviews submitted yet. Click "Write A Review" to be the first!
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {reviewsList.slice(0, 6).map((rev, idx) => {
+              const text = rev.comment || rev.text;
+              const initials = rev.name ? rev.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'U';
+              return (
+                <div key={rev._id || idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="flex gap-1 text-amber-400 mb-3">
+                      {[...Array(Number(rev.rating) || 5)].map((_, i) => (
+                        <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 text-xs leading-relaxed mb-6">"{text}"</p>
+                  </div>
 
-              <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
-                <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center">
-                  {rev.avatar}
+                  <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
+                    <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center">
+                      {initials}
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-xs">{rev.name}</div>
+                      <div className="text-[10px] text-slate-400">
+                        {rev.partName ? `Review on ${rev.partName}` : 'Verified Customer'}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="font-bold text-slate-900 text-xs">{rev.name}</div>
-                  <div className="text-[10px] text-slate-400">{rev.role} · {rev.location}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* ========================================================================= */}
