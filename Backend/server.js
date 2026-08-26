@@ -5,8 +5,8 @@ import path from 'path';
 import mongoose from 'mongoose';
 import connectDB from './config/db.js';
 import User from './models/User.js'; 
-import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
+
+// Security Imports
 import helmet from 'helmet';
 
 // Routes Import
@@ -24,24 +24,16 @@ dotenv.config();
 
 const app = express();
 
-// Trust Proxy for Cloud Hosting (Vercel, Render)
+// Security Config
 app.set('trust proxy', 1); 
-
-// 1. HELMET SECURITY HEADERS
 app.use(
   helmet({
     crossOriginResourcePolicy: false, 
     crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      directives: {
-        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "https:", "data:", "http://localhost:5000"],
-      },
-    },
+    contentSecurityPolicy: false,
   })
 );
 
-// 2. CORS PROTECTION
 app.use(cors({
   origin: true,
   credentials: true,
@@ -49,31 +41,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 })); 
 
-// 3. PAYLOAD LIMITERS (Prevent Memory Crashes)
-app.use(express.json({ limit: '10kb' })); 
-app.use(express.urlencoded({ extended: true, limit: '10kb' })); 
-
-// 4. NOSQL INJECTION SANITIZATION (Strips out $ and . characters from user inputs)
-app.use(mongoSanitize());
-
-// 5. SECURITY RATE LIMITERS (Anti-DDOS & Anti-Bruteforce)
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300, // Max 300 requests per IP per 15 minutes
-  message: { message: "Too many requests from this IP, please try again after 15 minutes." }
-});
-
-const writeLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 40, // Max 40 write operations per 15 mins
-  message: { message: "Action limit exceeded. Please wait before submitting more requests." }
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 15, // Max 15 login attempts per 15 mins
-  message: { message: "Too many authentication attempts. Account protected." }
-});
+app.use(express.json({ limit: '10mb' })); 
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); 
 
 // Static folder
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
@@ -88,19 +57,16 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Apply Global Rate Limiter
-app.use(globalLimiter);
-
-// --- SECURE ROUTES ---
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/orders', writeLimiter, orderRoutes);
-app.use('/api/appointments', writeLimiter, appointmentRoutes);
-app.use('/api/payments', writeLimiter, paymentRoutes);
+// --- ROUTES ---
+app.use('/api/orders', orderRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/parts', partRoutes);
 app.use('/api/users', userRoutes);
 
 // Sync Route
-app.post('/api/users/sync', writeLimiter, async (req, res) => {
+app.post('/api/users/sync', async (req, res) => {
   const { clerkId, email, name } = req.body;
   try {
     let user = await User.findOne({ clerkId });
@@ -113,14 +79,15 @@ app.post('/api/users/sync', writeLimiter, async (req, res) => {
     }
     res.status(200).json({ success: true, user });
   } catch (error) {
-    res.status(500).json({ success: false, error: "Sync failed" });
+    console.error("User Sync Error:", error);
+    res.status(500).json({ success: false, error: "Sync failed: " + error.message });
   }
 });
 
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'PartDoc Secure Backend API is operational & protected!',
+    message: 'PartDoc Server is running smoothly!',
     dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
   });
 });
@@ -128,10 +95,10 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-// --- SERVER START ---
+// --- VERCEL COMPATIBILITY ---
 if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`🚀 Secure Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 }
 
 export default app;

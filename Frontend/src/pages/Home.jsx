@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AestheticLoader from "../components/AestheticLoader";
 import Toast from "../components/Toast";
 import PartCard from "../components/PartCard";
-import { getImageUrl } from "../api/axiosConfig";
+import api, { getImageUrl } from "../api/axiosConfig";
 import {
   Search,
   ArrowRight,

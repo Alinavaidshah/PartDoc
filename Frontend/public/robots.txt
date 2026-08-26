@@ -1,0 +1,13 @@
+# PartDoc Robots.txt
+User-agent: *
+Allow: /
+Allow: /computerparts
+Allow: /mobileparts
+Allow: /appointment
+Allow: /product/*
+
+# Disallow indexing private admin panel
+Disallow: /admin/
+Disallow: /admin/*
+
+Sitemap: https://www.partdoc.com/sitemap.xml
