@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { TOKENS, FONT_HEAD, FONT_BODY } from "../constants";
 import { 
-  LayoutDashboard, CalendarClock, PackageSearch, Users, Wrench, ChevronLeft 
+  LayoutDashboard, CalendarClock, PackageSearch, Users, Wrench, ChevronLeft, Star 
 } from "lucide-react";
 
 export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, badges }) {
@@ -12,6 +12,7 @@ const items = [
     { key: "inventory", label: "Inventory", icon: PackageSearch, path: "/admin/inventory", badge: badges?.inventory },
     { key: "customers", label: "Customers", icon: Users, path: "/admin/customers" },
     { key: "orders", label: "Orders", icon: Wrench, path: "/admin/orders" }, 
+    { key: "reviews", label: "Reviews", icon: Star, path: "/admin/reviews" },
   ];
   const width = collapsed ? 76 : 244;
 

@@ -8,17 +8,27 @@ import {
   updatePart, 
   deletePart,
   getLowStockParts,
-  seedParts
+  seedParts,
+  createPartReview,
+  getAllReviews,
+  deletePartReview
 } from '../controllers/partController.js';
 
 const router = express.Router();
 
 router.get('/seed', seedParts);
 router.route('/low-stock').get(protect, admin, getLowStockParts);
+router.route('/reviews/all').get(protect, admin, getAllReviews);
 
 router.route('/')
   .get(getParts) 
   .post(protect, admin, uploadCloud.single('image'), createPart); // Cloudinary upload middleware
+
+router.route('/:id/reviews')
+  .post(createPartReview);
+
+router.route('/:id/reviews/:reviewId')
+  .delete(protect, admin, deletePartReview);
 
 router.route('/:id')
   .get(getPartById)

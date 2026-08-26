@@ -193,3 +193,85 @@ export const deletePart = async (req, res) => {
     res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };
+
+// @desc    Create new review for a part
+// @route   POST /api/parts/:id/reviews
+export const createPartReview = async (req, res) => {
+  try {
+    const { name, rating, comment } = req.body;
+    const part = await Part.findById(req.params.id);
+
+    if (part) {
+      const review = {
+        name: name || 'Anonymous Customer',
+        rating: Number(rating) || 5,
+        comment: comment || '',
+      };
+
+      part.reviews.push(review);
+      part.numReviews = part.reviews.length;
+      part.rating = part.reviews.reduce((acc, item) => item.rating + acc, 0) / part.reviews.length;
+
+      await part.save();
+      res.status(201).json({ message: 'Review added successfully', reviews: part.reviews, rating: part.rating, numReviews: part.numReviews });
+    } else {
+      res.status(404).json({ message: 'Part not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: ' + error.message });
+  }
+};
+
+// @desc    Get all reviews across all parts (Admin)
+// @route   GET /api/parts/reviews/all
+export const getAllReviews = async (req, res) => {
+  try {
+    const parts = await Part.find({ 'reviews.0': { $exists: true } });
+    let allReviews = [];
+
+    parts.forEach(part => {
+      part.reviews.forEach(review => {
+        allReviews.push({
+          _id: review._id,
+          partId: part._id,
+          partName: part.name,
+          partImage: part.image,
+          name: review.name,
+          rating: review.rating,
+          comment: review.comment,
+          createdAt: review.createdAt
+        });
+      });
+    });
+
+    // Sort newest first
+    allReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json(allReviews);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: ' + error.message });
+  }
+};
+
+// @desc    Delete a review from a part (Admin)
+// @route   DELETE /api/parts/:partId/reviews/:reviewId
+export const deletePartReview = async (req, res) => {
+  try {
+    const { partId, reviewId } = req.params;
+    const part = await Part.findById(partId);
+
+    if (part) {
+      part.reviews = part.reviews.filter(r => r._id.toString() !== reviewId);
+      part.numReviews = part.reviews.length;
+      part.rating = part.reviews.length > 0
+        ? part.reviews.reduce((acc, item) => item.rating + acc, 0) / part.reviews.length
+        : 5;
+
+      await part.save();
+      res.json({ message: 'Review deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'Part not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: ' + error.message });
+  }
+};

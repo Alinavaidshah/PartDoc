@@ -27,6 +27,7 @@ import AdminAppointment from './pages/Admin/AdminAppointment';
 import AdminOrder from './pages/Admin/AdminOrder';
 import AdminInventory from './pages/Admin/AdminInventory'; 
 import AdminCustomers from './pages/Admin/AdminCustomers';
+import AdminReviews from './pages/Admin/AdminReviews';
 
 import './index.css';
 
@@ -57,6 +58,9 @@ function App() {
           } /> 
           <Route path="/admin/customers" element={
             <ProtectedRoute><AdminCustomers /></ProtectedRoute>
+          } />
+          <Route path="/admin/reviews" element={
+            <ProtectedRoute><AdminReviews /></ProtectedRoute>
           } />
 
           {/* Main Website Routes */}

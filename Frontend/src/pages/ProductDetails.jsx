@@ -5,7 +5,7 @@ import { addToCart } from '../features/cart/cartSlice';
 import {
   Truck, ShieldCheck, Star, Package, RefreshCw, Minus, Plus, Heart,
   Share2, ShoppingBag, Check, Zap, Wrench, ChevronRight, AlertCircle,
-  CheckCircle2, ArrowRight
+  CheckCircle2, ArrowRight, MessageSquarePlus, User, CornerDownRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
@@ -19,29 +19,60 @@ export default function ProductDetails() {
   const [part, setPart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
   const [qty, setQty] = useState(1);
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
 
-  // Options State
-  const [selectedVariant, setSelectedVariant] = useState('OEM Grade');
-  const [selectedWarranty, setSelectedWarranty] = useState('Standard (Free)');
-  const [activeTab, setActiveTab] = useState('specs');
+  // User Specified Options
+  const [selectedGrade, setSelectedGrade] = useState('Refurbished (Grade A)');
+  const [selectedColor, setSelectedColor] = useState('Space Black');
+  const [activeTab, setActiveTab] = useState('reviews'); // 'reviews' | 'specs'
+
+  // Live Review Form State
+  const [reviewForm, setReviewForm] = useState({ name: '', rating: 5, comment: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(`/parts/${id}`);
-        setPart(response.data);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProduct();
   }, [id]);
+
+  const fetchProduct = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/parts/${id}`);
+      const data = response.data;
+      setPart(data);
+      if (data.colors && data.colors.length > 0) {
+        setSelectedColor(data.colors[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewForm.name || !reviewForm.comment) return;
+
+    setSubmittingReview(true);
+    try {
+      const res = await api.post(`/parts/${id}/reviews`, reviewForm);
+      setToastMsg("Review submitted successfully!");
+      setShowToast(true);
+      setReviewForm({ name: '', rating: 5, comment: '' });
+
+      // Refresh product data live from backend DB
+      const updated = await api.get(`/parts/${id}`);
+      setPart(updated.data);
+    } catch (err) {
+      alert("Error submitting review: " + (err.response?.data?.message || err.message));
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   if (loading) {
     return <AestheticLoader text="Loading Specifications..." />;
@@ -61,40 +92,37 @@ export default function ProductDetails() {
   }
 
   const basePrice = Number(part.price) || 0;
-  const warrantyCost = selectedWarranty.includes('1-Year') ? 2500 : selectedWarranty.includes('2-Year') ? 4800 : 0;
-  const unitPrice = basePrice + warrantyCost;
+
+  // Grade Options: Refurbished (Grade A) = Base Price, Brand New (Official Warranty) = +PKR 5,000
+  const isBrandNew = selectedGrade.includes('Brand New');
+  const gradeExtraCost = isBrandNew ? 5000 : 0;
+  const unitPrice = basePrice + gradeExtraCost;
   const totalPrice = unitPrice * qty;
   const inStock = (part.countInStock || 0) > 0;
 
-  const VARIANTS = [
-    { id: 'OEM Grade', label: 'OEM Grade Original' },
-    { id: 'Tested A+', label: 'Pre-Tested Grade A+' },
-    { id: 'Sealed New', label: 'Factory Sealed Box' }
-  ];
-
-  const WARRANTY_OPTIONS = [
-    { id: 'Standard (Free)', label: 'Standard Warranty (Included)' },
-    { id: '1-Year Extended (+PKR 2,500)', label: '1-Year Comprehensive (+PKR 2,500)' },
-    { id: '2-Year Priority (+PKR 4,800)', label: '2-Year Priority (+PKR 4,800)' }
-  ];
+  const defaultColors = part.colors && part.colors.length > 0 ? part.colors : ['Space Black', 'Silver', 'Graphite'];
 
   const handleAddToCart = () => {
     dispatch(addToCart({
       ...part,
       price: unitPrice,
-      variant: selectedVariant,
-      warrantyOption: selectedWarranty,
+      selectedGrade,
+      selectedColor,
+      warrantyOption: isBrandNew ? 'Company Official Manufacturer Warranty' : 'Standard 1 Year Warranty',
       qty
     }));
+    setToastMsg(`${part.name} added to cart!`);
     setShowToast(true);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
+  const reviewsList = part.reviews || [];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-28 pb-20 px-4 sm:px-8">
       
-      <Toast message={`${part.name} added to cart!`} isOpen={showToast} onClose={() => setShowToast(false)} />
+      <Toast message={toastMsg} isOpen={showToast} onClose={() => setShowToast(false)} />
 
       <div className="max-w-6xl mx-auto">
 
@@ -140,12 +168,12 @@ export default function ProductDetails() {
 
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 font-mono">
                 <span>SKU: #{part._id?.slice(-8).toUpperCase()}</span>
-                <span className="text-emerald-600 font-bold">100% Genuine Serial Verified</span>
+                <span className="text-emerald-600 font-bold">100% Verified Serial</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: DETAILS */}
+          {/* RIGHT: DETAILS & DYNAMIC OPTIONS */}
           <div className="lg:col-span-6 flex flex-col justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-2 block">
@@ -155,53 +183,80 @@ export default function ProductDetails() {
                 {part.name}
               </h1>
 
+              {/* Rating Summary */}
               <div className="flex items-center gap-2 mb-6">
                 <div className="flex text-amber-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} className="fill-amber-400" />)}
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <Star key={i} size={16} className={i <= Math.round(part.rating || 5) ? "fill-amber-400" : "text-slate-300"} />
+                  ))}
                 </div>
-                <span className="text-xs font-bold text-slate-700">4.9</span>
-                <span className="text-xs text-slate-400">(128 Verified Buyer Reviews)</span>
+                <span className="text-xs font-bold text-slate-700">{(part.rating || 5).toFixed(1)}</span>
+                <span className="text-xs text-slate-400">({part.numReviews || reviewsList.length} Live Reviews)</span>
               </div>
 
               <p className="text-slate-600 text-sm leading-relaxed mb-6">
                 {part.description || "Authentic high-performance spare component with official serial verification."}
               </p>
 
-              {/* VARIANT OPTIONS */}
+              {/* 1. GRADE OPTIONS (ONLY 2 OPTIONS: Refurbished auto-selected, Brand New with extra cost & company warranty) */}
               <div className="mb-6">
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">Grade Option</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {VARIANTS.map(v => (
-                    <button
-                      key={v.id}
-                      onClick={() => setSelectedVariant(v.id)}
-                      className={`p-3 rounded-xl border text-xs font-bold text-center transition-all ${
-                        selectedVariant === v.id
-                          ? 'bg-indigo-50 border-indigo-600 text-indigo-700 shadow-sm'
-                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                      }`}
-                    >
-                      {v.label}
-                    </button>
-                  ))}
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                  1. Select Condition & Warranty Grade
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  
+                  {/* Option A: Refurbished Grade A (Default) */}
+                  <button
+                    onClick={() => setSelectedGrade('Refurbished (Grade A)')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      selectedGrade === 'Refurbished (Grade A)'
+                        ? 'bg-indigo-50 border-indigo-600 text-indigo-900 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="text-xs font-extrabold flex items-center justify-between">
+                      <span>Refurbished (Grade A)</span>
+                      {selectedGrade === 'Refurbished (Grade A)' && <CheckCircle2 size={14} className="text-indigo-600" />}
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">Base Price · 1 Year Standard Warranty Included</div>
+                  </button>
+
+                  {/* Option B: Brand New (Official Warranty) */}
+                  <button
+                    onClick={() => setSelectedGrade('Brand New (Official Warranty)')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      selectedGrade === 'Brand New (Official Warranty)'
+                        ? 'bg-indigo-50 border-indigo-600 text-indigo-900 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="text-xs font-extrabold flex items-center justify-between">
+                      <span>Brand New (Sealed)</span>
+                      <span className="text-indigo-600 font-bold">+PKR 5,000</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">Official Company Manufacturer Warranty</div>
+                  </button>
+
                 </div>
               </div>
 
-              {/* WARRANTY OPTIONS */}
+              {/* 2. COLOR OPTIONS */}
               <div className="mb-6">
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">Warranty Plan</label>
-                <div className="space-y-2">
-                  {WARRANTY_OPTIONS.map(w => (
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                  2. Select Color Variant
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {defaultColors.map(color => (
                     <button
-                      key={w.id}
-                      onClick={() => setSelectedWarranty(w.id)}
-                      className={`w-full p-3 rounded-xl border text-xs font-bold text-left flex justify-between transition-all ${
-                        selectedWarranty === w.id
-                          ? 'bg-indigo-50 border-indigo-600 text-indigo-700 shadow-sm'
-                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
+                        selectedColor === color
+                          ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <span>{w.label}</span>
+                      {color}
                     </button>
                   ))}
                 </div>
@@ -210,12 +265,16 @@ export default function ProductDetails() {
               {/* DYNAMIC PRICE & QTY */}
               <div className="bg-white border border-slate-200 p-5 rounded-2xl mb-6 flex items-center justify-between shadow-sm">
                 <div>
-                  <div className="text-xs text-slate-400 font-semibold">Total Price</div>
+                  <div className="text-xs text-slate-400 font-semibold">Total Price ({qty} unit{qty > 1 ? 's' : ''})</div>
                   <div className="font-grotesk text-3xl font-extrabold text-slate-900 mt-0.5">
                     PKR {totalPrice.toLocaleString()}
                   </div>
+                  <div className="text-[11px] text-emerald-600 font-semibold mt-1">
+                    ✓ {isBrandNew ? 'Official Company Warranty Included' : '1 Year Standard Warranty Included'}
+                  </div>
                 </div>
 
+                {/* Quantity Controls */}
                 {inStock && (
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-slate-500 font-bold">Qty:</span>
@@ -268,65 +327,113 @@ export default function ProductDetails() {
 
         </div>
 
-        {/* TABBED DETAILS */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-          <div className="flex border-b border-slate-200 gap-6 mb-6">
-            {[
-              { id: 'specs', label: 'Technical Specifications' },
-              { id: 'reviews', label: 'Customer Reviews (128)' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 text-xs sm:text-sm font-bold transition-all border-b-2 ${
-                  activeTab === tab.id
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+        {/* LIVE REVIEWS & SUBMISSION SECTION */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-12">
+          
+          <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+            <div>
+              <h2 className="font-grotesk font-extrabold text-slate-900 text-xl flex items-center gap-2">
+                <MessageSquarePlus className="text-indigo-600" size={20} />
+                Customer Reviews & Ratings ({reviewsList.length})
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">Live customer feedback submitted directly from buyers.</p>
+            </div>
+            <div className="flex items-center gap-1 text-amber-500 font-extrabold text-sm bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl">
+              <Star size={16} className="fill-amber-400" />
+              <span>{(part.rating || 5).toFixed(1)} / 5.0</span>
+            </div>
           </div>
 
-          {activeTab === 'specs' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between">
-                <span className="text-slate-500">Manufacturer Brand:</span>
-                <span className="font-bold text-slate-900">{part.brand || 'Official'}</span>
-              </div>
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between">
-                <span className="text-slate-500">Category:</span>
-                <span className="font-bold text-slate-900">{part.category || 'Hardware'}</span>
-              </div>
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between">
-                <span className="text-slate-500">Condition:</span>
-                <span className="font-bold text-emerald-600">100% Brand New</span>
-              </div>
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between">
-                <span className="text-slate-500">Selected Warranty:</span>
-                <span className="font-bold text-slate-900">{selectedWarranty}</span>
-              </div>
-            </div>
-          )}
+          {/* SUBMIT REVIEW FORM FOR THIS PRODUCT */}
+          <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl mb-8">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 mb-3">
+              Write A Review For {part.name}
+            </h3>
+            <form onSubmit={handleReviewSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Your Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={reviewForm.name}
+                    onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
+                    placeholder="Enter your full name"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 outline-none focus:border-indigo-600"
+                  />
+                </div>
 
-          {activeTab === 'reviews' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { name: "Ali Ahmed", text: "Original product, working perfectly." },
-                { name: "Sara Khan", text: "Fast delivery and genuine quality." },
-                { name: "Bilal Raza", text: "Best price for OEM parts." }
-              ].map((r, i) => (
-                <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                  <div className="flex text-amber-400 mb-2">
-                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={12} className="fill-amber-400" />)}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Rating (1 to 5 Stars)</label>
+                  <div className="flex gap-2 items-center pt-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                        className="focus:outline-none"
+                      >
+                        <Star size={22} className={star <= reviewForm.rating ? "fill-amber-400 text-amber-400" : "text-slate-300"} />
+                      </button>
+                    ))}
+                    <span className="text-xs font-bold text-slate-700 ml-2">{reviewForm.rating} Stars</span>
                   </div>
-                  <p className="text-slate-700 text-xs mb-2">"{r.text}"</p>
-                  <p className="font-bold text-[10px] text-slate-400 uppercase">{r.name}</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Your Review Comment *</label>
+                <textarea
+                  required
+                  rows="3"
+                  value={reviewForm.comment}
+                  onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                  placeholder="Share details about performance, packaging, or compatibility..."
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 outline-none focus:border-indigo-600 resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-sm transition-all"
+              >
+                {submittingReview ? "Submitting..." : "Submit Review"}
+              </button>
+            </form>
+          </div>
+
+          {/* LIVE REVIEWS DISPLAY GRID */}
+          {reviewsList.length === 0 ? (
+            <div className="text-center py-8 text-slate-400 text-xs">
+              No reviews submitted yet for this product. Be the first to write a review above!
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {reviewsList.map((rev, i) => (
+                <div key={rev._id || i} className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-bold text-slate-900 text-xs flex items-center gap-2">
+                        <User size={14} className="text-indigo-600" />
+                        {rev.name}
+                      </div>
+                      <div className="flex text-amber-400">
+                        {[1, 2, 3, 4, 5].map(s => (
+                          <Star key={s} size={12} className={s <= rev.rating ? "fill-amber-400 text-amber-400" : "text-slate-300"} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-slate-700 text-xs leading-relaxed">"{rev.comment}"</p>
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-3 pt-2 border-t border-slate-200">
+                    Verified Customer · {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Just now'}
+                  </div>
                 </div>
               ))}
             </div>
           )}
+
         </div>
 
       </div>
