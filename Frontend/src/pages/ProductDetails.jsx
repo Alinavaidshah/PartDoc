@@ -92,22 +92,22 @@ export default function ProductDetails() {
   }
 
   const basePrice = Number(part.price) || 0;
+  const refurbPrice = part.refurbishedPrice ? Number(part.refurbishedPrice) : basePrice;
+  const brandNewPrice = part.brandNewPrice ? Number(part.brandNewPrice) : (basePrice + 5000);
 
-  // Grade Options: Refurbished (Grade A) = Base Price, Brand New (Official Warranty) = +PKR 5,000
   const isBrandNew = selectedGrade.includes('Brand New');
-  const gradeExtraCost = isBrandNew ? 5000 : 0;
-  const unitPrice = basePrice + gradeExtraCost;
+  const unitPrice = part.hasGrades !== false ? (isBrandNew ? brandNewPrice : refurbPrice) : basePrice;
   const totalPrice = unitPrice * qty;
   const inStock = (part.countInStock || 0) > 0;
 
-  const defaultColors = part.colors && part.colors.length > 0 ? part.colors : ['Space Black', 'Silver', 'Graphite'];
+  const defaultColors = part.colors && part.colors.length > 0 ? part.colors : [];
 
   const handleAddToCart = () => {
     dispatch(addToCart({
       ...part,
       price: unitPrice,
-      selectedGrade,
-      selectedColor,
+      selectedGrade: part.hasGrades !== false ? selectedGrade : 'Standard',
+      selectedColor: part.hasColors && defaultColors.length > 0 ? selectedColor : 'Default',
       warrantyOption: isBrandNew ? 'Company Official Manufacturer Warranty' : 'Standard 1 Year Warranty',
       qty
     }));
@@ -198,69 +198,79 @@ export default function ProductDetails() {
                 {part.description || "Authentic high-performance spare component with official serial verification."}
               </p>
 
-              {/* 1. GRADE OPTIONS (ONLY 2 OPTIONS: Refurbished auto-selected, Brand New with extra cost & company warranty) */}
-              <div className="mb-6">
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
-                  1. Select Condition & Warranty Grade
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  
-                  {/* Option A: Refurbished Grade A (Default) */}
-                  <button
-                    onClick={() => setSelectedGrade('Refurbished (Grade A)')}
-                    className={`p-3.5 rounded-xl border text-left transition-all ${
-                      selectedGrade === 'Refurbished (Grade A)'
-                        ? 'bg-indigo-50 border-indigo-600 text-indigo-900 shadow-sm'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="text-xs font-extrabold flex items-center justify-between">
-                      <span>Refurbished (Grade A)</span>
-                      {selectedGrade === 'Refurbished (Grade A)' && <CheckCircle2 size={14} className="text-indigo-600" />}
-                    </div>
-                    <div className="text-[11px] text-slate-500 mt-1">Base Price · 1 Year Standard Warranty Included</div>
-                  </button>
-
-                  {/* Option B: Brand New (Official Warranty) */}
-                  <button
-                    onClick={() => setSelectedGrade('Brand New (Official Warranty)')}
-                    className={`p-3.5 rounded-xl border text-left transition-all ${
-                      selectedGrade === 'Brand New (Official Warranty)'
-                        ? 'bg-indigo-50 border-indigo-600 text-indigo-900 shadow-sm'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="text-xs font-extrabold flex items-center justify-between">
-                      <span>Brand New (Sealed)</span>
-                      <span className="text-indigo-600 font-bold">+PKR 5,000</span>
-                    </div>
-                    <div className="text-[11px] text-slate-500 mt-1">Official Company Manufacturer Warranty</div>
-                  </button>
-
-                </div>
-              </div>
-
-              {/* 2. COLOR OPTIONS */}
-              <div className="mb-6">
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
-                  2. Select Color Variant
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {defaultColors.map(color => (
+              {/* 1. GRADE OPTIONS */}
+              {part.hasGrades !== false && (
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                    Select Condition & Warranty Grade
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    
+                    {/* Option A: Refurbished Grade A (Default) */}
                     <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
-                        selectedColor === color
-                          ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                      onClick={() => setSelectedGrade('Refurbished (Grade A)')}
+                      className={`p-3.5 rounded-xl border text-left transition-all ${
+                        selectedGrade === 'Refurbished (Grade A)'
+                          ? 'bg-indigo-50 border-indigo-600 text-indigo-900 shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                       }`}
                     >
-                      {color}
+                      <div className="text-xs font-extrabold flex items-center justify-between">
+                        <span>Refurbished (Grade A)</span>
+                        {selectedGrade === 'Refurbished (Grade A)' && <CheckCircle2 size={14} className="text-indigo-600" />}
+                      </div>
+                      <div className="text-xs font-mono font-bold text-slate-900 mt-1">
+                        PKR {refurbPrice.toLocaleString()}
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">1 Year Standard Warranty</div>
                     </button>
-                  ))}
+
+                    {/* Option B: Brand New (Official Warranty) */}
+                    <button
+                      onClick={() => setSelectedGrade('Brand New (Official Warranty)')}
+                      className={`p-3.5 rounded-xl border text-left transition-all ${
+                        selectedGrade === 'Brand New (Official Warranty)'
+                          ? 'bg-indigo-50 border-indigo-600 text-indigo-900 shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="text-xs font-extrabold flex items-center justify-between">
+                        <span>Brand New (Sealed)</span>
+                        {selectedGrade.includes('Brand New') && <CheckCircle2 size={14} className="text-indigo-600" />}
+                      </div>
+                      <div className="text-xs font-mono font-bold text-indigo-600 mt-1">
+                        PKR {brandNewPrice.toLocaleString()}
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">Official Company Warranty</div>
+                    </button>
+
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* 2. COLOR OPTIONS */}
+              {part.hasColors && defaultColors.length > 0 && (
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                    Select Color Variant
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {defaultColors.map(color => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
+                          selectedColor === color
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* DYNAMIC PRICE & QTY */}
               <div className="bg-white border border-slate-200 p-5 rounded-2xl mb-6 flex items-center justify-between shadow-sm">

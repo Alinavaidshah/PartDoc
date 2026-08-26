@@ -99,10 +99,23 @@ export const seedParts = async (req, res) => {
 // @desc    Create a part (Admin)
 export const createPart = async (req, res) => {
   try {
-    const { name, brand, category, description, price, countInStock } = req.body;
+    const {
+      name, brand, category, description, price, countInStock,
+      hasGrades, refurbishedPrice, brandNewPrice, hasColors, colors
+    } = req.body;
     
     // Cloudinary se aane wala secure URL path
     const imagePath = req.file ? req.file.path : null;
+
+    let parsedColors = [];
+    if (colors) {
+      if (typeof colors === 'string') {
+        try { parsedColors = JSON.parse(colors); }
+        catch { parsedColors = colors.split(',').map(c => c.trim()).filter(Boolean); }
+      } else if (Array.isArray(colors)) {
+        parsedColors = colors;
+      }
+    }
 
     const part = new Part({
       name,
@@ -110,8 +123,13 @@ export const createPart = async (req, res) => {
       brand,
       category,
       description,
-      price,
-      countInStock,
+      price: Number(price) || 0,
+      countInStock: Number(countInStock) || 0,
+      hasGrades: hasGrades === 'true' || hasGrades === true,
+      refurbishedPrice: Number(refurbishedPrice) || Number(price) || 0,
+      brandNewPrice: Number(brandNewPrice) || (Number(price) ? Number(price) + 5000 : 0),
+      hasColors: hasColors === 'true' || hasColors === true,
+      colors: parsedColors
     });
 
     const createdPart = await part.save();
@@ -151,16 +169,33 @@ export const getLowStockParts = async (req, res) => {
 // @desc    Update a part
 export const updatePart = async (req, res) => {
   try {
-    const { name, brand, category, description, price, countInStock } = req.body;
+    const {
+      name, brand, category, description, price, countInStock,
+      hasGrades, refurbishedPrice, brandNewPrice, hasColors, colors
+    } = req.body;
     const part = await Part.findById(req.params.id);
 
     if (part) {
-      part.name = name || part.name;
-      part.brand = brand || part.brand;
-      part.category = category || part.category;
-      part.description = description || part.description;
-      part.price = price !== undefined ? price : part.price;
-      part.countInStock = countInStock !== undefined ? countInStock : part.countInStock;
+      part.name = name !== undefined ? name : part.name;
+      part.brand = brand !== undefined ? brand : part.brand;
+      part.category = category !== undefined ? category : part.category;
+      part.description = description !== undefined ? description : part.description;
+      part.price = price !== undefined ? Number(price) : part.price;
+      part.countInStock = countInStock !== undefined ? Number(countInStock) : part.countInStock;
+
+      if (hasGrades !== undefined) part.hasGrades = hasGrades === 'true' || hasGrades === true;
+      if (refurbishedPrice !== undefined) part.refurbishedPrice = Number(refurbishedPrice);
+      if (brandNewPrice !== undefined) part.brandNewPrice = Number(brandNewPrice);
+      if (hasColors !== undefined) part.hasColors = hasColors === 'true' || hasColors === true;
+
+      if (colors !== undefined) {
+        if (typeof colors === 'string') {
+          try { part.colors = JSON.parse(colors); }
+          catch { part.colors = colors.split(',').map(c => c.trim()).filter(Boolean); }
+        } else if (Array.isArray(colors)) {
+          part.colors = colors;
+        }
+      }
       
       // Agar nayi image upload ki gayi hai toh Cloudinary URL update karo
       if (req.file) {

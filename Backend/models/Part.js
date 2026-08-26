@@ -21,7 +21,11 @@ const partSchema = new mongoose.Schema(
     rating: { type: Number, required: true, default: 5 },
     numReviews: { type: Number, required: true, default: 0 },
     reviews: [reviewSchema],
-    colors: { type: [String], default: ['Space Black', 'Silver', 'Graphite'] },
+    hasGrades: { type: Boolean, default: true },
+    refurbishedPrice: { type: Number, default: 0 },
+    brandNewPrice: { type: Number, default: 0 },
+    hasColors: { type: Boolean, default: false },
+    colors: { type: [String], default: [] },
   },
   { timestamps: true }
 );
