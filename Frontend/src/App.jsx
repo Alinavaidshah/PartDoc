@@ -7,7 +7,8 @@ import { store } from './app/store';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import SyncUser from './components/SyncUser'; 
-import ProtectedRoute from './components/ProtectedRoute'; // Yahan tumhara ProtectedRoute import hua hai
+import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import Home from './pages/Home'; 
@@ -35,6 +36,7 @@ function App() {
       <SyncUser /> 
 
       <Router>
+        <ScrollToTop />
         <Routes>
     
           
