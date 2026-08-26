@@ -6,8 +6,7 @@ import mongoose from 'mongoose';
 import connectDB from './config/db.js';
 import User from './models/User.js'; 
 import rateLimit from 'express-rate-limit';
-
-// Security Imports
+import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 
 // Routes Import
@@ -25,8 +24,10 @@ dotenv.config();
 
 const app = express();
 
-// Security Config
+// Trust Proxy for Cloud Hosting (Vercel, Render)
 app.set('trust proxy', 1); 
+
+// 1. HELMET SECURITY HEADERS
 app.use(
   helmet({
     crossOriginResourcePolicy: false, 
@@ -34,12 +35,13 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "https://via.placeholder.com", "data:", "http://localhost:5000"],
+        "img-src": ["'self'", "https:", "data:", "http://localhost:5000"],
       },
     },
   })
 );
 
+// 2. CORS PROTECTION
 app.use(cors({
   origin: true,
   credentials: true,
@@ -47,18 +49,30 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 })); 
 
+// 3. PAYLOAD LIMITERS (Prevent Memory Crashes)
 app.use(express.json({ limit: '10kb' })); 
 app.use(express.urlencoded({ extended: true, limit: '10kb' })); 
 
-// --- RATE LIMITERS ---
-const strictLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, 
-  max: 9999,
+// 4. NOSQL INJECTION SANITIZATION (Strips out $ and . characters from user inputs)
+app.use(mongoSanitize());
+
+// 5. SECURITY RATE LIMITERS (Anti-DDOS & Anti-Bruteforce)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // Max 300 requests per IP per 15 minutes
+  message: { message: "Too many requests from this IP, please try again after 15 minutes." }
 });
 
-const standardLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 9999,
+const writeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 40, // Max 40 write operations per 15 mins
+  message: { message: "Action limit exceeded. Please wait before submitting more requests." }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15, // Max 15 login attempts per 15 mins
+  message: { message: "Too many authentication attempts. Account protected." }
 });
 
 // Static folder
@@ -74,17 +88,19 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// --- ROUTES ---
-app.use(standardLimiter);
-app.use('/api/orders', strictLimiter, orderRoutes);
-app.use('/api/appointments', strictLimiter, appointmentRoutes);
-app.use('/api/payments', strictLimiter, paymentRoutes);
-app.use('/api/auth', authRoutes);
+// Apply Global Rate Limiter
+app.use(globalLimiter);
+
+// --- SECURE ROUTES ---
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/orders', writeLimiter, orderRoutes);
+app.use('/api/appointments', writeLimiter, appointmentRoutes);
+app.use('/api/payments', writeLimiter, paymentRoutes);
 app.use('/api/parts', partRoutes);
 app.use('/api/users', userRoutes);
 
 // Sync Route
-app.post('/api/users/sync', strictLimiter, async (req, res) => {
+app.post('/api/users/sync', writeLimiter, async (req, res) => {
   const { clerkId, email, name } = req.body;
   try {
     let user = await User.findOne({ clerkId });
@@ -104,7 +120,7 @@ app.post('/api/users/sync', strictLimiter, async (req, res) => {
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'Byteforge Backend Server is running and Secure!',
+    message: 'PartDoc Secure Backend API is operational & protected!',
     dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
   });
 });
@@ -112,10 +128,10 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-// --- VERCEL COMPATIBILITY ---
+// --- SERVER START ---
 if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 Secure Server running on port ${PORT}`));
 }
 
 export default app;

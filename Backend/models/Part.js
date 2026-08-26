@@ -30,5 +30,9 @@ const partSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+partSchema.index({ category: 1, name: 1 });
+partSchema.index({ countInStock: 1 });
+partSchema.index({ createdAt: -1 });
+
 const Part = mongoose.model('Part', partSchema, 'Parts');
 export default Part;
