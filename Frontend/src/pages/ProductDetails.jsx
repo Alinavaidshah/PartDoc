@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
 import AestheticLoader from '../components/AestheticLoader';
 import api, { getImageUrl } from '../api/axiosConfig';
+import { playPopSound } from '../utils/soundUtils';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -103,6 +104,7 @@ export default function ProductDetails() {
   const defaultColors = part.colors && part.colors.length > 0 ? part.colors : [];
 
   const handleAddToCart = () => {
+    playPopSound();
     dispatch(addToCart({
       ...part,
       price: unitPrice,

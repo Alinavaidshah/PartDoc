@@ -81,6 +81,7 @@ const Appointment = () => {
 
     dispatch(bookAppointment(payload)).then((result) => {
       if (result.meta.requestStatus === 'fulfilled') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setFormData({
           name: '', phone: '', customerEmail: '', deviceModel: '',
           issueDescription: '', appointmentDate: '', appointmentTime: '',

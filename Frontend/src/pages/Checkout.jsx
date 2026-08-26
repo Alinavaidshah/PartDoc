@@ -277,28 +277,37 @@ export default function Checkout() {
                   { id: 'COD', label: 'Cash on Delivery', icon: Truck },
                   { id: 'JazzCash', label: 'JazzCash Mobile', icon: Smartphone },
                   { id: 'EasyPaisa', label: 'EasyPaisa Mobile', icon: Smartphone },
-                  { id: 'Card', label: 'Card Payment', icon: CreditCard }
+                  { id: 'Card', label: 'Card Payment', icon: CreditCard, disabled: true }
                 ].map((m) => (
                   <button
                     key={m.id}
                     type="button"
+                    disabled={m.disabled}
                     onClick={() => {
+                      if (m.disabled) return;
                       setPaymentMethod(m.id);
                       if (m.id !== 'Card') setClientSecret(null);
                     }}
-                    className={`relative p-4 rounded-2xl border text-center flex flex-col items-center justify-center gap-2 transition-all ${
-                      paymentMethod === m.id
+                    className={`relative p-4 rounded-2xl border text-center flex flex-col items-center justify-center gap-1.5 transition-all ${
+                      m.disabled
+                        ? 'bg-slate-100 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed'
+                        : paymentMethod === m.id
                         ? 'bg-indigo-50 border-indigo-600 text-indigo-700 shadow-sm font-bold scale-[1.02]'
                         : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    {paymentMethod === m.id && (
+                    {paymentMethod === m.id && !m.disabled && (
                       <span className="absolute top-2 right-2 w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px]">
                         ✓
                       </span>
                     )}
-                    <m.icon className="w-5 h-5 text-indigo-600" />
+                    <m.icon className={`w-5 h-5 ${m.disabled ? 'text-slate-400' : 'text-indigo-600'}`} />
                     <span className="text-xs font-bold">{m.id}</span>
+                    {m.disabled && (
+                      <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 bg-slate-200 text-slate-500 rounded">
+                        Disabled
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
