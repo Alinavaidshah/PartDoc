@@ -123,7 +123,7 @@ export const deleteAppointment = async (req, res) => {
 // @route   PUT /api/appointments/:id/status
 export const updateAppointmentStatus = async (req, res) => {
   try {
-    const { status, reason, declineReason } = req.body;
+    const { status, reason, declineReason, suggestedDate, suggestedTime } = req.body;
     const appointment = await Appointment.findById(req.params.id);
 
     if (appointment) {
@@ -131,6 +131,9 @@ export const updateAppointmentStatus = async (req, res) => {
       if (reason || declineReason) {
         appointment.declineReason = reason || declineReason;
       }
+      if (suggestedDate) appointment.suggestedDate = suggestedDate;
+      if (suggestedTime) appointment.suggestedTime = suggestedTime;
+
       const updatedAppointment = await appointment.save();
 
       // Send Email notification in complete English
@@ -157,13 +160,19 @@ export const updateAppointmentStatus = async (req, res) => {
           subject = 'Appointment Request Status Update - PartDoc';
           messageHtml = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #dc2626;">Appointment Request Declined</h2>
+              <h2 style="color: #dc2626;">Appointment Request Declined / Rescheduled</h2>
               <p>Dear <b>${appointment.name}</b>,</p>
               <p>We regret to inform you that your appointment request (Ticket <b>#${appointment._id}</b>) for <b>${appointment.deviceModel}</b> has been <b>DECLINED</b>.</p>
               <p style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 10px; margin: 15px 0;">
                 <b>Reason for Decline:</b> ${appointment.declineReason || 'Schedule or slot unavailability at selected date/time.'}
               </p>
-              <p>Please feel free to submit another appointment request or contact our support team.</p>
+              ${appointment.suggestedDate ? `
+                <div style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 10px; margin: 15px 0;">
+                  <b style="color: #1d4ed8;">📅 Suggested Alternative Slot:</b><br />
+                  <b>Date:</b> ${appointment.suggestedDate} | <b>Time:</b> ${appointment.suggestedTime || 'Anytime during working hours'}
+                </div>
+              ` : ''}
+              <p>Please feel free to submit another appointment request for the suggested slot or contact our support team.</p>
               <p style="font-weight: bold; color: #4f46e5; margin-top: 20px;">Our team will contact you soon.</p>
             </div>
           `;
@@ -185,9 +194,11 @@ export const updateAppointmentStatus = async (req, res) => {
 
       // Send WhatsApp Notification to customer's registered phone
       if (appointment.phone) {
+        const suggestedSlotStr = appointment.suggestedDate ? `\n*Suggested New Slot:* ${appointment.suggestedDate} at ${appointment.suggestedTime || '10:00 AM'}` : '';
+
         const whatsappMsg = status === 'Approved'
           ? `📌 *PartDoc Appointment Approved!*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Date & Time:* ${appointment.appointmentDate} at ${appointment.appointmentTime}\n*Status:* APPROVED\n\nOur team will contact you soon.`
-          : `📌 *PartDoc Appointment Status Update*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Status:* DECLINED\n*Reason:* ${appointment.declineReason || 'Slot or technician unavailability'}\n\nOur team will contact you soon.`;
+          : `📌 *PartDoc Appointment Status Update*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Status:* DECLINED\n*Reason:* ${appointment.declineReason || 'Slot or technician unavailability'}${suggestedSlotStr}\n\nOur team will contact you soon.`;
 
         await sendWhatsAppMessage(appointment.phone, whatsappMsg);
       }

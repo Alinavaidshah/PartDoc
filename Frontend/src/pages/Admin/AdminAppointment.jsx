@@ -27,6 +27,8 @@ const AdminAppointment = () => {
   // Decline Reason Modal State
   const [declineModal, setDeclineModal] = useState(null); // { id, name, deviceModel }
   const [declineReasonInput, setDeclineReasonInput] = useState('');
+  const [suggestedDateInput, setSuggestedDateInput] = useState('');
+  const [suggestedTimeInput, setSuggestedTimeInput] = useState('');
   const [declining, setDeclining] = useState(false);
 
   // Sidebar collapse states
@@ -45,12 +47,23 @@ const AdminAppointment = () => {
       const finalReason = declineReasonInput.trim() || 'Schedule or slot unavailability';
       await api.put(`/appointments/${declineModal.id}/status`, {
         status: 'Denied',
-        reason: finalReason
+        reason: finalReason,
+        suggestedDate: suggestedDateInput,
+        suggestedTime: suggestedTimeInput
       });
 
-      setAppointments(prev => prev.map(a => a._id === declineModal.id ? { ...a, status: 'Denied', declineReason: finalReason } : a));
+      setAppointments(prev => prev.map(a => a._id === declineModal.id ? {
+        ...a,
+        status: 'Denied',
+        declineReason: finalReason,
+        suggestedDate: suggestedDateInput,
+        suggestedTime: suggestedTimeInput
+      } : a));
+
       setDeclineModal(null);
       setDeclineReasonInput('');
+      setSuggestedDateInput('');
+      setSuggestedTimeInput('');
     } catch (err) {
       alert("Failed to update status: " + (err.response?.data?.message || err.message));
     } finally {
@@ -459,6 +472,185 @@ const AdminAppointment = () => {
               >
                 Close
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Decline Reason Prompt Modal */}
+      <AnimatePresence>
+        {declineModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              style={{ background: '#fff', padding: 24, borderRadius: 20, width: 440, maxWidth: '92vw', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', maxHeight: '90vh', overflowY: 'auto' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fef2f2', color: '#ef4444', display: 'flex', alignItems: 'center', justify: 'center' }}>
+                  <XCircle size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a' }}>Decline / Reschedule Appointment</h3>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>For {declineModal.name} ({declineModal.deviceModel})</div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 8 }}>
+                  Reason for Decline / Update:
+                </label>
+
+                {/* Preset quick selection pills */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                  {[
+                    "Slot unavailable at requested time",
+                    "Technician / Spare parts out of stock",
+                    "Outside doorstep service area",
+                    "Incomplete address or phone details"
+                  ].map(preset => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setDeclineReasonInput(preset)}
+                      style={{
+                        fontSize: 11,
+                        padding: '4px 8px',
+                        borderRadius: 6,
+                        border: '1px solid #cbd5e1',
+                        background: declineReasonInput === preset ? '#eff6ff' : '#f8fafc',
+                        color: declineReasonInput === preset ? '#1d4ed8' : '#475569',
+                        cursor: 'pointer',
+                        fontWeight: 600
+                      }}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  rows="2"
+                  required
+                  placeholder="Enter reason..."
+                  value={declineReasonInput}
+                  onChange={(e) => setDeclineReasonInput(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: 10,
+                    borderRadius: 10,
+                    border: '1px solid #cbd5e1',
+                    fontSize: 13,
+                    outline: 'none',
+                    resize: 'none',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                    marginBottom: 14
+                  }}
+                />
+
+                {/* OPTIONAL SUGGESTED DATE & TIME PICKER */}
+                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 12, border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Calendar size={14} color="#4f46e5" />
+                    <span>Offer Suggested Alternative Date & Time (Optional)</span>
+                  </div>
+
+                  <div style={{ marginBottom: 10 }}>
+                    <label style={{ display: 'block', fontSize: 11, color: '#64748b', marginBottom: 4 }}>Select New Date:</label>
+                    <input
+                      type="date"
+                      value={suggestedDateInput}
+                      onChange={(e) => setSuggestedDateInput(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        borderRadius: 8,
+                        border: '1px solid #cbd5e1',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        outline: 'none',
+                        background: '#fff'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, color: '#64748b', marginBottom: 4 }}>Select New Time Slot:</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                      {['10:00 AM', '12:00 PM', '02:00 PM', '04:00 PM', '06:00 PM'].map(slot => (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setSuggestedTimeInput(slot)}
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 700,
+                            padding: '6px 4px',
+                            borderRadius: 6,
+                            border: '1px solid #cbd5e1',
+                            background: suggestedTimeInput === slot ? '#4f46e5' : '#fff',
+                            color: suggestedTimeInput === slot ? '#fff' : '#334155',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={handleConfirmDecline}
+                  disabled={declining}
+                  style={{
+                    flex: 1,
+                    padding: '10px 14px',
+                    borderRadius: 10,
+                    border: 'none',
+                    background: '#ef4444',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: 13,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6
+                  }}
+                >
+                  {declining ? <Loader2 size={16} className="animate-spin" /> : null}
+                  <span>{declining ? "Sending..." : "Confirm & Send WhatsApp/Email"}</span>
+                </motion.button>
+
+                <button
+                  type="button"
+                  onClick={() => setDeclineModal(null)}
+                  disabled={declining}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: 10,
+                    border: '1px solid #cbd5e1',
+                    background: '#f8fafc',
+                    color: '#475569',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

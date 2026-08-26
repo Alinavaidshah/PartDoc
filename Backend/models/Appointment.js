@@ -53,6 +53,14 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    suggestedDate: {
+      type: String,
+      default: '',
+    },
+    suggestedTime: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

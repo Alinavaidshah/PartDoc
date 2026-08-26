@@ -480,6 +480,11 @@ const Appointment = () => {
                       <strong>Reason for Decline:</strong> {statusData.declineReason}
                     </div>
                   )}
+                  {statusData.suggestedDate && (
+                    <div className="p-3 bg-blue-50 border border-blue-200 text-blue-900 text-xs rounded-xl font-medium">
+                      <strong>📅 Suggested Alternative Slot:</strong> {statusData.suggestedDate} at {statusData.suggestedTime || '10:00 AM'}
+                    </div>
+                  )}
                   <div className={`p-3 rounded-xl text-xs flex items-center gap-2 border ${getStatusDetails(statusData.status).color}`}>
                     {getStatusDetails(statusData.status).icon}
                     <span>{getStatusDetails(statusData.status).msg}</span>
