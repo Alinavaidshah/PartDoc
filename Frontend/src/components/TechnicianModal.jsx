@@ -47,61 +47,78 @@ const TechnicianModal = () => {
 
   return (
     <>
-      {/* BOTTOM-RIGHT FLOATING TECHNICIAN BUTTON (WhatsApp position) */}
-      <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2">
+      {/* RIGHT-EDGE VERTICAL HIRING TAB */}
+      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center">
+
+        {/* Slide-Out Expanded Card */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              key="expanded-card"
-              initial={{ opacity: 0, y: 10, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.9 }}
-              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-              className="bg-slate-900/95 text-white px-4 py-3.5 rounded-2xl shadow-2xl border border-indigo-500/50 backdrop-blur-xl flex items-center gap-3 mb-1"
+              key="hiring-card"
+              initial={{ x: 40, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 40, opacity: 0 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 280 }}
+              className="bg-slate-900 text-white px-4 py-3.5 shadow-2xl border-y border-l border-indigo-500/60 rounded-l-2xl flex items-center gap-3 mr-0"
             >
-              <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
-                <Wrench size={16} />
+              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md flex-shrink-0">
+                <Wrench size={17} />
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
-                  <span>Technicians Required</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className="text-[11px] font-extrabold uppercase tracking-widest text-white flex items-center gap-1.5 leading-none">
+                  Technicians Required
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
                 </span>
-                <span className="text-[10px] text-indigo-300 font-semibold mt-1">Karachi All Over</span>
+                <span className="text-[10px] text-indigo-300 font-semibold mt-1">All Over Karachi — Apply Now!</span>
               </div>
               <button
                 onClick={() => { setIsOpen(true); setIsExpanded(false); }}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-xl shadow-md transition-colors ml-1 cursor-pointer whitespace-nowrap"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold px-3 py-1.5 rounded-xl shadow-md transition-colors cursor-pointer whitespace-nowrap flex-shrink-0"
               >
                 Apply Now
-              </button>
-              <button
-                onClick={() => setIsExpanded(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
-                aria-label="Close"
-              >
-                <ChevronRight size={16} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* CIRCULAR FLOATING BUTTON */}
-        <motion.button
+        {/* VERTICAL TAB — always visible on right edge, text reads top-to-bottom */}
+        <button
           onClick={() => setIsExpanded(prev => !prev)}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.93 }}
-          className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl flex items-center justify-center transition-all cursor-pointer"
-          aria-label="Technician Hiring"
+          className="relative group flex flex-col items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-5 rounded-l-2xl shadow-2xl border-y border-l border-indigo-400/50 cursor-pointer transition-all"
+          aria-label="Technician Hiring — Click to expand"
         >
-          {/* Glow ring */}
-          <span className="absolute -inset-1 rounded-full bg-indigo-500/30 animate-pulse blur-sm" />
-          <Wrench size={22} className="relative z-10" />
-          {/* Green live indicator */}
-          <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white shadow z-10">
-            <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+          {/* Subtle glow edge */}
+          <span className="absolute inset-0 rounded-l-2xl ring-1 ring-inset ring-indigo-300/20 pointer-events-none" />
+
+          {/* Arrow indicator (flips when expanded) */}
+          <motion.span
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-indigo-200 group-hover:text-white"
+          >
+            <ChevronLeft size={15} />
+          </motion.span>
+
+          {/* Wrench icon */}
+          <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center">
+            <Wrench size={14} />
+          </div>
+
+          {/* Vertical text: HIRING */}
+          <span
+            className="text-[10px] font-black uppercase tracking-[0.2em] text-white leading-none"
+            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+          >
+            Hiring
           </span>
-        </motion.button>
+
+          {/* Live green dot */}
+          <span className="relative flex items-center justify-center">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 block">
+              <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+            </span>
+          </span>
+        </button>
       </div>
 
       {/* LIGHT THEME FORM MODAL OVERLAY */}

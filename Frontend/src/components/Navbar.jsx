@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Cpu, Menu, X, Sparkles } from 'lucide-react';
+import { ShoppingCart, Cpu, Menu, X, Sparkles, Wrench } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import { useUser, SignOutButton, SignInButton, SignedIn, SignedOut } from "@clerk/clerk-react";
@@ -92,6 +92,22 @@ const Navbar = () => {
                 </Link>
               );
             })}
+          </div>
+
+          {/* We're Hiring Pill — visible in desktop nav */}
+          <div className="hidden md:flex items-center ml-2">
+            <motion.a
+              href="#"
+              onClick={e => e.preventDefault()}
+              animate={{ y: [0, -2, 0] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md border border-indigo-400/60 cursor-default select-none"
+              aria-label="We are Hiring Technicians"
+            >
+              <Wrench size={10} />
+              <span>We're Hiring</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping flex-shrink-0" />
+            </motion.a>
           </div>
 
           {/* RIGHT SIDE: ACTIONS */}
