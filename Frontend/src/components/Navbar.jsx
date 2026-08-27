@@ -45,10 +45,10 @@ const Navbar = () => {
             : 'h-20 sm:h-22 bg-white/80 backdrop-blur-md border-b border-slate-100'
         }`}
       >
-        <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex md:grid md:grid-cols-3 items-center justify-between relative">
+        <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           
           {/* LEFT SIDE: BRAND LOGO */}
-          <div className="flex justify-start items-center h-full">
+          <div className="flex justify-start items-center flex-shrink-0">
             <Link to="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2.5 group">
               <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-md group-hover:scale-105 transition-transform flex items-center justify-center">
                 <Cpu className="w-5 h-5" />
@@ -65,7 +65,7 @@ const Navbar = () => {
           </div>
 
           {/* CENTER: DESKTOP NAVIGATION */}
-          <div className="hidden md:flex justify-center items-center space-x-1 font-semibold text-sm h-full">
+          <div className="hidden md:flex items-center space-x-1 font-semibold text-sm">
             {NAV_LINKS.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -94,24 +94,8 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* We're Hiring Pill — visible in desktop nav */}
-          <div className="hidden md:flex items-center ml-2">
-            <motion.a
-              href="#"
-              onClick={e => e.preventDefault()}
-              animate={{ y: [0, -2, 0] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md border border-indigo-400/60 cursor-default select-none"
-              aria-label="We are Hiring Technicians"
-            >
-              <Wrench size={10} />
-              <span>We're Hiring</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping flex-shrink-0" />
-            </motion.a>
-          </div>
-
           {/* RIGHT SIDE: ACTIONS */}
-          <div className="flex justify-end items-center gap-3 h-full">
+          <div className="flex items-center gap-3 flex-shrink-0">
             
             {/* Auth Controls */}
             <div className="flex items-center gap-3">
