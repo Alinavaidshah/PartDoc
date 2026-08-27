@@ -30,6 +30,7 @@ import AdminOrder from './pages/Admin/AdminOrder';
 import AdminInventory from './pages/Admin/AdminInventory'; 
 import AdminCustomers from './pages/Admin/AdminCustomers';
 import AdminReviews from './pages/Admin/AdminReviews';
+import AdminTechnicians from './pages/Admin/AdminTechnicians';
 
 import './index.css';
 
@@ -63,6 +64,9 @@ function App() {
           } />
           <Route path="/admin/reviews" element={
             <ProtectedRoute><AdminReviews /></ProtectedRoute>
+          } />
+          <Route path="/admin/technicians" element={
+            <ProtectedRoute><AdminTechnicians /></ProtectedRoute>
           } />
 
           {/* Main Website Routes */}

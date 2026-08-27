@@ -9,7 +9,7 @@ const WhatsAppButton = () => {
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${message}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+    <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 sm:gap-3 scale-90 sm:scale-100 origin-bottom-right">
       {/* Tooltip Badge */}
       <motion.div
         initial={{ opacity: 0, x: 10, scale: 0.9 }}

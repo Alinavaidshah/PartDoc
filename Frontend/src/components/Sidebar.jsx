@@ -12,6 +12,7 @@ const items = [
     { key: "inventory", label: "Inventory", icon: PackageSearch, path: "/admin/inventory", badge: badges?.inventory },
     { key: "customers", label: "Customers", icon: Users, path: "/admin/customers" },
     { key: "orders", label: "Orders", icon: Wrench, path: "/admin/orders" }, 
+    { key: "technicians", label: "Technicians", icon: Users, path: "/admin/technicians" },
     { key: "reviews", label: "Reviews", icon: Star, path: "/admin/reviews" },
   ];
   const width = collapsed ? 76 : 244;

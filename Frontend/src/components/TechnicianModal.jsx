@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wrench, X, CheckCircle2, User, Phone, Briefcase, MapPin, Sparkles, Send } from 'lucide-react';
+import { Wrench, X, CheckCircle2, User, Phone, Briefcase, Sparkles, Send } from 'lucide-react';
+import api from '../api/axiosConfig';
 
 const TechnicianModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     specialization: 'Mobile OLED & Screen Repair',
     experience: '2-3 Years',
-    area: 'Saddar / Karachi Central'
   });
 
-  // Auto pop-up callout nudge after 30 seconds if not opened yet
+  // Auto pop-up callout nudge after 15 seconds if not opened yet
   const [showCallout, setShowCallout] = useState(false);
 
   useEffect(() => {
@@ -27,13 +28,16 @@ const TechnicianModal = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) return;
 
-    setSubmitted(true);
-    setTimeout(() => {
-      // Keep thank you screen for 3 seconds then close
+    setSubmitting(true);
+    try {
+      await api.post('/technicians/apply', formData);
+      setSubmitted(true);
+      setSubmitting(false);
+
       setTimeout(() => {
         setIsOpen(false);
         setSubmitted(false);
@@ -42,21 +46,23 @@ const TechnicianModal = () => {
           phone: '',
           specialization: 'Mobile OLED & Screen Repair',
           experience: '2-3 Years',
-          area: 'Saddar / Karachi Central'
         });
       }, 3500);
-    }, 500);
+    } catch (err) {
+      setSubmitting(false);
+      alert('Error submitting application: ' + (err.response?.data?.message || err.message));
+    }
   };
 
   return (
     <>
-      {/* FLOATING BADGE BUTTON (BOTTOM-LEFT) */}
-      <div className="fixed bottom-6 left-6 z-50 flex items-center gap-3">
+      {/* FLOATING BADGE BUTTON (BOTTOM-LEFT - COMPACT MOBILE SIZE) */}
+      <div className="fixed bottom-3 left-3 sm:bottom-6 sm:left-6 z-40 flex items-center gap-2 sm:gap-3 scale-90 sm:scale-100 origin-bottom-left">
         <motion.button
           onClick={() => { setIsOpen(true); setShowCallout(false); }}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.95 }}
-          className="relative group bg-slate-900 hover:bg-slate-800 text-white px-4 py-3 sm:px-5 sm:py-3.5 rounded-full shadow-2xl border border-slate-700 flex items-center gap-2.5 transition-all cursor-pointer"
+          className="relative group bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full shadow-2xl border border-slate-700 flex items-center gap-2 transition-all cursor-pointer"
         >
           {/* Glowing Ring */}
           <span className="absolute -inset-1 rounded-full bg-indigo-500/30 animate-pulse blur-sm group-hover:bg-indigo-500/50" />
@@ -251,34 +257,14 @@ const TechnicianModal = () => {
                         </div>
                       </div>
 
-                      {/* Area in Karachi */}
-                      <div>
-                        <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1 flex items-center gap-1.5">
-                          <MapPin size={13} className="text-rose-400" />
-                          <span>Preferred Location in Karachi</span>
-                        </label>
-                        <select
-                          name="area"
-                          value={formData.area}
-                          onChange={handleChange}
-                          className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
-                        >
-                          <option value="Saddar / Karachi Central">Saddar / Techno City Market</option>
-                          <option value="Nazimabad / North Nazimabad">Nazimabad / North Nazimabad</option>
-                          <option value="Gulshan-e-Iqbal / Johar">Gulshan-e-Iqbal / Johar</option>
-                          <option value="DHA / Clifton">DHA / Clifton / Defense</option>
-                          <option value="Malir / Korangi">Malir / Korangi / Shah Faisal</option>
-                          <option value="All Karachi Doorstep">Available All Over Karachi (Mobile Technician)</option>
-                        </select>
-                      </div>
-
                       {/* Submit CTA Button */}
                       <button
                         type="submit"
-                        className="w-full mt-2 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 group cursor-pointer"
+                        disabled={submitting}
+                        className="w-full mt-2 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
                       >
                         <Send size={15} className="group-hover:translate-x-1 transition-transform" />
-                        <span>Submit Application</span>
+                        <span>{submitting ? 'Submitting Application...' : 'Submit Application'}</span>
                       </button>
 
                     </form>

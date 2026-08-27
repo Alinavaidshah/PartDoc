@@ -16,6 +16,7 @@ import appointmentRoutes from './routes/appointmentRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import userRoutes from './routes/userRoutes.js'; 
+import technicianRoutes from './routes/technicianRoutes.js';
 
 // Middlewares Import 
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
@@ -64,6 +65,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/parts', partRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/technicians', technicianRoutes);
 
 // Sync Route
 app.post('/api/users/sync', async (req, res) => {
