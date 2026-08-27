@@ -29,7 +29,7 @@ const Appointment = () => {
   } = useSelector((state) => state.appointment);
 
   const [activeTab, setActiveTab] = useState('book');
-  const [faultTracingPrice, setFaultTracingPrice] = useState(899);
+  const [faultTracingPrice, setFaultTracingPrice] = useState(599);
   const [formData, setFormData] = useState({
     name: '', phone: '', customerEmail: '', deviceModel: '',
     issueDescription: '', appointmentDate: '', appointmentTime: '',
@@ -239,10 +239,13 @@ const Appointment = () => {
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-extrabold text-slate-900">Standard Repair & Upgradation</span>
+                          <span className="text-xs font-extrabold text-slate-900">Pre-Diagnosed Issue & Upgradation</span>
                           {formData.serviceType === 'Normal' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
                         </div>
                         <span className="text-[11px] text-slate-500 leading-normal">Hardware repair, display replacement, RAM/SSD speed upgradation & software diagnostics.</span>
+                        <div className="mt-2 text-[10px] font-bold text-indigo-600 flex items-center gap-1 pt-1.5 border-t border-slate-200/60">
+                          <span>⚡ Service delivered at your doorstep</span>
+                        </div>
                       </button>
 
                       <button
@@ -257,11 +260,14 @@ const Appointment = () => {
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs font-extrabold text-indigo-900 flex items-center gap-1">
                             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            Fault Tracing Of Your Device At Your Door Step
+                            Doorstep Fault Tracing (PKR {faultTracingPrice})
                           </span>
                           {formData.serviceType === 'Fault Tracing' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
                         </div>
-                        <span className="text-[11px] text-slate-500 leading-normal">Technician visits your doorstep for complete fault tracing & detailed diagnosis</span>
+                        <span className="text-[11px] text-slate-500 leading-normal">Technician visits your doorstep for complete fault tracing & detailed diagnosis across Karachi.</span>
+                        <div className="mt-2 text-[10px] font-bold text-amber-700 flex items-center gap-1 pt-1.5 border-t border-slate-200/60">
+                          <span>💵 Visiting Charges: PKR {faultTracingPrice} (Admin Managed)</span>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -279,15 +285,15 @@ const Appointment = () => {
                           <Tag className="w-5 h-5" />
                         </div>
                         <div>
-                          <div className="text-xs font-extrabold text-slate-900">Doorstep Fault Tracing Fixed Fee</div>
+                          <div className="text-xs font-extrabold text-slate-900">Doorstep Visiting & Fault Tracing Fee</div>
                           <div className="text-[11px] text-slate-500 flex items-center gap-1">
                             <Lock className="w-3 h-3 text-slate-400" />
-                            Official rate (Fixed by Admin Panel)
+                            Official Visiting Rate (Admin Managed)
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-extrabold text-indigo-600 font-grotesk">Rs {faultTracingPrice}</span>
+                        <span className="text-lg font-extrabold text-indigo-600 font-grotesk">PKR {faultTracingPrice}</span>
                       </div>
                     </motion.div>
                   )}

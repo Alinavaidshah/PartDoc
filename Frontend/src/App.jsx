@@ -10,6 +10,7 @@ import SyncUser from './components/SyncUser';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import WhatsAppButton from './components/WhatsAppButton';
+import TechnicianModal from './components/TechnicianModal';
 
 // Pages
 import Home from './pages/Home'; 
@@ -80,6 +81,7 @@ function App() {
               </Routes>
               <Footer />
               <WhatsAppButton />
+              <TechnicianModal />
             </div>
           } />
         </Routes>

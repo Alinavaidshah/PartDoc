@@ -342,23 +342,28 @@ export default function Home() {
       
       <Toast message={toastMsg} isOpen={showToast} onClose={() => setShowToast(false)} />
 
-      {/* Top Banner Announcement Strip with Live Countdown */}
-      <div className="bg-slate-900 text-slate-200 text-xs py-2.5 px-4 text-center font-medium flex flex-wrap items-center justify-center gap-3 border-b border-slate-800 shadow-inner">
-        <div className="flex items-center gap-1.5 bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider animate-pulse">
-          <Zap className="w-3 h-3 fill-white" />
-          <span>Special Flash Offer</span>
-        </div>
-        <span>Free Express Delivery Across Pakistan On Orders Above PKR 15,000 | 100% Genuine Guaranteed</span>
-        
-        {/* Ticking Countdown Timer */}
-        <div className="flex items-center gap-1.5 font-mono font-extrabold text-amber-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 text-xs">
-          <Clock className="w-3.5 h-3.5 text-amber-400" />
-          <span>Ends In: {hrs}:{mins}:{secs}</span>
+      {/* Top Banner Announcement Strip with Live Countdown (Centered Alignment - Fix Image 2) */}
+      <div className="bg-slate-900 text-slate-200 text-xs py-2.5 px-4 text-center font-medium border-b border-slate-800 shadow-inner w-full">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-3 text-center">
+          <div className="inline-flex items-center gap-1.5 bg-rose-600 text-white font-extrabold px-3 py-1 rounded-full text-[10px] uppercase tracking-wider animate-pulse flex-shrink-0">
+            <Zap className="w-3 h-3 fill-white" />
+            <span>Special Flash Offer</span>
+          </div>
+
+          <span className="text-slate-200 font-medium">
+            Free Express Delivery Across Pakistan On Orders Above PKR 15,000 | 100% Genuine Guaranteed
+          </span>
+
+          {/* Ticking Countdown Timer */}
+          <div className="inline-flex items-center gap-1.5 font-mono font-extrabold text-amber-400 bg-slate-800/90 px-3 py-1 rounded-lg border border-slate-700 text-xs flex-shrink-0">
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            <span>Ends In: {hrs}:{mins}:{secs}</span>
+          </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (BENTO GRID WITH TYPEWRITER & DECONSTRUCTED GRAPHICS) */}
+      {/* 1. HERO SECTION (BENTO GRID WITH TYPEWRITER & IMAGE 1 VISUAL SHOWCASE) */}
       {/* ========================================================================= */}
       <section className="pt-10 pb-16 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
@@ -380,9 +385,18 @@ export default function Home() {
                 <span>Original Spare Parts & Priority Lab Repair & Upgradation</span>
               </div>
 
-              {/* Smooth Typewriter Main Headline */}
+              {/* Smooth Typewriter Main Headline with Blue Touch Preserved */}
               <h1 className="font-grotesk text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.18] mb-5 min-h-[110px] sm:min-h-[135px]">
-                {displayText}
+                {displayText.includes("&") ? (
+                  <>
+                    {displayText.split("&")[0]} &
+                    <span className="text-indigo-600 font-extrabold">
+                      {displayText.split("&").slice(1).join("&")}
+                    </span>
+                  </>
+                ) : (
+                  displayText
+                )}
                 {!isDone && <span className="inline-block w-2 h-7 sm:h-9 bg-indigo-600 ml-1 animate-pulse" />}
               </h1>
 
@@ -452,121 +466,65 @@ export default function Home() {
 
           </motion.div>
 
-          {/* Right Hero Bento Block: 4 Fragmented Deconstructed Tech Components Grid (5 Columns) */}
+          {/* Right Hero Block: Image 1 Visual Showcase (Exploded Phone 3D Layers + Laptop Repair Hands Photo) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="lg:col-span-5 grid grid-cols-2 gap-3.5 sm:gap-4 h-full"
+            className="lg:col-span-5 flex flex-col justify-between items-center h-full space-y-4"
           >
-            
-            {/* Component 1: DDR5 High-Speed RAM Module */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-indigo-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
-            >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl group-hover:bg-indigo-500/20 transition-all" />
-              <div className="flex items-center justify-between z-10">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 bg-indigo-950/80 border border-indigo-700/50 px-2 py-0.5 rounded-md">
-                  DDR5 RAM
-                </span>
-                <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping" />
-              </div>
+            {/* Side-by-side rounded visual cards (Image 1 style) */}
+            <div className="grid grid-cols-2 gap-3.5 sm:gap-4 w-full flex-1">
               
-              <div className="my-2 z-10">
-                <div className="text-white font-grotesk font-extrabold text-sm sm:text-base leading-tight">6000 MHz RGB</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">High-Speed Desktop Memory</div>
-              </div>
-
-              <div className="space-y-1 z-10">
-                <div className="flex justify-between text-[10px] text-indigo-300 font-mono">
-                  <span>CL36 Speed</span>
-                  <span>100% OK</span>
+              {/* Card 1: 3D Exploded View Smartphone Component Layers */}
+              <motion.div
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="bg-white border border-slate-200 rounded-3xl p-3 shadow-xl flex flex-col justify-between overflow-hidden relative group"
+              >
+                <div className="w-full h-full min-h-[220px] sm:min-h-[260px] rounded-2xl bg-slate-100 flex items-center justify-center relative overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&q=80"
+                    alt="Exploded Mobile Phone Display & Battery Assembly"
+                    className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2.5 left-2.5 bg-slate-900/85 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-extrabold text-indigo-300 shadow-md border border-slate-700">
+                    3D Exploded Assembly
+                  </div>
                 </div>
-                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-4/5 animate-pulse" />
+              </motion.div>
+
+              {/* Card 2: Precision Laptop Repair Hands Screwdriver Photo */}
+              <motion.div
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="bg-white border border-slate-200 rounded-3xl p-3 shadow-xl flex flex-col justify-between overflow-hidden relative group"
+              >
+                <div className="w-full h-full min-h-[220px] sm:min-h-[260px] rounded-2xl bg-slate-100 flex items-center justify-center relative overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
+                    alt="Hands Repairing Laptop with Precision Screwdriver Tool"
+                    className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2.5 right-2.5 bg-emerald-950/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-extrabold text-emerald-400 shadow-md border border-emerald-700/60 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    Certified Lab
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            {/* Component 2: Powerful GPU & Processor Engine */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-amber-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
-            >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all" />
-              <div className="flex items-center justify-between z-10">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400 bg-amber-950/80 border border-amber-700/50 px-2 py-0.5 rounded-md">
-                  GPU Engine
-                </span>
-                <Cpu className="w-4 h-4 text-amber-400" />
-              </div>
+            </div>
 
-              <div className="my-2 z-10">
-                <div className="text-white font-grotesk font-extrabold text-sm sm:text-base leading-tight">16GB GDDR6X</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Ray Tracing & 4K Gaming</div>
+            {/* Bottom Status Assurance Strip (Image 1 style: Fast Shipping | Certified Technicians) */}
+            <div className="w-full bg-white border border-slate-200/90 rounded-2xl py-3.5 px-4 shadow-md flex items-center justify-around text-xs font-extrabold text-slate-800">
+              <div className="flex items-center gap-2 text-indigo-900">
+                <Truck className="w-4 h-4 text-indigo-600" />
+                <span>Fast Shipping</span>
               </div>
-
-              <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold z-10 pt-1 border-t border-slate-800">
-                <span className="flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-amber-400" /> CUDA Cores
-                </span>
-                <span className="text-amber-400 font-extrabold">Active</span>
+              <span className="text-slate-300 font-normal">|</span>
+              <div className="flex items-center gap-2 text-indigo-900">
+                <Wrench className="w-4 h-4 text-indigo-600" />
+                <span>Certified Technicians</span>
               </div>
-            </motion.div>
-
-            {/* Component 3: PC Repair & Diagnostic Tools Visual */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
-            >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all" />
-              <div className="flex items-center justify-between z-10">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-700/50 px-2 py-0.5 rounded-md">
-                  Repair Tools
-                </span>
-                <Wrench className="w-4 h-4 text-emerald-400" />
-              </div>
-
-              <div className="my-2 z-10">
-                <div className="text-white font-grotesk font-extrabold text-sm sm:text-base leading-tight">Lab Tools & Kits</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Precision Repair Hardware</div>
-              </div>
-
-              <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold z-10 pt-1 border-t border-slate-800">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                <span>100% Calibrated</span>
-              </div>
-            </motion.div>
-
-            {/* Component 4: Real PC & Mobile Repair Workshop Photo Card */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-cyan-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
-            >
-              {/* Photo Background */}
-              <img
-                src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
-                alt="PC & Mobile Repair Technician"
-                className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
-
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-300 bg-cyan-950/90 border border-cyan-700/60 px-2 py-0.5 rounded-md">
-                  Tech Workshop
-                </span>
-                <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-700/60 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  Live Lab
-                </span>
-              </div>
-
-              <div className="relative z-10 mt-auto">
-                <div className="text-white font-grotesk font-extrabold text-xs sm:text-sm">Hardware & Upgradation</div>
-                <div className="text-[10px] text-cyan-200 mt-0.5 font-medium">Certified Engineers</div>
-              </div>
-            </motion.div>
+            </div>
 
           </motion.div>
 
@@ -747,8 +705,8 @@ export default function Home() {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 justify-items-center">
-          {filteredProducts.slice(0, 6).map((item, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 justify-items-center">
+          {filteredProducts.slice(0, 3).map((item, idx) => (
             <div key={item._id || idx} className="w-full flex justify-center">
               <PartCard part={item} />
             </div>
