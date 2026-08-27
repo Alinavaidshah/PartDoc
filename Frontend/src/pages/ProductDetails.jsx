@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../features/cart/cartSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, removeFromCart } from '../features/cart/cartSlice';
 import {
   Truck, ShieldCheck, Star, Package, RefreshCw, Minus, Plus, Heart,
   Share2, ShoppingBag, Check, Zap, Wrench, ChevronRight, AlertCircle,
   CheckCircle2, ArrowRight, MessageSquarePlus, User, CornerDownRight,
-  Grid, Search, X, Monitor, Smartphone, Laptop, Cpu
+  Grid, Search, X, Monitor, Smartphone, Laptop, Cpu, Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
@@ -17,6 +17,9 @@ import { playPopSound } from '../utils/soundUtils';
 export default function ProductDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.items);
+  const isInCart = cartItems.some(item => item._id === id);
+  const [removed, setRemoved] = useState(false);
 
   const [part, setPart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -314,7 +317,7 @@ export default function ProductDetails() {
 
               {/* CTA BUTTONS */}
               <div className="flex flex-col gap-3">
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
                     onClick={handleAddToCart}
                     disabled={!inStock}
@@ -327,6 +330,24 @@ export default function ProductDetails() {
                     {added ? <Check size={18} /> : <ShoppingBag size={18} />}
                     <span>{added ? "Added To Cart" : "Add To Cart"}</span>
                   </button>
+
+                  {/* Remove from Cart - shown when item is already in cart */}
+                  {isInCart && (
+                    <button
+                      onClick={() => {
+                        dispatch(removeFromCart(id));
+                        setRemoved(true);
+                        setAdded(false);
+                        setToastMsg('Removed from cart');
+                        setShowToast(true);
+                        setTimeout(() => setRemoved(false), 2000);
+                      }}
+                      title="Remove from Cart"
+                      className="w-14 py-4 rounded-xl font-extrabold text-sm transition-all flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 shadow-sm flex-shrink-0"
+                    >
+                      {removed ? <Check size={18} className="text-rose-500" /> : <Trash2 size={18} />}
+                    </button>
+                  )}
 
                   <Link
                     to="/checkout"

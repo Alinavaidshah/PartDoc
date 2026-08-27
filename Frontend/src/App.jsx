@@ -83,8 +83,8 @@ function App() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
               </Routes>
-              <Footer />
               <WhatsAppButton />
+              <Footer />
               <TechnicianModal />
             </div>
           } />

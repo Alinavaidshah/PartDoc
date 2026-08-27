@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, ArrowRight, Phone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const WhatsAppButton = () => {
@@ -9,36 +9,50 @@ const WhatsAppButton = () => {
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${message}`;
 
   return (
-    <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 sm:gap-3 scale-90 sm:scale-100 origin-bottom-right">
-      {/* Tooltip Badge */}
-      <motion.div
-        initial={{ opacity: 0, x: 10, scale: 0.9 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{ delay: 1, duration: 0.4 }}
-        className="hidden sm:flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-3.5 py-2 rounded-2xl shadow-xl border border-slate-800"
-      >
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-        <span>Chat with Digi Dude ({phoneNumber})</span>
-      </motion.div>
+    <div className="w-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 border-t border-emerald-400/50 shadow-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-      {/* Floating Button */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp with Digi Dude"
-        className="relative group bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 sm:p-4 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95"
-      >
-        {/* Glow Ring */}
-        <span className="absolute -inset-1 rounded-full bg-emerald-500/40 animate-pulse blur-sm group-hover:bg-emerald-500/60" />
-        
-        <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8 relative z-10 fill-white stroke-emerald-600" />
+        {/* Left: Icon + Text */}
+        <div className="flex items-center gap-4">
+          <div className="relative flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/30">
+              <MessageCircle className="w-6 h-6 text-white fill-white" />
+            </div>
+            {/* Pulsing online dot */}
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            </span>
+          </div>
 
-        {/* Unread Alert Counter */}
-        <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-md">
-          1
-        </span>
-      </a>
+          <div>
+            <p className="text-white font-extrabold text-sm sm:text-base leading-tight">
+              Chat with Digi Dude on WhatsApp
+            </p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <Phone className="w-3 h-3 text-emerald-100" />
+              <p className="text-emerald-100 text-xs sm:text-sm font-semibold">
+                {phoneNumber} · Usually replies within minutes
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: CTA Button */}
+        <motion.a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on WhatsApp with Digi Dude"
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.97 }}
+          className="flex items-center gap-2.5 bg-white hover:bg-emerald-50 text-emerald-700 font-extrabold text-sm px-6 py-3 rounded-xl shadow-lg transition-all border border-white/60 whitespace-nowrap flex-shrink-0"
+        >
+          <MessageCircle className="w-5 h-5 fill-emerald-600 stroke-none" />
+          <span>Start Chat Now</span>
+          <ArrowRight className="w-4 h-4" />
+        </motion.a>
+
+      </div>
     </div>
   );
 };

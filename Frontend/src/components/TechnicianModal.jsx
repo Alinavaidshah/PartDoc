@@ -47,41 +47,17 @@ const TechnicianModal = () => {
 
   return (
     <>
-      {/* RIGHT SIDE COLLAPSIBLE TECHNICIAN TRIGGER TAB */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center">
-        <AnimatePresence mode="wait">
-          {!isExpanded ? (
-            /* CLOSED STATE: SLEEK RIGHT-EDGE BADGE WITH ARROW & HIRING ICON */
-            <motion.button
-              key="closed-tab"
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 20, opacity: 0 }}
-              whileHover={{ x: -4 }}
-              onClick={() => setIsExpanded(true)}
-              className="bg-slate-900/95 hover:bg-slate-900 text-white pl-3.5 pr-2.5 py-3 rounded-l-2xl shadow-2xl border-y border-l border-indigo-500/40 backdrop-blur-md flex items-center gap-2 group cursor-pointer transition-all"
-              aria-label="Open Technician Hiring Info"
-            >
-              <ChevronLeft size={16} className="text-indigo-400 group-hover:-translate-x-1 transition-transform" />
-              <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
-                <Wrench size={14} />
-              </div>
-              <div className="flex flex-col text-left pr-1">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5">
-                  <span>Hiring</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                </span>
-              </div>
-            </motion.button>
-          ) : (
-            /* OPEN / EXPANDED STATE: SLIDES OUT WITH FULL DETAILS AND APPLY BUTTON */
+      {/* BOTTOM-RIGHT FLOATING TECHNICIAN BUTTON (WhatsApp position) */}
+      <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2">
+        <AnimatePresence>
+          {isExpanded && (
             <motion.div
-              key="expanded-tab"
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 260 }}
-              className="bg-slate-900/95 text-white pl-4 pr-3 py-3.5 rounded-l-3xl shadow-2xl border-y border-l border-indigo-500/50 backdrop-blur-xl flex items-center gap-3"
+              key="expanded-card"
+              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.9 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              className="bg-slate-900/95 text-white px-4 py-3.5 rounded-2xl shadow-2xl border border-indigo-500/50 backdrop-blur-xl flex items-center gap-3 mb-1"
             >
               <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
                 <Wrench size={16} />
@@ -95,20 +71,37 @@ const TechnicianModal = () => {
               </div>
               <button
                 onClick={() => { setIsOpen(true); setIsExpanded(false); }}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-xl shadow-md transition-colors ml-1 cursor-pointer"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-xl shadow-md transition-colors ml-1 cursor-pointer whitespace-nowrap"
               >
                 Apply Now
               </button>
               <button
                 onClick={() => setIsExpanded(false)}
                 className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
-                aria-label="Collapse tab"
+                aria-label="Close"
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* CIRCULAR FLOATING BUTTON */}
+        <motion.button
+          onClick={() => setIsExpanded(prev => !prev)}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.93 }}
+          className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl flex items-center justify-center transition-all cursor-pointer"
+          aria-label="Technician Hiring"
+        >
+          {/* Glow ring */}
+          <span className="absolute -inset-1 rounded-full bg-indigo-500/30 animate-pulse blur-sm" />
+          <Wrench size={22} className="relative z-10" />
+          {/* Green live indicator */}
+          <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white shadow z-10">
+            <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+          </span>
+        </motion.button>
       </div>
 
       {/* LIGHT THEME FORM MODAL OVERLAY */}
