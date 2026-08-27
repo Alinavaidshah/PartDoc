@@ -428,25 +428,70 @@ export default function Home() {
                 GPUs, CPUs, RAM, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Official Warranty across Pakistan.
               </p>
 
-              {/* HIGH-CONTRAST 2-COLOR DEAL BADGES (INDIGO + SLATE) */}
+              {/* ANIMATED 2-COLOR DEAL BADGES (AMBER/YELLOW + EMERALD/GREEN) */}
               <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 w-full">
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 text-white border border-indigo-500 text-xs font-extrabold shadow-md">
-                  <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" style={{ animationDuration: '6s' }} />
-                  <span>Exchange Policy Available</span>
+
+                {/* Badge 1: Amber filled — Exchange Policy — spinning + shimmer */}
+                <div
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-md relative overflow-hidden cursor-default"
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    border: '1px solid #fbbf24',
+                    color: '#fff',
+                    animation: 'badgePulse 2.8s ease-in-out infinite',
+                  }}
+                >
+                  <span
+                    className="absolute inset-0 opacity-0"
+                    style={{ animation: 'shimmerBadge 2.5s ease-in-out infinite', background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%)', backgroundSize: '200% 100%' }}
+                  />
+                  <RefreshCw className="w-3.5 h-3.5 relative z-10" style={{ animation: 'spin 5s linear infinite' }} />
+                  <span className="relative z-10">Exchange Policy Available</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-extrabold shadow-sm">
-                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                {/* Badge 2: Amber light — 1 Year Warranty — gentle bounce */}
+                <div
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-sm cursor-default"
+                  style={{
+                    background: '#fef9c3',
+                    border: '1px solid #fde047',
+                    color: '#78350f',
+                    animation: 'badgeBounce 3.5s ease-in-out infinite',
+                  }}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#d97706' }} />
                   <span>1 Year Official Warranty</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 text-white border border-slate-800 text-xs font-extrabold shadow-md">
-                  <Truck className="w-3.5 h-3.5 text-indigo-300" />
-                  <span>24-48h Express Shipping</span>
+                {/* Badge 3: Emerald filled — 24-48h Shipping — pulsing glow */}
+                <div
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-md relative overflow-hidden cursor-default"
+                  style={{
+                    background: 'linear-gradient(135deg, #059669, #047857)',
+                    border: '1px solid #34d399',
+                    color: '#fff',
+                    animation: 'badgePulse 2.2s ease-in-out infinite 0.4s',
+                  }}
+                >
+                  <span
+                    className="absolute inset-0 opacity-0"
+                    style={{ animation: 'shimmerBadge 2.5s ease-in-out infinite 0.8s', background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)', backgroundSize: '200% 100%' }}
+                  />
+                  <Truck className="w-3.5 h-3.5 relative z-10" style={{ animation: 'truckMove 1.8s ease-in-out infinite' }} />
+                  <span className="relative z-10">24-48h Express Shipping</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-900 text-xs font-extrabold shadow-sm">
-                  <Award className="w-3.5 h-3.5 text-slate-700" />
+                {/* Badge 4: Emerald light — Best Price — subtle float */}
+                <div
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-sm cursor-default"
+                  style={{
+                    background: '#dcfce7',
+                    border: '1px solid #86efac',
+                    color: '#14532d',
+                    animation: 'badgeBounce 4s ease-in-out infinite 0.6s',
+                  }}
+                >
+                  <Award className="w-3.5 h-3.5" style={{ color: '#059669' }} />
                   <span>Best Market Price Guarantee</span>
                 </div>
               </div>

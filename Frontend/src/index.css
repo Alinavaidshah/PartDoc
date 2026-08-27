@@ -33,3 +33,32 @@ body {
     font-size: 16px !important;
   }
 }
+
+/* ─── Hero Badge Animations ─── */
+
+/* Subtle scale + brightness pulse for filled badges */
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%       { transform: scale(1.035); filter: brightness(1.08); }
+}
+
+/* Shimmer light-sweep across filled badges */
+@keyframes shimmerBadge {
+  0%   { opacity: 0; background-position: -200% 0; }
+  30%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; background-position: 200% 0; }
+}
+
+/* Gentle float bounce for light badges */
+@keyframes badgeBounce {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+
+/* Truck icon subtle horizontal slide */
+@keyframes truckMove {
+  0%, 100% { transform: translateX(0px); }
+  40%       { transform: translateX(3px); }
+  60%       { transform: translateX(-1px); }
+}
