@@ -147,36 +147,74 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU OVERLAY */}
+      {/* MOBILE MENU SLIDE-OVER SIDEBAR */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 w-full h-screen bg-white/95 backdrop-blur-2xl flex flex-col justify-center items-center px-6 md:hidden z-40"
-          >
-            <div className="flex flex-col space-y-4 w-full max-w-xs text-center">
-              {NAV_LINKS.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.label}
-                    to={item.path}
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 md:hidden"
+            />
+
+            {/* Sliding Sidebar Panel */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="fixed top-0 right-0 h-full w-[82%] max-w-xs bg-white shadow-2xl z-50 flex flex-col justify-between p-6 border-l border-slate-200 md:hidden overflow-y-auto"
+            >
+              <div>
+                {/* Drawer Brand Header */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-indigo-600 p-1.5 rounded-xl text-white shadow-sm">
+                      <Cpu className="w-4 h-4" />
+                    </div>
+                    <span className="font-grotesk font-extrabold uppercase tracking-wider text-base text-slate-900">
+                      Digi<span className="text-indigo-600">Dude</span>
+                    </span>
+                  </div>
+                  <button
                     onClick={() => setIsOpen(false)}
-                    className={`block py-3.5 text-lg font-extrabold transition-all rounded-2xl ${
-                      isActive 
-                        ? 'text-indigo-600 bg-indigo-50 border border-indigo-100' 
-                        : 'text-slate-800 hover:bg-slate-100'
-                    }`}
+                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
                   >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-          </motion.div>
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Nav Links */}
+                <div className="flex flex-col space-y-2">
+                  {NAV_LINKS.map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <Link
+                        key={item.label}
+                        to={item.path}
+                        onClick={() => setIsOpen(false)}
+                        className={`block py-3 px-4 text-sm font-extrabold transition-all rounded-xl ${
+                          isActive 
+                            ? 'text-indigo-600 bg-indigo-50 border border-indigo-100 shadow-sm' 
+                            : 'text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Sidebar Footer */}
+              <div className="pt-4 border-t border-slate-100 text-center">
+                <p className="text-[11px] font-mono text-slate-400 font-medium">Digi Dude Official Tech Store</p>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>

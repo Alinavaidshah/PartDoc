@@ -405,25 +405,25 @@ export default function Home() {
                 GPUs, CPUs, RAM, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Official Warranty across Pakistan.
               </p>
 
-              {/* SLOW BLINKING DEAL BADGES */}
+              {/* CLEAN 2-COLOR DEAL BADGES (INDIGO + SLATE) */}
               <div className="flex flex-wrap items-center gap-2.5 mb-8 w-full">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-400/40 text-amber-900 text-xs font-extrabold shadow-sm animate-pulse">
-                  <RefreshCw className="w-3.5 h-3.5 text-amber-600 animate-spin" style={{ animationDuration: '7s' }} />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-bold shadow-sm animate-pulse">
+                  <RefreshCw className="w-3.5 h-3.5 text-indigo-600 animate-spin" style={{ animationDuration: '7s' }} />
                   <span>⚡ Exchange Policy Available</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-bold shadow-sm">
                   <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
                   <span>🛡️ 1 Year Official Warranty</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold shadow-sm">
-                  <Truck className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold shadow-sm">
+                  <Truck className="w-3.5 h-3.5 text-slate-700" />
                   <span>🚚 24-48h Express Shipping</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs font-bold shadow-sm">
-                  <Award className="w-3.5 h-3.5 text-purple-600" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold shadow-sm">
+                  <Award className="w-3.5 h-3.5 text-slate-700" />
                   <span>💵 Best Market Price Guarantee</span>
                 </div>
               </div>

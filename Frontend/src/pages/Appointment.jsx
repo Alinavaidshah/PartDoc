@@ -29,7 +29,8 @@ const Appointment = () => {
   } = useSelector((state) => state.appointment);
 
   const [activeTab, setActiveTab] = useState('book');
-  const [faultTracingPrice, setFaultTracingPrice] = useState(599);
+  const [faultTracingPrice, setFaultTracingPrice] = useState(899);
+  const [preDiagnosedPrice, setPreDiagnosedPrice] = useState(599);
   const [formData, setFormData] = useState({
     name: '', phone: '', customerEmail: '', deviceModel: '',
     issueDescription: '', appointmentDate: '', appointmentTime: '',
@@ -41,12 +42,15 @@ const Appointment = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState({ appointmentId: '', name: '' });
 
-  // Fetch dynamic fault tracing price from backend settings
+  // Fetch dynamic appointment pricing from backend settings
   useEffect(() => {
     api.get('/appointments/settings')
       .then(res => {
         if (res.data?.faultTracingPrice) {
           setFaultTracingPrice(res.data.faultTracingPrice);
+        }
+        if (res.data?.preDiagnosedPrice) {
+          setPreDiagnosedPrice(res.data.preDiagnosedPrice);
         }
       })
       .catch(err => console.error("Error loading settings:", err));
@@ -73,7 +77,7 @@ const Appointment = () => {
     e.preventDefault();
     const payload = {
       ...formData,
-      price: formData.serviceType === 'Fault Tracing' ? faultTracingPrice : 0,
+      price: formData.serviceType === 'Fault Tracing' ? faultTracingPrice : preDiagnosedPrice,
       issueDescription: formData.serviceType === 'Fault Tracing' && !formData.issueDescription
         ? 'Fault Tracing Of Your Device At Your Door Step'
         : formData.issueDescription
@@ -229,6 +233,8 @@ const Appointment = () => {
                   <div className="space-y-2">
                     <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-600">Select Service Option</label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      
+                      {/* OPTION 1: PRE-DIAGNOSED (RS 599) */}
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, serviceType: 'Normal' })}
@@ -238,16 +244,21 @@ const Appointment = () => {
                             : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-extrabold text-slate-900">Pre-Diagnosed Issue & Upgradation</span>
-                          {formData.serviceType === 'Normal' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-extrabold text-slate-900">Pre-Diagnosed & Upgradation</span>
+                            {formData.serviceType === 'Normal' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                          </div>
+                          <span className="text-[11px] text-slate-500 leading-normal">Hardware repair, display replacement, RAM/SSD speed upgradation & software diagnostics.</span>
                         </div>
-                        <span className="text-[11px] text-slate-500 leading-normal">Hardware repair, display replacement, RAM/SSD speed upgradation & software diagnostics.</span>
-                        <div className="mt-2 text-[10px] font-bold text-indigo-600 flex items-center gap-1 pt-1.5 border-t border-slate-200/60">
-                          <span>⚡ Service delivered at your doorstep</span>
+
+                        <div className="mt-3 pt-2 border-t border-slate-200/80 flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-indigo-700">⚡ Doorstep Service</span>
+                          <span className="text-xs font-extrabold text-indigo-600 font-grotesk">PKR {preDiagnosedPrice}</span>
                         </div>
                       </button>
 
+                      {/* OPTION 2: FAULT TRACING (RS 899) */}
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, serviceType: 'Fault Tracing' })}
@@ -257,46 +268,52 @@ const Appointment = () => {
                             : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-extrabold text-indigo-900 flex items-center gap-1">
-                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            Doorstep Fault Tracing (PKR {faultTracingPrice})
-                          </span>
-                          {formData.serviceType === 'Fault Tracing' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-extrabold text-indigo-900 flex items-center gap-1">
+                              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                              Doorstep Fault Tracing
+                            </span>
+                            {formData.serviceType === 'Fault Tracing' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                          </div>
+                          <span className="text-[11px] text-slate-500 leading-normal">Technician visits your doorstep for complete fault tracing & detailed diagnosis across Karachi.</span>
                         </div>
-                        <span className="text-[11px] text-slate-500 leading-normal">Technician visits your doorstep for complete fault tracing & detailed diagnosis across Karachi.</span>
-                        <div className="mt-2 text-[10px] font-bold text-amber-700 flex items-center gap-1 pt-1.5 border-t border-slate-200/60">
-                          <span>💵 Visiting Charges: PKR {faultTracingPrice} (Admin Managed)</span>
+
+                        <div className="mt-3 pt-2 border-t border-slate-200/80 flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-amber-800">💵 Diagnostic Fee</span>
+                          <span className="text-xs font-extrabold text-indigo-600 font-grotesk">PKR {faultTracingPrice}</span>
                         </div>
                       </button>
                     </div>
                   </div>
 
-                  {/* FAULT TRACING PRICE DISPLAY (NON-EDITABLE FOR USER) */}
-                  {formData.serviceType === 'Fault Tracing' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-center justify-between shadow-sm"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700">
-                          <Tag className="w-5 h-5" />
+                  {/* PRICE SUMMARY CARD */}
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700">
+                        <Tag className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900">
+                          {formData.serviceType === 'Fault Tracing' ? 'Doorstep Tracing & Visiting Fee' : 'Doorstep Service Slot Fee'}
                         </div>
-                        <div>
-                          <div className="text-xs font-extrabold text-slate-900">Doorstep Visiting & Fault Tracing Fee</div>
-                          <div className="text-[11px] text-slate-500 flex items-center gap-1">
-                            <Lock className="w-3 h-3 text-slate-400" />
-                            Official Visiting Rate (Admin Managed)
-                          </div>
+                        <div className="text-[11px] text-slate-500 flex items-center gap-1">
+                          <Lock className="w-3 h-3 text-slate-400" />
+                          Official Rate (Admin Managed)
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-lg font-extrabold text-indigo-600 font-grotesk">PKR {faultTracingPrice}</span>
-                      </div>
-                    </motion.div>
-                  )}
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-extrabold text-indigo-600 font-grotesk">
+                        PKR {formData.serviceType === 'Fault Tracing' ? faultTracingPrice : preDiagnosedPrice}
+                      </span>
+                    </div>
+                  </motion.div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
