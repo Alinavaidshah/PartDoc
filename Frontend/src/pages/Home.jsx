@@ -210,6 +210,38 @@ export default function Home() {
   const { displayText, isDone } = useTypewriter(headlineText, 30, 150);
   const { hrs, mins, secs } = useCountdown(19420);
 
+  const renderTypewrittenTitle = () => {
+    const prefix = "Genuine Tech Parts & ";
+    const highlight = "Hardware Diagnostic & Upgradation";
+    
+    if (displayText.length <= prefix.length) {
+      return <span>{displayText}</span>;
+    }
+    
+    const prefixPart = displayText.slice(0, prefix.length);
+    
+    if (displayText.length <= prefix.length + highlight.length) {
+      const highlightPart = displayText.slice(prefix.length);
+      return (
+        <>
+          <span>{prefixPart}</span>
+          <span className="text-indigo-600 font-extrabold">{highlightPart}</span>
+        </>
+      );
+    }
+    
+    const highlightPart = displayText.slice(prefix.length, prefix.length + highlight.length);
+    const suffixPart = displayText.slice(prefix.length + highlight.length);
+    
+    return (
+      <>
+        <span>{prefixPart}</span>
+        <span className="text-indigo-600 font-extrabold">{highlightPart}</span>
+        <span>{suffixPart}</span>
+      </>
+    );
+  };
+
   // One-Time Loader Per Session
   const [showInitialLoader, setShowInitialLoader] = useState(() => {
     return !sessionStorage.getItem('hasSeenInitialLoader');
@@ -385,13 +417,9 @@ export default function Home() {
                 <span>Original Spare Parts & Priority Lab Repair & Upgradation</span>
               </div>
 
-              {/* Typewriter Main Headline: Only "Hardware Diagnostic & Upgradation" in Indigo Blue */}
+              {/* Typewriter Main Headline: Character-by-character typing with "Hardware Diagnostic & Upgradation" in Indigo Blue */}
               <h1 className="font-grotesk text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.18] mb-4 sm:mb-5 min-h-[90px] sm:min-h-[130px]">
-                Genuine Tech Parts &{" "}
-                <span className="text-indigo-600 font-extrabold">
-                  Hardware Diagnostic & Upgradation
-                </span>{" "}
-                Services
+                {renderTypewrittenTitle()}
                 {!isDone && <span className="inline-block w-2 h-6 sm:h-9 bg-indigo-600 ml-1 animate-pulse" />}
               </h1>
 
@@ -400,27 +428,25 @@ export default function Home() {
                 GPUs, CPUs, RAM, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Official Warranty across Pakistan.
               </p>
 
-              {/* CLEAN 2-COLOR DEAL BADGES (INDIGO + EMERALD) */}
+              {/* CLEAN UNIFIED 2-COLOR DEAL BADGES (INDIGO + SLATE) */}
               <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 w-full">
-                {/* Indigo Policy Badges */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-extrabold shadow-sm animate-pulse">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-extrabold shadow-sm animate-pulse">
                   <RefreshCw className="w-3.5 h-3.5 text-indigo-600 animate-spin" style={{ animationDuration: '6s' }} />
                   <span>Exchange Policy Available</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-extrabold shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs font-extrabold shadow-sm">
                   <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
                   <span>1 Year Official Warranty</span>
                 </div>
 
-                {/* Emerald Delivery Badges */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs font-extrabold shadow-sm">
-                  <Truck className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-extrabold shadow-sm">
+                  <Truck className="w-3.5 h-3.5 text-slate-700" />
                   <span>24-48h Express Shipping</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs font-extrabold shadow-sm">
-                  <Award className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-extrabold shadow-sm">
+                  <Award className="w-3.5 h-3.5 text-slate-700" />
                   <span>Best Market Price Guarantee</span>
                 </div>
               </div>
@@ -471,21 +497,20 @@ export default function Home() {
             className="lg:col-span-5 grid grid-cols-2 gap-3.5 sm:gap-4 h-full"
           >
             
-            {/* Card 1: DDR5 High-Speed RAM Module (Dark Photo Background) */}
+            {/* Card 1: DDR5 High-Speed RAM Module */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-indigo-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
-              {/* Background Image */}
               <img
                 src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=600&q=80"
                 alt="DDR5 Desktop RAM Memory Stick"
                 className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="flex items-center justify-between z-10 relative">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-indigo-950/90 border border-indigo-700/60 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
                   DDR5 RAM
                 </span>
                 <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping" />
@@ -507,24 +532,23 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Card 2: Powerful GPU & Processor Engine (Dark Photo Background) */}
+            {/* Card 2: Powerful GPU & Processor Engine */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-amber-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
-              {/* Background Image */}
               <img
                 src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&q=80"
                 alt="NVIDIA GPU Graphics Engine"
                 className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="flex items-center justify-between z-10 relative">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-300 bg-amber-950/90 border border-amber-700/60 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
                   GPU Engine
                 </span>
-                <Cpu className="w-4 h-4 text-amber-400" />
+                <Cpu className="w-4 h-4 text-indigo-400" />
               </div>
 
               <div className="my-2 z-10 relative">
@@ -532,32 +556,31 @@ export default function Home() {
                 <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Ray Tracing & 4K Gaming</div>
               </div>
 
-              <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
+              <div className="flex items-center justify-between text-[10px] font-mono text-indigo-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
                 <span className="flex items-center gap-1">
                   <Zap className="w-3 h-3 text-amber-400" /> CUDA Cores
                 </span>
-                <span className="text-amber-400 font-extrabold">Active</span>
+                <span className="text-indigo-400 font-extrabold">Active</span>
               </div>
             </motion.div>
 
-            {/* Card 3: PC Repair & Diagnostic Tools (Dark Photo Background) */}
+            {/* Card 3: PC Repair & Diagnostic Tools */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
-              {/* Background Image */}
               <img
                 src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80"
                 alt="Precision Repair Tool Kit"
                 className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="flex items-center justify-between z-10 relative">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 bg-emerald-950/90 border border-emerald-700/60 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
                   Repair Tools
                 </span>
-                <Wrench className="w-4 h-4 text-emerald-400" />
+                <Wrench className="w-4 h-4 text-indigo-400" />
               </div>
 
               <div className="my-2 z-10 relative">
@@ -565,8 +588,8 @@ export default function Home() {
                 <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Precision Repair Hardware</div>
               </div>
 
-              <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold z-10 relative pt-1 border-t border-slate-800/80">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              <div className="flex items-center gap-1.5 text-[10px] text-indigo-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
+                <CheckCircle2 className="w-3 h-3 text-indigo-400" />
                 <span>100% Calibrated</span>
               </div>
             </motion.div>
@@ -574,29 +597,28 @@ export default function Home() {
             {/* Card 4: Hardware Workshop Photo Card */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-cyan-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
-              {/* Background Image */}
               <img
                 src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
                 alt="PC & Mobile Repair Technician Workshop"
                 className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-300 bg-cyan-950/90 border border-cyan-700/60 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
                   Tech Workshop
                 </span>
-                <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-700/60 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span className="text-[9px] font-extrabold text-indigo-300 bg-slate-950/85 backdrop-blur-md px-2 py-0.5 rounded-md border border-indigo-500/40 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
                   Live Lab
                 </span>
               </div>
 
               <div className="relative z-10 mt-auto">
                 <div className="text-white font-grotesk font-extrabold text-xs sm:text-sm">Hardware & Upgradation</div>
-                <div className="text-[10px] text-cyan-200 mt-0.5 font-medium">Certified Engineers</div>
+                <div className="text-[10px] text-indigo-200 mt-0.5 font-medium">Certified Engineers</div>
               </div>
             </motion.div>
 
