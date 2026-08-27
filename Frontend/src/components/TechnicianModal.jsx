@@ -47,78 +47,89 @@ const TechnicianModal = () => {
 
   return (
     <>
-      {/* RIGHT-EDGE VERTICAL HIRING TAB */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center">
-
-        {/* Slide-Out Expanded Card */}
+      {/* BOTTOM-RIGHT HIRING TECHNICIAN TRIGGER */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2">
         <AnimatePresence>
           {isExpanded && (
             <motion.div
               key="hiring-card"
-              initial={{ x: 40, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 40, opacity: 0 }}
+              initial={{ opacity: 0, y: 15, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 15, scale: 0.92 }}
               transition={{ type: 'spring', damping: 22, stiffness: 280 }}
-              className="bg-slate-900 text-white px-4 py-3.5 shadow-2xl border-y border-l border-indigo-500/60 rounded-l-2xl flex items-center gap-3 mr-0"
+              className="bg-slate-900/95 text-white p-4 rounded-3xl shadow-2xl border border-indigo-500/50 backdrop-blur-xl flex flex-col gap-3 min-w-[280px] max-w-xs mb-1"
             >
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md flex-shrink-0">
-                <Wrench size={17} />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md">
+                    <Wrench size={16} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
+                      Technicians Required
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
+                    </span>
+                    <span className="text-[10px] text-indigo-300 font-semibold mt-0.5">Karachi All Over</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
               </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[11px] font-extrabold uppercase tracking-widest text-white flex items-center gap-1.5 leading-none">
-                  Technicians Required
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
-                </span>
-                <span className="text-[10px] text-indigo-300 font-semibold mt-1">All Over Karachi — Apply Now!</span>
-              </div>
+
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                We are recruiting mobile and computer repair specialists across all areas of Karachi.
+              </p>
+
               <button
                 onClick={() => { setIsOpen(true); setIsExpanded(false); }}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-extrabold px-3 py-1.5 rounded-xl shadow-md transition-colors cursor-pointer whitespace-nowrap flex-shrink-0"
+                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold rounded-xl shadow-md transition-all cursor-pointer text-center flex items-center justify-center gap-2"
               >
-                Apply Now
+                <span>Apply For Job Now</span>
+                <Send size={13} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* VERTICAL TAB — always visible on right edge, text reads top-to-bottom */}
-        <button
+        {/* BOTTOM-RIGHT HIRING PILL BUTTON */}
+        <motion.button
           onClick={() => setIsExpanded(prev => !prev)}
-          className="relative group flex flex-col items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-5 rounded-l-2xl shadow-2xl border-y border-l border-indigo-400/50 cursor-pointer transition-all"
-          aria-label="Technician Hiring — Click to expand"
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          className="relative group bg-slate-900/95 hover:bg-slate-900 text-white pl-3.5 pr-4 py-3 rounded-2xl shadow-2xl border border-indigo-500/50 backdrop-blur-xl flex items-center gap-3 cursor-pointer transition-all"
+          aria-label="Technicians Hiring Trigger"
         >
-          {/* Subtle glow edge */}
-          <span className="absolute inset-0 rounded-l-2xl ring-1 ring-inset ring-indigo-300/20 pointer-events-none" />
+          {/* Subtle Glow Ring */}
+          <span className="absolute -inset-0.5 rounded-2xl bg-indigo-500/30 animate-pulse blur-sm pointer-events-none" />
 
-          {/* Arrow indicator (flips when expanded) */}
-          <motion.span
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-indigo-200 group-hover:text-white"
+          {/* Left chevron arrow */}
+          <motion.div
+            animate={{ x: isExpanded ? 2 : [0, -3, 0] }}
+            transition={{ repeat: isExpanded ? 0 : Infinity, duration: 1.8, ease: "easeInOut" }}
+            className="text-indigo-400 flex-shrink-0"
           >
-            <ChevronLeft size={15} />
-          </motion.span>
+            <ChevronLeft size={16} />
+          </motion.div>
 
-          {/* Wrench icon */}
-          <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center">
-            <Wrench size={14} />
+          {/* Wrench Icon Badge */}
+          <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
+            <Wrench size={16} />
           </div>
 
-          {/* Vertical text: HIRING */}
-          <span
-            className="text-[10px] font-black uppercase tracking-[0.2em] text-white leading-none"
-            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-          >
-            Hiring
-          </span>
-
-          {/* Live green dot */}
-          <span className="relative flex items-center justify-center">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 block">
-              <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+          {/* Text Labels */}
+          <div className="flex flex-col text-left">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
+              <span>Hiring Technicians</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
             </span>
-          </span>
-        </button>
+            <span className="text-[10px] text-indigo-300 font-semibold mt-1">Karachi All Over (Apply)</span>
+          </div>
+        </motion.button>
       </div>
 
       {/* LIGHT THEME FORM MODAL OVERLAY */}
