@@ -36,18 +36,6 @@ function Footer() {
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
               Pakistan's premier platform for original computer, laptop, and mobile replacement spare parts & lab upgradations with verified serial numbers & official warranty.
             </p>
-            <div className="flex items-center gap-3">
-              {["Twitter", "LinkedIn", "Facebook", "YouTube"].map((name, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  onClick={(e) => e.preventDefault()}
-                  className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-indigo-600 hover:text-white border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 transition-all shadow-sm"
-                >
-                  {name[0]}
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Quick Links Column */}

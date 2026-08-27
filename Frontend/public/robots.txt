@@ -1,13 +1,7 @@
-# PartDoc Robots.txt
 User-agent: *
 Allow: /
-Allow: /computerparts
-Allow: /mobileparts
-Allow: /appointment
-Allow: /product/*
-
-# Disallow indexing private admin panel
 Disallow: /admin/
-Disallow: /admin/*
+Disallow: /checkout
+Disallow: /cart
 
-Sitemap: https://www.partdoc.com/sitemap.xml
+Sitemap: https://part-doc-rrnn.vercel.app/sitemap.xml
