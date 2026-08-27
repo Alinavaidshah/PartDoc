@@ -55,9 +55,9 @@ const TechnicianModal = () => {
 
   return (
     <>
-      {/* DOCKED RIGHT-EDGE SLIDE-OUT HIRING TRIGGER (ONLY ON HOME PAGE) */}
+      {/* DOCKED RIGHT-EDGE SLIDE-OUT HIRING TRIGGER (ONLY ON HOME PAGE - BOTTOM CORNER) */}
       {isHomePage && (
-        <div className="fixed right-0 bottom-24 sm:bottom-28 z-40 flex items-center">
+        <div className="fixed right-0 bottom-4 sm:bottom-6 z-40 flex items-center">
         <AnimatePresence mode="wait">
           {!isExpanded ? (
             /* COLLAPSED / TUCKED IN: MINIMAL EDGE HANDLE (Does NOT occupy screen space) */

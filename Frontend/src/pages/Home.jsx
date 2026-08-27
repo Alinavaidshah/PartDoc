@@ -428,12 +428,12 @@ export default function Home() {
                 GPUs, CPUs, RAM, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Official Warranty across Pakistan.
               </p>
 
-              {/* SOFT PASTEL BADGES — 2 Light Yellow + 2 Light Green */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 w-full">
+              {/* SOFT PASTEL BADGES — 2x2 CLEAN GRID (2 Light Yellow + 2 Light Green) */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-6 sm:mb-8 w-full max-w-xl">
 
-                {/* Badge 1: Soft Light Yellow — Exchange Policy — gentle pulse + spin */}
+                {/* Badge 1: Soft Light Yellow — Exchange Policy */}
                 <div
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-sm relative overflow-hidden cursor-default"
+                  className="flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-[11px] sm:text-xs font-extrabold shadow-sm cursor-default w-full"
                   style={{
                     background: '#fefce8',
                     border: '1.5px solid #fef08a',
@@ -441,13 +441,13 @@ export default function Home() {
                     animation: 'badgeBounce 3s ease-in-out infinite',
                   }}
                 >
-                  <RefreshCw className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#ca8a04', animation: 'spin 6s linear infinite' }} />
-                  <span>Exchange Policy Available</span>
+                  <RefreshCw className="w-3.5 h-3.5 flex-shrink-0 text-amber-600 animate-spin" style={{ animationDuration: '6s' }} />
+                  <span className="leading-tight">Exchange Policy</span>
                 </div>
 
-                {/* Badge 2: Soft Light Yellow — 1 Year Warranty — float */}
+                {/* Badge 2: Soft Light Yellow — 1 Year Warranty */}
                 <div
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-sm cursor-default"
+                  className="flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-[11px] sm:text-xs font-extrabold shadow-sm cursor-default w-full"
                   style={{
                     background: '#fefce8',
                     border: '1.5px solid #fef08a',
@@ -455,13 +455,13 @@ export default function Home() {
                     animation: 'badgeBounce 3.8s ease-in-out infinite 0.5s',
                   }}
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#ca8a04' }} />
-                  <span>1 Year Official Warranty</span>
+                  <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0 text-amber-600" />
+                  <span className="leading-tight">1 Year Warranty</span>
                 </div>
 
-                {/* Badge 3: Soft Light Green — 24-48h Shipping — truck slide */}
+                {/* Badge 3: Soft Light Green — 24-48h Shipping */}
                 <div
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-sm cursor-default"
+                  className="flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-[11px] sm:text-xs font-extrabold shadow-sm cursor-default w-full"
                   style={{
                     background: '#f0fdf4',
                     border: '1.5px solid #bbf7d0',
@@ -469,13 +469,13 @@ export default function Home() {
                     animation: 'badgeBounce 3.2s ease-in-out infinite 0.2s',
                   }}
                 >
-                  <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#16a34a', animation: 'truckMove 2s ease-in-out infinite' }} />
-                  <span>24-48h Express Shipping</span>
+                  <Truck className="w-3.5 h-3.5 flex-shrink-0 text-emerald-600" style={{ animation: 'truckMove 2s ease-in-out infinite' }} />
+                  <span className="leading-tight">24-48h Shipping</span>
                 </div>
 
-                {/* Badge 4: Soft Light Green — Best Price — float */}
+                {/* Badge 4: Soft Light Green — Best Market Price */}
                 <div
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-sm cursor-default"
+                  className="flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-[11px] sm:text-xs font-extrabold shadow-sm cursor-default w-full"
                   style={{
                     background: '#f0fdf4',
                     border: '1.5px solid #bbf7d0',
@@ -483,8 +483,8 @@ export default function Home() {
                     animation: 'badgeBounce 4.2s ease-in-out infinite 0.8s',
                   }}
                 >
-                  <Award className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#16a34a' }} />
-                  <span>Best Market Price Guarantee</span>
+                  <Award className="w-3.5 h-3.5 flex-shrink-0 text-emerald-600" />
+                  <span className="leading-tight">Best Price Guarantee</span>
                 </div>
               </div>
 
