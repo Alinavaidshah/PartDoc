@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wrench, X, CheckCircle2, User, Phone, Briefcase, Sparkles, Send } from 'lucide-react';
+import { Wrench, X, CheckCircle2, User, Phone, Briefcase, Sparkles, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../api/axiosConfig';
 
 const TechnicianModal = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -13,16 +14,6 @@ const TechnicianModal = () => {
     specialization: 'Mobile OLED & Screen Repair',
     experience: '2-3 Years',
   });
-
-  // Auto pop-up callout nudge after 15 seconds if not opened yet
-  const [showCallout, setShowCallout] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCallout(true);
-    }, 15000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,46 +47,64 @@ const TechnicianModal = () => {
 
   return (
     <>
-      {/* FLOATING BADGE BUTTON (BOTTOM-LEFT - COMPACT MOBILE SIZE) */}
-      <div className="fixed bottom-3 left-3 sm:bottom-6 sm:left-6 z-40 flex items-center gap-2 sm:gap-3 scale-90 sm:scale-100 origin-bottom-left">
-        <motion.button
-          onClick={() => { setIsOpen(true); setShowCallout(false); }}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.95 }}
-          className="relative group bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full shadow-2xl border border-slate-700 flex items-center gap-2 transition-all cursor-pointer"
-        >
-          {/* Glowing Ring */}
-          <span className="absolute -inset-1 rounded-full bg-indigo-500/30 animate-pulse blur-sm group-hover:bg-indigo-500/50" />
-
-          <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md">
-            <Wrench size={15} />
-          </div>
-
-          <div className="flex flex-col text-left">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5">
-              <span>Technicians Required</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            </span>
-            <span className="text-[10px] text-indigo-300 font-semibold">Karachi All Over (Apply Now)</span>
-          </div>
-        </motion.button>
-
-        {/* PERIODIC CALLOUT NUDGE BADGE */}
-        <AnimatePresence>
-          {showCallout && !isOpen && (
-            <motion.div
-              initial={{ opacity: 0, x: -10, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: -10, scale: 0.9 }}
-              className="hidden lg:flex items-center gap-2 bg-indigo-600 text-white text-xs font-bold px-3.5 py-2 rounded-2xl shadow-xl border border-indigo-500 relative"
+      {/* RIGHT SIDE COLLAPSIBLE TECHNICIAN TRIGGER TAB */}
+      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center">
+        <AnimatePresence mode="wait">
+          {!isExpanded ? (
+            /* CLOSED STATE: SLEEK RIGHT-EDGE BADGE WITH ARROW & HIRING ICON */
+            <motion.button
+              key="closed-tab"
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 20, opacity: 0 }}
+              whileHover={{ x: -4 }}
+              onClick={() => setIsExpanded(true)}
+              className="bg-slate-900/95 hover:bg-slate-900 text-white pl-3.5 pr-2.5 py-3 rounded-l-2xl shadow-2xl border-y border-l border-indigo-500/40 backdrop-blur-md flex items-center gap-2 group cursor-pointer transition-all"
+              aria-label="Open Technician Hiring Info"
             >
-              <Sparkles size={14} className="text-amber-300" />
-              <span>Are you a repair expert? Join us!</span>
+              <ChevronLeft size={16} className="text-indigo-400 group-hover:-translate-x-1 transition-transform" />
+              <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
+                <Wrench size={14} />
+              </div>
+              <div className="flex flex-col text-left pr-1">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5">
+                  <span>Hiring</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                </span>
+              </div>
+            </motion.button>
+          ) : (
+            /* OPEN / EXPANDED STATE: SLIDES OUT WITH FULL DETAILS AND APPLY BUTTON */
+            <motion.div
+              key="expanded-tab"
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 260 }}
+              className="bg-slate-900/95 text-white pl-4 pr-3 py-3.5 rounded-l-3xl shadow-2xl border-y border-l border-indigo-500/50 backdrop-blur-xl flex items-center gap-3"
+            >
+              <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
+                <Wrench size={16} />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
+                  <span>Technicians Required</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                </span>
+                <span className="text-[10px] text-indigo-300 font-semibold mt-1">Karachi All Over</span>
+              </div>
               <button
-                onClick={() => setShowCallout(false)}
-                className="ml-1 text-indigo-200 hover:text-white"
+                onClick={() => { setIsOpen(true); setIsExpanded(false); }}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-xl shadow-md transition-colors ml-1 cursor-pointer"
               >
-                <X size={13} />
+                Apply Now
+              </button>
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+                aria-label="Collapse tab"
+              >
+                <ChevronRight size={18} />
               </button>
             </motion.div>
           )}
