@@ -151,11 +151,11 @@ const AdminAppointment = () => {
   };
 
   return (
-    <div style={{ display: 'flex', background: '#f8fafc', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex', background: '#f8fafc', minHeight: '100vh', fontFamily: 'Inter, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
         <Topbar title="Manage Appointments" onMenuClick={() => setMobileOpen(true)} />
-        <div style={{ padding: '24px' }}>
+        <div style={{ padding: '24px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
 
           {/* ADMIN FAULT TRACING PRICE CONTROL BAR */}
           <div style={{

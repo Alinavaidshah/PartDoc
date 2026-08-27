@@ -62,13 +62,13 @@ const AdminTechnicians = () => {
   const contactedCount = technicians.filter(t => t.status === 'Contacted').length;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
         <Topbar title="Technician Recruitment Portal" adminName="Ali Navaid Shah" onMenuClick={() => setMobileOpen(true)} />
         
-        <main style={{ padding: 24, maxWidth: 1400, margin: '0 auto', width: '100%' }}>
+        <main style={{ padding: '20px', maxWidth: 1400, margin: '0 auto', width: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
           
           {/* Header */}
           <div style={{ marginBottom: 24 }}>

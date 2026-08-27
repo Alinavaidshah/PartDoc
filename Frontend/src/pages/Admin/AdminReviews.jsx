@@ -62,10 +62,10 @@ const AdminReviews = () => {
     : '5.0';
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: TOKENS.bg, color: TOKENS.text, fontFamily: FONT_BODY }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: TOKENS.bg, color: TOKENS.text, fontFamily: FONT_BODY, width: "100%", maxWidth: "100vw", overflowX: "hidden" }}>
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflowX: "hidden" }}>
         <Topbar title="Reviews & Moderation" onMenuClick={() => setMobileOpen(true)} />
 
         <main style={{ padding: 24, maxWidth: 1280, width: "100%", margin: "0 auto" }}>

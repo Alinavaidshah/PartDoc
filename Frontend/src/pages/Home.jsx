@@ -489,7 +489,7 @@ export default function Home() {
 
           </motion.div>
 
-          {/* Right Hero Block: 4 Bento Cards with Accurate High-Res Tech Background Images */}
+          {/* Right Hero Block: 4 Bento Cards with Distinct Accent Colors (Indigo, Amber, Emerald, Cyan) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -497,7 +497,7 @@ export default function Home() {
             className="lg:col-span-5 grid grid-cols-2 gap-3.5 sm:gap-4 h-full"
           >
             
-            {/* Card 1: DDR5 High-Speed RAM Module (Actual RAM Stick Photo) */}
+            {/* Card 1: DDR5 High-Speed RAM Module (Indigo Accent) */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
               className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
@@ -532,10 +532,10 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Card 2: Powerful GPU & Processor Engine (Actual GPU Graphics Card Photo) */}
+            {/* Card 2: Powerful GPU Engine (Amber/Gold Accent) */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
+              className="bg-slate-900 border border-amber-500/40 hover:border-amber-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
               <img
                 src="https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80"
@@ -545,10 +545,10 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="flex items-center justify-between z-10 relative">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-300 bg-slate-950/85 backdrop-blur-md border border-amber-500/40 px-2 py-0.5 rounded-md">
                   GPU Engine
                 </span>
-                <Cpu className="w-4 h-4 text-indigo-400" />
+                <Cpu className="w-4 h-4 text-amber-400" />
               </div>
 
               <div className="my-2 z-10 relative">
@@ -556,31 +556,31 @@ export default function Home() {
                 <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Ray Tracing & 4K Gaming</div>
               </div>
 
-              <div className="flex items-center justify-between text-[10px] font-mono text-indigo-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
+              <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
                 <span className="flex items-center gap-1">
                   <Zap className="w-3 h-3 text-amber-400" /> CUDA Cores
                 </span>
-                <span className="text-indigo-400 font-extrabold">Active</span>
+                <span className="text-amber-400 font-extrabold">Active</span>
               </div>
             </motion.div>
 
-            {/* Card 3: PC Repair & Diagnostic Tools */}
+            {/* Card 3: PC Repair & Diagnostic Tools (Emerald/Green Accent) */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
+              className="bg-slate-900 border border-emerald-500/40 hover:border-emerald-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
               <img
                 src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80"
                 alt="Precision Repair Tool Kit"
-                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
+                className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="flex items-center justify-between z-10 relative">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 bg-slate-950/85 backdrop-blur-md border border-emerald-500/40 px-2 py-0.5 rounded-md">
                   Repair Tools
                 </span>
-                <Wrench className="w-4 h-4 text-indigo-400" />
+                <Wrench className="w-4 h-4 text-emerald-400" />
               </div>
 
               <div className="my-2 z-10 relative">
@@ -588,37 +588,37 @@ export default function Home() {
                 <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Precision Repair Hardware</div>
               </div>
 
-              <div className="flex items-center gap-1.5 text-[10px] text-indigo-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
-                <CheckCircle2 className="w-3 h-3 text-indigo-400" />
+              <div className="flex items-center gap-1.5 text-[10px] text-emerald-300 font-bold z-10 relative pt-1 border-t border-slate-800/80">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 <span>100% Calibrated</span>
               </div>
             </motion.div>
 
-            {/* Card 4: Hardware Workshop Photo Card */}
+            {/* Card 4: Hardware Workshop Photo Card (Cyan/Blue Accent) */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
+              className="bg-slate-900 border border-cyan-500/40 hover:border-cyan-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
               <img
                 src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
                 alt="PC & Mobile Repair Technician Workshop"
-                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
+                className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
               <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-slate-950/85 backdrop-blur-md border border-indigo-500/40 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-300 bg-slate-950/85 backdrop-blur-md border border-cyan-500/40 px-2 py-0.5 rounded-md">
                   Tech Workshop
                 </span>
-                <span className="text-[9px] font-extrabold text-indigo-300 bg-slate-950/85 backdrop-blur-md px-2 py-0.5 rounded-md border border-indigo-500/40 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+                <span className="text-[9px] font-extrabold text-cyan-300 bg-slate-950/85 backdrop-blur-md px-2 py-0.5 rounded-md border border-cyan-500/40 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
                   Live Lab
                 </span>
               </div>
 
               <div className="relative z-10 mt-auto">
                 <div className="text-white font-grotesk font-extrabold text-xs sm:text-sm">Hardware & Upgradation</div>
-                <div className="text-[10px] text-indigo-200 mt-0.5 font-medium">Certified Engineers</div>
+                <div className="text-[10px] text-cyan-200 mt-0.5 font-medium">Certified Engineers</div>
               </div>
             </motion.div>
 

@@ -61,7 +61,7 @@ const AdminDashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: FONT_BODY }}>
+    <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: FONT_BODY, width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       <style>{`
         @keyframes fadeSlideUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -149,28 +149,28 @@ const AdminDashboard = () => {
       `}</style>
 
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
         <Topbar title="Digi Dude Console" adminName="Ali Navaid Shah" onMenuClick={() => setMobileOpen(true)} />
-        <main style={{ padding: 24 }}>
-          <div style={{ marginBottom: 28, animation: 'fadeSlideUp 0.5s ease both', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <main style={{ padding: '20px sm:24px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
+          <div style={{ marginBottom: 24, animation: 'fadeSlideUp 0.5s ease both' }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 style={{ margin: 0, fontSize: 30, color: '#1a1a1a', fontWeight: 800, letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <h1 style={{ margin: 0, fontSize: 28, color: '#1a1a1a', fontWeight: 800, letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: 10 }}>
                 Dashboard Overview
                 <Sparkles size={22} color={TOKENS.amber} style={{ animation: 'pulseGlow 2.5s infinite' }} />
               </h1>
-              <p style={{ color: '#777', fontSize: 15, marginTop: 6 }}>Welcome back, <strong style={{ color: '#333' }}>Ali</strong>. Here is your business performance.</p>
+              <p style={{ color: '#777', fontSize: 14, marginTop: 4 }}>Welcome back, <strong style={{ color: '#333' }}>Ali</strong>. Here is your business performance.</p>
             </div>
             <div style={{
-              display: 'flex', alignItems: 'center', gap: 8, background: '#fff',
-              padding: '10px 16px', borderRadius: 14, border: '1px solid #e5e5e5',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.03)', fontSize: 13, color: '#555', fontWeight: 600
+              display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff',
+              padding: '8px 14px', borderRadius: 14, border: '1px solid #e5e5e5',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.03)', fontSize: 13, color: '#555', fontWeight: 600, width: 'fit-content'
             }}>
               <Clock size={15} color={TOKENS.amber} />
               {today}
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 24 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 mb-6">
             <div className="dash-card" style={{ animationDelay: '0.05s' }}>
               <GaugeStat label="Monthly Revenue" value="639,900" numericValue={639900} target={1000000} icon={DollarSign} color={TOKENS.amber} suffix=" PKR" />
             </div>
@@ -185,8 +185,8 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 20, marginBottom: 24 }}>
-            <div className="dash-card" style={{ animationDelay: '0.32s', background: TOKENS.panel, padding: 24, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-6">
+            <div className="lg:col-span-7 xl:col-span-8 dash-card" style={{ animationDelay: '0.32s', background: TOKENS.panel, padding: 24, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                 <h3 style={{ margin: 0, fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
                   <TrendingUp size={18} color={TOKENS.amber} />
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
                   padding: '4px 10px', borderRadius: 20
                 }}>▲ Trending up</span>
               </div>
-              <ResponsiveContainer width="100%" height={150}>
+              <ResponsiveContainer width="100%" height={160}>
                 <AreaChart data={[{ v: 400 }, { v: 600 }, { v: 500 }, { v: 800 }]}>
                   <defs>
                     <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
@@ -210,7 +210,7 @@ const AdminDashboard = () => {
               </ResponsiveContainer>
             </div>
 
-            <div className="dash-card" style={{ animationDelay: '0.38s', background: TOKENS.panel, padding: 24, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            <div className="lg:col-span-5 xl:col-span-4 dash-card" style={{ animationDelay: '0.38s', background: TOKENS.panel, padding: 24, borderRadius: 20, border: '1px solid #e5e5e5', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Package size={18} color={TOKENS.blueish} />
                 Stock by category
@@ -218,37 +218,32 @@ const AdminDashboard = () => {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 {categoryPieData.length > 0 ? (
                   <>
-                    <div className="spin-slow" style={{ display: 'inline-block' }}>
-                      <ResponsiveContainer width={150} height={150}>
-                        <PieChart>
-                          <Pie data={categoryPieData} innerRadius={45} outerRadius={65} dataKey="value" animationDuration={900} animationEasing="ease-out">
-                            {categoryPieData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]} stroke={TOKENS.panel} strokeWidth={2} />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 5 }}>
-                      {categoryPieData.map((entry, i) => (
-                        <div key={entry.name} style={{ fontSize: 12, display: 'flex', alignItems: 'center', color: '#555', fontWeight: 500 }}>
-                          <span style={{ width: 8, height: 8, borderRadius: '50%', background: CATEGORY_COLORS[i % CATEGORY_COLORS.length], marginRight: 5, boxShadow: `0 0 0 3px ${CATEGORY_COLORS[i % CATEGORY_COLORS.length]}22` }} />
-                          {entry.name} ({entry.value})
+                    <ResponsiveContainer width="100%" height={160}>
+                      <PieChart>
+                        <Pie data={categoryPieData} cx="50%" cy="50%" innerRadius={42} outerRadius={68} paddingAngle={4} dataKey="value">
+                          {categoryPieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginTop: 8 }}>
+                      {categoryPieData.map((item, index) => (
+                        <div key={item.name} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#666" }}>
+                          <span style={{ width: 8, height: 8, borderRadius: "50%", background: CATEGORY_COLORS[index % CATEGORY_COLORS.length] }} />
+                          {item.name}
                         </div>
                       ))}
                     </div>
                   </>
                 ) : (
-                  <div className="empty-state" style={{ textAlign: 'center', color: '#999', fontSize: 14, marginTop: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <Package size={32} color="#ccc" />
-                    No parts found in inventory
-                  </div>
+                  <div style={{ textAlign: "center", color: "#aaa", padding: "30px 0", fontSize: 13 }}>No category data available</div>
                 )}
               </div>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
             <div className="dash-card" style={{ animationDelay: '0.44s' }}>
               <BottomCard title="Today's schedule" icon={CalendarClock} iconColor={TOKENS.amber} action="View all">
                 {data.appointments.filter(a => a.appointmentDate === today).length === 0 ? (

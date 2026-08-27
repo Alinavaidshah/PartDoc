@@ -73,9 +73,9 @@ const AdminCustomers = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden w-full max-w-full">
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Topbar onMenuClick={() => setMobileOpen(true)} />
 
         <main className="flex-1 overflow-y-auto p-8">
