@@ -451,21 +451,21 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Action CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8 w-full sm:w-auto">
+              {/* Action CTA Buttons (Fixed Equal Height & Alignment on Mobile - Screenshot 1) */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6 sm:mb-8 w-full sm:w-auto">
                 <Link
                   to="/computerparts"
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all flex-1 sm:flex-none"
+                  className="h-12 bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-6 sm:px-7 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 text-center shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
                 >
-                  <ShoppingBag className="w-4 h-4 text-amber-400" />
+                  <ShoppingBag className="w-4 h-4 text-amber-400 flex-shrink-0" />
                   <span>Explore Catalog</span>
                 </Link>
 
                 <Link
                   to="/appointment"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all flex-1 sm:flex-none"
+                  className="h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-6 sm:px-7 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 text-center shadow-md transition-all w-full sm:w-auto"
                 >
-                  <Wrench className="w-4 h-4 text-white" />
+                  <Wrench className="w-4 h-4 text-white flex-shrink-0" />
                   <span>Book Repair & Upgradation</span>
                 </Link>
               </div>
@@ -489,7 +489,7 @@ export default function Home() {
 
           </motion.div>
 
-          {/* Right Hero Block: 4 Bento Cards with Dark Background Images Behind ALL 4 Cards */}
+          {/* Right Hero Block: 4 Bento Cards with Accurate High-Res Tech Background Images */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -497,15 +497,15 @@ export default function Home() {
             className="lg:col-span-5 grid grid-cols-2 gap-3.5 sm:gap-4 h-full"
           >
             
-            {/* Card 1: DDR5 High-Speed RAM Module */}
+            {/* Card 1: DDR5 High-Speed RAM Module (Actual RAM Stick Photo) */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
               className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
               <img
-                src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=600&q=80"
+                src="https://images.unsplash.com/photo-1562976540-1502c2145186?w=600&q=80"
                 alt="DDR5 Desktop RAM Memory Stick"
-                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
+                className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
@@ -532,15 +532,15 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Card 2: Powerful GPU & Processor Engine */}
+            {/* Card 2: Powerful GPU & Processor Engine (Actual GPU Graphics Card Photo) */}
             <motion.div
               whileHover={{ y: -4, scale: 1.02 }}
               className="bg-slate-900 border border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px] transition-all"
             >
               <img
-                src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&q=80"
+                src="https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80"
                 alt="NVIDIA GPU Graphics Engine"
-                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-500"
+                className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/20 pointer-events-none" />
 
