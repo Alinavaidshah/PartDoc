@@ -18,9 +18,11 @@ const AdminAppointment = () => {
   const [selectedAppt, setSelectedAppt] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null);
 
-  // Price Setting State
+  // Price Settings State
   const [faultTracingPrice, setFaultTracingPrice] = useState(899);
-  const [priceInput, setPriceInput] = useState(899);
+  const [preDiagnosedPrice, setPreDiagnosedPrice] = useState(599);
+  const [tracingPriceInput, setTracingPriceInput] = useState(899);
+  const [preDiagPriceInput, setPreDiagPriceInput] = useState(599);
   const [savingPrice, setSavingPrice] = useState(false);
   const [priceNotice, setPriceNotice] = useState('');
 
@@ -65,7 +67,7 @@ const AdminAppointment = () => {
       setSuggestedDateInput('');
       setSuggestedTimeInput('');
     } catch (err) {
-      alert("Failed to update status: " + (err.response?.data?.message || err.message));
+      alert("Failed to decline appointment");
     } finally {
       setDeclining(false);
     }
@@ -87,7 +89,11 @@ const AdminAppointment = () => {
       const { data } = await api.get('/appointments/settings');
       if (data?.faultTracingPrice) {
         setFaultTracingPrice(data.faultTracingPrice);
-        setPriceInput(data.faultTracingPrice);
+        setTracingPriceInput(data.faultTracingPrice);
+      }
+      if (data?.preDiagnosedPrice) {
+        setPreDiagnosedPrice(data.preDiagnosedPrice);
+        setPreDiagPriceInput(data.preDiagnosedPrice);
       }
     } catch (err) {
       console.error("Error fetching settings:", err);
@@ -99,12 +105,16 @@ const AdminAppointment = () => {
     setSavingPrice(true);
     setPriceNotice('');
     try {
-      const { data } = await api.put('/appointments/settings', { faultTracingPrice: Number(priceInput) });
+      const { data } = await api.put('/appointments/settings', {
+        faultTracingPrice: Number(tracingPriceInput),
+        preDiagnosedPrice: Number(preDiagPriceInput)
+      });
       setFaultTracingPrice(data.faultTracingPrice);
-      setPriceNotice('Price updated successfully!');
-      setTimeout(() => setPriceNotice(''), 3000);
+      setPreDiagnosedPrice(data.preDiagnosedPrice);
+      setPriceNotice('Both service prices updated successfully!');
+      setTimeout(() => setPriceNotice(''), 3500);
     } catch (err) {
-      alert("Failed to update price: " + (err.response?.data?.message || err.message));
+      alert("Failed to update prices: " + (err.response?.data?.message || err.message));
     } finally {
       setSavingPrice(false);
     }
@@ -157,75 +167,58 @@ const AdminAppointment = () => {
         <Topbar title="Manage Appointments" onMenuClick={() => setMobileOpen(true)} />
         <div style={{ padding: '24px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
 
-          {/* ADMIN FAULT TRACING PRICE CONTROL BAR */}
-          <div style={{
-            background: '#fff',
-            padding: '16px 24px',
-            borderRadius: 16,
-            border: '1px solid #e2e8f0',
-            marginBottom: 20,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: 16,
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* ADMIN SERVICE PRICING CONTROL BAR (BOTH OPTION 1 & OPTION 2) */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold flex-shrink-0">
                 <Sparkles size={20} />
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a' }}>Doorstep Fault Tracing Fixed Price</div>
-                <div style={{ fontSize: 12, color: '#64748b' }}>Configure the price customers see for doorstep fault tracing appointments</div>
+                <div className="font-extrabold text-sm text-slate-900">Appointment Service Pricing Controls</div>
+                <div className="text-xs text-slate-500">Configure prices for Pre-Diagnosed Lab Upgradations & Doorstep Fault Tracing</div>
               </div>
             </div>
 
-            <form onSubmit={handleUpdatePrice} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <span style={{ position: 'absolute', left: 12, fontSize: 13, fontWeight: 700, color: '#64748b' }}>Rs</span>
+            <form onSubmit={handleUpdatePrice} className="flex flex-wrap items-center gap-3">
+              {/* Option 1: Pre-Diagnosed Price */}
+              <div className="flex items-center gap-1.5 bg-indigo-50/70 border border-indigo-200 px-3 py-1.5 rounded-xl">
+                <span className="text-[11px] font-bold text-indigo-900">Pre-Diagnosed:</span>
+                <span className="text-xs font-extrabold text-indigo-600">Rs</span>
                 <input
                   type="number"
                   required
                   min="0"
-                  value={priceInput}
-                  onChange={(e) => setPriceInput(e.target.value)}
-                  style={{
-                    padding: '8px 12px 8px 36px',
-                    borderRadius: 10,
-                    border: '1px solid #cbd5e1',
-                    fontSize: 14,
-                    fontWeight: 700,
-                    width: 120,
-                    outline: 'none',
-                    color: '#0f172a'
-                  }}
+                  value={preDiagPriceInput}
+                  onChange={(e) => setPreDiagPriceInput(e.target.value)}
+                  className="w-16 px-1.5 py-0.5 bg-white border border-indigo-300 rounded text-xs font-extrabold text-indigo-950 focus:outline-none focus:border-indigo-600 text-center"
+                />
+              </div>
+
+              {/* Option 2: Fault Tracing Price */}
+              <div className="flex items-center gap-1.5 bg-amber-50/70 border border-amber-300 px-3 py-1.5 rounded-xl">
+                <span className="text-[11px] font-bold text-amber-900">Fault Tracing:</span>
+                <span className="text-xs font-extrabold text-amber-600">Rs</span>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  value={tracingPriceInput}
+                  onChange={(e) => setTracingPriceInput(e.target.value)}
+                  className="w-16 px-1.5 py-0.5 bg-white border border-amber-300 rounded text-xs font-extrabold text-amber-950 focus:outline-none focus:border-amber-600 text-center"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={savingPrice}
-                style={{
-                  background: '#4f46e5',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 10,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6
-                }}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
               >
-                {savingPrice ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                <span>Save Price</span>
+                {savingPrice ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                <span>Save Prices</span>
               </button>
 
               {priceNotice && (
-                <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>{priceNotice}</span>
+                <span className="text-xs font-extrabold text-emerald-600 animate-pulse">{priceNotice}</span>
               )}
             </form>
           </div>
@@ -281,7 +274,6 @@ const AdminAppointment = () => {
             >
               <AnimatePresence mode="popLayout">
                 {filtered.map(a => {
-                  const s = statusStyles[a.status] || statusStyles.Pending;
                   const isFaultTracing = a.serviceType === 'Fault Tracing';
 
                   return (
@@ -293,64 +285,42 @@ const AdminAppointment = () => {
                       whileHover={{ y: -3, boxShadow: '0 8px 20px -8px rgba(0,0,0,0.12)' }}
                       onClick={() => setSelectedAppt(a)}
                       style={{
-                        background: isFaultTracing ? '#fffbeb' : '#fff',
+                        background: isFaultTracing ? '#fffbeb' : '#ffffff',
                         padding: '16px 24px',
-                        borderRadius: 12,
-                        border: isFaultTracing ? '2px solid #f59e0b' : '1px solid #e2e8f0',
+                        borderRadius: 16,
+                        border: isFaultTracing ? '2px solid #f59e0b' : '1.5px solid #e2e8f0',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         cursor: 'pointer',
                         position: 'relative'
                       }}
+                      className="shadow-sm transition-all"
                     >
                       <div>
-                        <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                          {a.name}
+                        <div style={{ fontWeight: 800, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <span className="text-slate-900 text-base">{a.name}</span>
 
-                          {/* FAULT TRACING HIGHLIGHTED BADGE */}
+                          {/* SERVICE TYPE BADGE (FAULT TRACING VS PRE-DIAGNOSED) */}
                           {isFaultTracing ? (
-                            <span style={{
-                              fontSize: 11,
-                              fontWeight: 800,
-                              padding: '3px 10px',
-                              borderRadius: 999,
-                              background: '#fef3c7',
-                              color: '#b45309',
-                              border: '1px solid #fde68a',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 4
-                            }}>
-                              <Sparkles size={12} color="#b45309" /> Doorstep Fault Tracing (Rs {a.price || faultTracingPrice})
+                            <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 inline-flex items-center gap-1.5 shadow-sm">
+                              <Sparkles size={12} className="text-amber-700" />
+                              ⚡ Doorstep Fault Tracing (Rs {a.price || faultTracingPrice})
                             </span>
                           ) : (
-                            <span style={{
-                              fontSize: 11,
-                              fontWeight: 600,
-                              padding: '2px 10px',
-                              borderRadius: 999,
-                              background: s.bg,
-                              color: s.text,
-                              border: `1px solid ${s.border}`
-                            }}>
-                              {a.status}
+                            <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-300 inline-flex items-center gap-1.5 shadow-sm">
+                              🔬 Pre-Diagnosed & Upgradation (Rs {a.price || preDiagnosedPrice})
                             </span>
                           )}
 
-                          {isFaultTracing && (
-                            <span style={{
-                              fontSize: 11,
-                              fontWeight: 600,
-                              padding: '2px 10px',
-                              borderRadius: 999,
-                              background: s.bg,
-                              color: s.text,
-                              border: `1px solid ${s.border}`
-                            }}>
-                              {a.status}
-                            </span>
-                          )}
+                          {/* PROMINENT STATUS BADGE */}
+                          <span className={`text-[11px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
+                            a.status === 'Approved' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                            a.status === 'Denied' ? 'bg-rose-100 text-rose-800 border border-rose-300' :
+                            'bg-amber-100 text-amber-800 border border-amber-300 animate-pulse'
+                          }`}>
+                            {a.status}
+                          </span>
                         </div>
 
                         <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>

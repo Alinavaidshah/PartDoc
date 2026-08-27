@@ -263,27 +263,48 @@ export const getAppointmentSettings = async (req, res) => {
   }
 };
 
-// @desc    Update Fault Tracing Price (Admin)
+// @desc    Update Appointment Pricing Settings (Admin)
 // @route   PUT /api/appointments/settings
 export const updateAppointmentSettings = async (req, res) => {
   try {
-    const { faultTracingPrice } = req.body;
-    if (faultTracingPrice === undefined || isNaN(Number(faultTracingPrice))) {
-      return res.status(400).json({ message: 'Invalid price value' });
+    const { faultTracingPrice, preDiagnosedPrice } = req.body;
+
+    let updatedTracing = 899;
+    let updatedPreDiag = 599;
+
+    if (faultTracingPrice !== undefined && !isNaN(Number(faultTracingPrice))) {
+      let priceSetting = await Settings.findOne({ key: 'faultTracingPrice' });
+      if (priceSetting) {
+        priceSetting.value = Number(faultTracingPrice);
+        await priceSetting.save();
+      } else {
+        priceSetting = await Settings.create({
+          key: 'faultTracingPrice',
+          value: Number(faultTracingPrice),
+        });
+      }
+      updatedTracing = priceSetting.value;
     }
 
-    let priceSetting = await Settings.findOne({ key: 'faultTracingPrice' });
-    if (priceSetting) {
-      priceSetting.value = Number(faultTracingPrice);
-      await priceSetting.save();
-    } else {
-      priceSetting = await Settings.create({
-        key: 'faultTracingPrice',
-        value: Number(faultTracingPrice),
-      });
+    if (preDiagnosedPrice !== undefined && !isNaN(Number(preDiagnosedPrice))) {
+      let preDiagSetting = await Settings.findOne({ key: 'preDiagnosedPrice' });
+      if (preDiagSetting) {
+        preDiagSetting.value = Number(preDiagnosedPrice);
+        await preDiagSetting.save();
+      } else {
+        preDiagSetting = await Settings.create({
+          key: 'preDiagnosedPrice',
+          value: Number(preDiagnosedPrice),
+        });
+      }
+      updatedPreDiag = preDiagSetting.value;
     }
 
-    res.json({ message: 'Price updated successfully', faultTracingPrice: priceSetting.value });
+    res.json({
+      message: 'Pricing settings updated successfully',
+      faultTracingPrice: updatedTracing,
+      preDiagnosedPrice: updatedPreDiag,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server Error: ' + error.message });
   }
