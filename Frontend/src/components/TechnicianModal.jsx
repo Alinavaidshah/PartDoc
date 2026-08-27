@@ -130,6 +130,7 @@ const TechnicianModal = () => {
           )}
         </AnimatePresence>
       </div>
+      )}
 
       {/* LIGHT THEME FORM MODAL OVERLAY */}
       <AnimatePresence>
