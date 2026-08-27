@@ -15,10 +15,9 @@ const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: `"Digi Dude Support" <${process.env.EMAIL_USER}>`, // Dynamically email le raha hai
+    from: `"Digi Dude Support" <${process.env.EMAIL_USER || 'digidude.online@gmail.com'}>`, 
     to: options.email,
     subject: options.subject,
-    // Yahan maine 'html' property daal di hai
     html: options.html, 
   };
 
