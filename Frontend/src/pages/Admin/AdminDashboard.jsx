@@ -61,7 +61,7 @@ const AdminDashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: FONT_BODY, width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
+    <div style={{ display: 'flex', background: TOKENS.bg, height: '100vh', fontFamily: FONT_BODY, width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
       <style>{`
         @keyframes fadeSlideUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
       `}</style>
 
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
         <Topbar title="Digi Dude Console" adminName="Ali Navaid Shah" onMenuClick={() => setMobileOpen(true)} />
         <main style={{ padding: '20px sm:24px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
           <div style={{ marginBottom: 24, animation: 'fadeSlideUp 0.5s ease both' }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

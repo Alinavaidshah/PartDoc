@@ -86,11 +86,11 @@ const AdminInventory = () => {
     .sort((a, b) => sortBy === "Price" ? (a?.price || 0) - (b?.price || 0) : (a?.name || '').localeCompare(b?.name || ''));
 
   return (
-    <div style={{ display: 'flex', background: TOKENS.bg, minHeight: '100vh', fontFamily: 'Inter, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
+    <div style={{ display: 'flex', background: TOKENS.bg, height: '100vh', fontFamily: 'Inter, sans-serif', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
         <Topbar title="Inventory Manager" onMenuClick={() => setMobileOpen(true)} />
-        <main style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
+        <main style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6 flex-1">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
             <h2 style={{ fontSize: 24, fontWeight: 700 }}>Manage Inventory ({processedParts.length})</h2>
             <button onClick={() => setIsModalOpen(true)} style={{ background: TOKENS.rust, color: 'white', padding: '12px 24px', borderRadius: 12, border: 'none', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontWeight: 600 }}>

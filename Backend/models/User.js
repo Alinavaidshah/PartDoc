@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema(
     clerkId: { type: String, unique: true, sparse: true }, 
     isAdmin: { type: Boolean, required: true, default: false },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    resetOtp: { type: String },
+    resetOtpExpires: { type: Date },
   },
   { timestamps: true }
 );

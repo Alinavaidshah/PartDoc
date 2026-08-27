@@ -161,11 +161,11 @@ const AdminAppointment = () => {
   };
 
   return (
-    <div style={{ display: 'flex', background: '#f8fafc', minHeight: '100vh', fontFamily: 'Inter, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
+    <div className="flex h-screen bg-slate-50 overflow-hidden w-full max-w-full" style={{ fontFamily: 'Inter, sans-serif' }}>
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto overflow-x-hidden">
         <Topbar title="Manage Appointments" onMenuClick={() => setMobileOpen(true)} />
-        <div style={{ padding: '24px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6">
+        <main style={{ padding: '24px', maxWidth: '100%', boxSizing: 'border-box' }} className="p-4 sm:p-6 flex-1">
 
           {/* ADMIN SERVICE PRICING CONTROL BAR (BOTH OPTION 1 & OPTION 2) */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -379,7 +379,7 @@ const AdminAppointment = () => {
               </AnimatePresence>
             </motion.div>
           )}
-        </div>
+        </main>
       </div>
 
       {/* Details Modal */}

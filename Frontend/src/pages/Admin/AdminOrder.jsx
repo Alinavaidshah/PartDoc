@@ -51,7 +51,7 @@ const AdminOrders = () => {
   const getStatusStyle = (status) => STATUS_CONFIG[status] || { color: '#4b5563', bg: '#f3f4f6', icon: Clock3 };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden w-full max-w-full">
       <style>{`
         @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
