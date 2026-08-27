@@ -27,7 +27,7 @@ const AdminLogin = () => {
   };
 
   const handleQuickFill = () => {
-    const defaultCreds = { email: 'admin@partdoc.com', password: 'admin123456' };
+    const defaultCreds = { email: 'admin@digidude.com', password: 'admin123456' };
     setCredentials(defaultCreds);
     dispatch(loginUser(defaultCreds));
   };
@@ -94,7 +94,7 @@ const AdminLogin = () => {
             <span>Default Super Admin Credentials:</span>
           </div>
           <div className="text-[11px] text-slate-300 font-mono space-y-0.5">
-            <div>Email: <b className="text-white">admin@partdoc.com</b></div>
+            <div>Email: <b className="text-white">admin@digidude.com</b></div>
             <div>Password: <b className="text-white">admin123456</b></div>
           </div>
           <button

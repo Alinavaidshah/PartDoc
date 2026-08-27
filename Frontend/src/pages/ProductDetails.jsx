@@ -5,7 +5,8 @@ import { addToCart } from '../features/cart/cartSlice';
 import {
   Truck, ShieldCheck, Star, Package, RefreshCw, Minus, Plus, Heart,
   Share2, ShoppingBag, Check, Zap, Wrench, ChevronRight, AlertCircle,
-  CheckCircle2, ArrowRight, MessageSquarePlus, User, CornerDownRight
+  CheckCircle2, ArrowRight, MessageSquarePlus, User, CornerDownRight,
+  Grid, Search, X, Monitor, Smartphone, Laptop, Cpu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
@@ -24,6 +25,8 @@ export default function ProductDetails() {
   const [qty, setQty] = useState(1);
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
+  const [shopMoreOpen, setShopMoreOpen] = useState(false);
+  const [drawerSearch, setDrawerSearch] = useState("");
 
   // User Specified Options
   const [selectedGrade, setSelectedGrade] = useState('Refurbished (Grade A)');
@@ -310,28 +313,41 @@ export default function ProductDetails() {
               </div>
 
               {/* CTA BUTTONS */}
-              <div className="flex gap-4">
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!inStock}
-                  className={`flex-1 py-4 rounded-xl font-extrabold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
-                    inStock
-                      ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
-                      : "bg-slate-300 text-slate-500 cursor-not-allowed"
-                  }`}
-                >
-                  {added ? <Check size={18} /> : <ShoppingBag size={18} />}
-                  <span>{added ? "Added To Cart" : "Add To Cart"}</span>
-                </button>
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-4">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={!inStock}
+                    className={`flex-1 py-4 rounded-xl font-extrabold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                      inStock
+                        ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
+                        : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    }`}
+                  >
+                    {added ? <Check size={18} /> : <ShoppingBag size={18} />}
+                    <span>{added ? "Added To Cart" : "Add To Cart"}</span>
+                  </button>
 
-                <Link
-                  to="/checkout"
-                  onClick={handleAddToCart}
-                  className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm uppercase tracking-wider rounded-xl text-center shadow-md transition-all flex items-center justify-center gap-2"
+                  <Link
+                    to="/checkout"
+                    onClick={handleAddToCart}
+                    className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm uppercase tracking-wider rounded-xl text-center shadow-md transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>Checkout Now</span>
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+
+                {/* SHOP MORE BUTTON */}
+                <button
+                  type="button"
+                  onClick={() => setShopMoreOpen(true)}
+                  className="w-full py-3.5 bg-gradient-to-r from-indigo-50 to-slate-100 hover:from-indigo-100 hover:to-slate-200 text-indigo-900 border border-indigo-200/90 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 group cursor-pointer"
                 >
-                  <span>Checkout Now</span>
-                  <ArrowRight size={16} />
-                </Link>
+                  <Grid size={16} className="text-indigo-600 group-hover:rotate-90 transition-transform duration-300" />
+                  <span>Shop More Computer & Mobile Parts</span>
+                  <ChevronRight size={16} className="text-indigo-600 group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
 
             </div>
@@ -449,6 +465,160 @@ export default function ProductDetails() {
         </div>
 
       </div>
+
+      {/* SHOP MORE SLIDE-OVER DRAWER */}
+      <AnimatePresence>
+        {shopMoreOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShopMoreOpen(false)}
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50"
+            />
+
+            {/* Drawer Panel */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col justify-between overflow-hidden border-l border-slate-200"
+            >
+              {/* Drawer Header */}
+              <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-indigo-600 p-2 rounded-xl text-white">
+                    <Grid size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-grotesk font-extrabold text-base tracking-tight">Explore Digi Dude Catalog</h3>
+                    <p className="text-[11px] text-slate-400">Quick browse computer & mobile spare parts</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShopMoreOpen(false)}
+                  className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Drawer Content Body */}
+              <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">
+                
+                {/* Search Bar */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (drawerSearch.trim()) {
+                      window.location.href = `/computerparts?search=${encodeURIComponent(drawerSearch)}`;
+                    }
+                  }}
+                  className="relative"
+                >
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={drawerSearch}
+                    onChange={(e) => setDrawerSearch(e.target.value)}
+                    placeholder="Search GPUs, RAM, screens, batteries..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 shadow-sm"
+                  />
+                </form>
+
+                {/* Computer Parts Category Group */}
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-3">
+                    <Monitor size={15} className="text-indigo-600" />
+                    <span>Computer & Laptop Parts</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {[
+                      { name: 'Graphics Cards (GPUs)', path: '/computerparts?category=gpu', count: 'High End 4K' },
+                      { name: 'Desktop CPUs', path: '/computerparts?category=cpu', count: 'Intel & Ryzen' },
+                      { name: 'RAM Memory Modules', path: '/computerparts?category=ram', count: 'DDR4 / DDR5' },
+                      { name: 'NVMe SSD Storage', path: '/computerparts?category=ssd', count: 'Up to 7450 MB/s' },
+                      { name: 'Laptop Displays', path: '/computerparts?category=laptop', count: 'FHD & 4K OLED' },
+                      { name: 'Laptop Batteries', path: '/computerparts?category=laptop', count: '100% Health OEM' },
+                    ].map((cat, idx) => (
+                      <Link
+                        key={idx}
+                        to={cat.path}
+                        onClick={() => setShopMoreOpen(false)}
+                        className="p-3 bg-white hover:bg-indigo-50/60 border border-slate-200 hover:border-indigo-300 rounded-xl transition-all text-left shadow-sm group"
+                      >
+                        <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 flex items-center justify-between">
+                          <span>{cat.name}</span>
+                          <ChevronRight size={13} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-indigo-600" />
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{cat.count}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Mobile Parts Category Group */}
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-3">
+                    <Smartphone size={15} className="text-emerald-600" />
+                    <span>Mobile Spare Parts</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {[
+                      { name: 'OLED & Retina Screens', path: '/mobileparts', count: 'Original Displays' },
+                      { name: 'Mobile OEM Batteries', path: '/mobileparts', count: 'High Capacity' },
+                      { name: 'Charging Port Flex', path: '/mobileparts', count: 'Fast Charge Board' },
+                      { name: 'Back Glass & Frames', path: '/mobileparts', count: 'Precision Glass' },
+                    ].map((cat, idx) => (
+                      <Link
+                        key={idx}
+                        to={cat.path}
+                        onClick={() => setShopMoreOpen(false)}
+                        className="p-3 bg-white hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 rounded-xl transition-all text-left shadow-sm group"
+                      >
+                        <div className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 flex items-center justify-between">
+                          <span>{cat.name}</span>
+                          <ChevronRight size={13} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-emerald-600" />
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{cat.count}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Repair & Upgradation Promo Banner */}
+                <div className="bg-gradient-to-br from-indigo-900 to-slate-900 p-4 rounded-2xl text-white shadow-md border border-indigo-700/50">
+                  <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
+                    <Wrench size={14} />
+                    <span>Lab Installation & Upgradation</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                    Don't want to install spare parts yourself? Book priority hardware installation & performance upgradation at your doorstep.
+                  </p>
+                  <Link
+                    to="/appointment"
+                    onClick={() => setShopMoreOpen(false)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                  >
+                    <span>Book Upgradation</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+              </div>
+
+              {/* Drawer Footer */}
+              <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between text-xs text-slate-500 font-mono">
+                <span>Verified Serial Warranty</span>
+                <span className="text-indigo-600 font-bold">Digi Dude Official</span>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

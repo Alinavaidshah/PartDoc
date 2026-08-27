@@ -34,7 +34,7 @@ const items = [
           </div>
           {!collapsed && (
             <div>
-              <div style={{ fontFamily: FONT_HEAD, fontWeight: 700, fontSize: 15.5, letterSpacing: -0.2 }}>PartDoc Pro</div>
+              <div style={{ fontFamily: FONT_HEAD, fontWeight: 700, fontSize: 15.5, letterSpacing: -0.2 }}>Digi Dude Pro</div>
               <div style={{ fontSize: 10.5, color: "#8B8F99", letterSpacing: 0.4, textTransform: "uppercase" }}>Admin Console</div>
             </div>
           )}

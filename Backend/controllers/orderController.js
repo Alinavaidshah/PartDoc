@@ -40,7 +40,7 @@ export const addOrderItems = async (req, res) => {
 
         await sendEmail({
           email: shippingAddress.email,
-          subject: 'Order Placed Successfully - PartDoc',
+          subject: 'Order Placed Successfully - Digi Dude',
           html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
               <h2 style="color: #4f46e5;">Thank you! Your order has been placed successfully.</h2>
@@ -63,7 +63,7 @@ export const addOrderItems = async (req, res) => {
     // WhatsApp Notification on Order Placement
     if (shippingAddress?.phone) {
       const orderIdShort = createdOrder._id.toString().slice(-6).toUpperCase();
-      const whatsappMsg = `📌 *PartDoc Order Placed Successfully!*\n\n*Order ID:* #${orderIdShort}\n*Customer Name:* ${shippingAddress.fullName || 'Customer'}\n*Total Price:* PKR ${createdOrder.totalPrice}\n*Payment Method:* ${paymentMethod}\n*Status:* Order Received & Being Prepared\n\nOur team will contact you soon.`;
+      const whatsappMsg = `📌 *Digi Dude Order Placed Successfully!*\n\n*Order ID:* #${orderIdShort}\n*Customer Name:* ${shippingAddress.fullName || 'Customer'}\n*Total Price:* PKR ${createdOrder.totalPrice}\n*Payment Method:* ${paymentMethod}\n*Status:* Order Received & Being Prepared\n\nOur team will contact you soon.`;
       try {
         await sendWhatsAppMessage(shippingAddress.phone, whatsappMsg);
       } catch (waErr) {
@@ -121,7 +121,7 @@ export const updateOrderStatus = async (req, res) => {
 
     // 1. WhatsApp Notification
     if (order.shippingAddress?.phone) {
-      const whatsappMsg = `📌 *PartDoc Order Status Update*\n\n*Order ID:* #${orderIdShort}\n*Customer Name:* ${order.shippingAddress.fullName || 'Customer'}\n*Updated Status:* ${orderStatus}\n\nOur team will contact you soon.`;
+      const whatsappMsg = `📌 *Digi Dude Order Status Update*\n\n*Order ID:* #${orderIdShort}\n*Customer Name:* ${order.shippingAddress.fullName || 'Customer'}\n*Updated Status:* ${orderStatus}\n\nOur team will contact you soon.`;
       try {
         await sendWhatsAppMessage(order.shippingAddress.phone, whatsappMsg);
       } catch (err) {
@@ -134,13 +134,13 @@ export const updateOrderStatus = async (req, res) => {
       try {
         await sendEmail({
           email: order.shippingAddress.email,
-          subject: `Order Status Update - PartDoc`,
+          subject: `Order Status Update - Digi Dude`,
           html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
               <h2 style="color: #4f46e5;">Order Status Update</h2>
               <p>Dear <b>${order.shippingAddress.fullName || 'Customer'}</b>,</p>
               <p>The status of your order <b>#${orderIdShort}</b> has been updated to: <b>${orderStatus}</b>.</p>
-              <p>Thank you for shopping with PartDoc!</p>
+              <p>Thank you for shopping with Digi Dude!</p>
               <p style="font-weight: bold; color: #4f46e5; margin-top: 20px;">Our team will contact you soon.</p>
             </div>
           `

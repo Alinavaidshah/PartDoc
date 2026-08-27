@@ -30,11 +30,11 @@ function Footer() {
                 <Cpu className="w-5 h-5" />
               </div>
               <span className="font-grotesk font-extrabold uppercase tracking-wider text-xl text-white">
-                Part<span className="text-indigo-500">Doc</span>
+                Digi<span className="text-indigo-500">Dude</span>
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
-              Pakistan's premier platform for original computer, laptop, and mobile replacement spare parts with verified serial numbers & official warranty.
+              Pakistan's premier platform for original computer, laptop, and mobile replacement spare parts & lab upgradations with verified serial numbers & official warranty.
             </p>
             <div className="flex items-center gap-3">
               {["Twitter", "LinkedIn", "Facebook", "YouTube"].map((name, i) => (
@@ -98,7 +98,7 @@ function Footer() {
 
               {subscribed && (
                 <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 pt-1">
-                  <CheckCircle2 size={14} /> Subscribed to PartDoc updates!
+                  <CheckCircle2 size={14} /> Subscribed to Digi Dude updates!
                 </div>
               )}
             </form>
@@ -108,7 +108,7 @@ function Footer() {
 
         {/* Bottom Legal Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs text-slate-500 font-medium">
-          <p>© 2026 PartDoc Technologies Inc. All rights reserved.</p>
+          <p>© 2026 Digi Dude Technologies Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link to="/" className="hover:text-slate-300 transition-colors">Privacy Policy</Link>
             <Link to="/" className="hover:text-slate-300 transition-colors">Terms of Service</Link>

@@ -87,7 +87,7 @@ app.post('/api/users/sync', async (req, res) => {
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'PartDoc Server is running smoothly!',
+    message: 'Digi Dude Server is running smoothly!',
     dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
   });
 });

@@ -125,7 +125,7 @@ const Appointment = () => {
       <div className="relative z-10 text-center w-full max-w-xl mb-10">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-4 shadow-sm">
           <Wrench className="w-4 h-4 text-indigo-600" />
-          <span>Priority Tech Diagnostics & Hardware Repair</span>
+          <span>Priority Tech Diagnostics, Hardware Repair & Speed Upgradation</span>
         </div>
 
         <motion.h1
@@ -133,11 +133,11 @@ const Appointment = () => {
           animate={{ opacity: 1, y: 0 }}
           className="font-grotesk text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight"
         >
-          Book Repair Appointment
+          Book Repair & Upgradation Appointment
         </motion.h1>
 
         <p className="text-slate-600 text-sm sm:text-base mt-2 max-w-md mx-auto leading-relaxed">
-          Schedule a priority diagnostic slot with our certified lab technicians for computer, laptop, or mobile repairs.
+          Schedule a priority diagnostic, hardware repair, or performance upgradation slot with certified lab technicians.
         </p>
 
         {/* TABS CONTROLLER */}
@@ -239,10 +239,10 @@ const Appointment = () => {
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-extrabold text-slate-900">Standard</span>
+                          <span className="text-xs font-extrabold text-slate-900">Standard Repair & Upgradation</span>
                           {formData.serviceType === 'Normal' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
                         </div>
-                        <span className="text-[11px] text-slate-500 leading-normal">Standard replacement, hardware & software issues at doorstep. Prices are situation wise.</span>
+                        <span className="text-[11px] text-slate-500 leading-normal">Hardware repair, display replacement, RAM/SSD speed upgradation & software diagnostics.</span>
                       </button>
 
                       <button

@@ -4,6 +4,22 @@ body {
   background-color: #f8fafc; 
 }
 
+/* Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 /* Prevent Mobile Input Focus Auto-Zoom on iOS & Android */
 @media screen and (max-width: 768px) {
   input[type="text"],

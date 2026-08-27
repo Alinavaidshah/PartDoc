@@ -241,9 +241,9 @@ export const createPartReview = async (req, res) => {
       part = await Part.findOne();
       if (!part) {
         part = await Part.create({
-          name: 'PartDoc Store Feedback',
+          name: 'Digi Dude Store Feedback',
           image: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80',
-          brand: 'PartDoc',
+          brand: 'Digi Dude',
           category: 'Service',
           description: 'General store feedback & customer reviews',
           price: 0,

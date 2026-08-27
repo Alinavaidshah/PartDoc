@@ -70,7 +70,7 @@ export const createAppointment = async (req, res) => {
 
         await sendEmail({
           email: customerEmail,
-          subject: 'Appointment Request Received - PartDoc',
+          subject: 'Appointment Request Received - Digi Dude',
           html: emailHtml,
         });
       } catch (emailErr) {
@@ -82,7 +82,7 @@ export const createAppointment = async (req, res) => {
     if (phone) {
       const isFaultTracing = serviceType === 'Fault Tracing';
       const serviceName = isFaultTracing ? 'Doorstep Fault Tracing' : 'Standard Appointment';
-      const whatsappMsg = `📌 *PartDoc Appointment Request Received!*\n\n*Ticket Reference ID:* #${createdAppointment._id}\n*Customer Name:* ${name}\n*Service:* ${serviceName}\n*Device:* ${deviceModel}\n*Requested Slot:* ${appointmentDate} at ${appointmentTime}\n*Status:* PENDING CONFIRMATION\n\nOur team will review your request and contact you soon.`;
+      const whatsappMsg = `📌 *Digi Dude Appointment Request Received!*\n\n*Ticket Reference ID:* #${createdAppointment._id}\n*Customer Name:* ${name}\n*Service:* ${serviceName}\n*Device:* ${deviceModel}\n*Requested Slot:* ${appointmentDate} at ${appointmentTime}\n*Status:* PENDING CONFIRMATION\n\nOur team will review your request and contact you soon.`;
 
       try {
         await sendWhatsAppMessage(phone, whatsappMsg);
@@ -156,7 +156,7 @@ export const updateAppointmentStatus = async (req, res) => {
         const isFaultTracing = appointment.serviceType === 'Fault Tracing';
 
         if (status === 'Approved') {
-          subject = 'Appointment Approved! - PartDoc';
+          subject = 'Appointment Approved! - Digi Dude';
           messageHtml = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
               <h2 style="color: #16a34a;">Appointment Confirmed & Approved</h2>
@@ -165,12 +165,12 @@ export const updateAppointmentStatus = async (req, res) => {
               <p><b>Reported Issue:</b> ${appointment.issueDescription || 'Hardware/Software Check'}</p>
               ${isFaultTracing ? `<p><b>Service Type:</b> Doorstep Fault Tracing (Rs ${appointment.price})</p>` : ''}
               ${appointment.address ? `<p><b>Doorstep Address:</b> ${appointment.address}</p>` : ''}
-              <p>Thank you for choosing PartDoc!</p>
+              <p>Thank you for choosing Digi Dude!</p>
               <p style="font-weight: bold; color: #4f46e5; margin-top: 20px;">Our team will contact you soon.</p>
             </div>
           `;
         } else if (status === 'Denied') {
-          subject = 'Appointment Request Status Update - PartDoc';
+          subject = 'Appointment Request Status Update - Digi Dude';
           messageHtml = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
               <h2 style="color: #dc2626;">Appointment Request Declined / Rescheduled</h2>
@@ -210,8 +210,8 @@ export const updateAppointmentStatus = async (req, res) => {
         const suggestedSlotStr = appointment.suggestedDate ? `\n*Suggested New Slot:* ${appointment.suggestedDate} at ${appointment.suggestedTime || '10:00 AM'}` : '';
 
         const whatsappMsg = status === 'Approved'
-          ? `📌 *PartDoc Appointment Approved!*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Date & Time:* ${appointment.appointmentDate} at ${appointment.appointmentTime}\n*Status:* APPROVED\n\nOur team will contact you soon.`
-          : `📌 *PartDoc Appointment Status Update*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Status:* DECLINED\n*Reason:* ${appointment.declineReason || 'Slot or technician unavailability'}${suggestedSlotStr}\n\nOur team will contact you soon.`;
+          ? `📌 *Digi Dude Appointment Approved!*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Date & Time:* ${appointment.appointmentDate} at ${appointment.appointmentTime}\n*Status:* APPROVED\n\nOur team will contact you soon.`
+          : `📌 *Digi Dude Appointment Status Update*\n\n*Ticket ID:* #${appointment._id}\n*Customer Name:* ${appointment.name}\n*Device:* ${appointment.deviceModel}\n*Issue:* ${appointment.issueDescription || 'Hardware/Software Diagnostic'}\n*Status:* DECLINED\n*Reason:* ${appointment.declineReason || 'Slot or technician unavailability'}${suggestedSlotStr}\n\nOur team will contact you soon.`;
 
         await sendWhatsAppMessage(appointment.phone, whatsappMsg);
       }

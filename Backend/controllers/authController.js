@@ -54,6 +54,7 @@ export const authUser = async (req, res) => {
 
     // Check if the input is an admin email attempt
     const isAdminEmail = (
+      normalizedEmail === 'admin@digidude.com' ||
       normalizedEmail === 'admin@partdoc.com' ||
       normalizedEmail.includes('alinavaid') ||
       normalizedEmail.startsWith('admin@') ||

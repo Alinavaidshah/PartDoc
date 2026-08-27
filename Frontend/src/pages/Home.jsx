@@ -31,8 +31,58 @@ import {
   Zap,
   TrendingUp,
   Clock,
-  ArrowUpRight
+  ArrowUpRight,
+  Cpu,
+  RefreshCw
 } from "lucide-react";
+
+// Custom Typewriter Hook
+function useTypewriter(text, speed = 35, delay = 150) {
+  const [displayText, setDisplayText] = useState("");
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    let currentIndex = 0;
+    setDisplayText("");
+    setIsDone(false);
+
+    const timer = setTimeout(() => {
+      const interval = setInterval(() => {
+        if (currentIndex < text.length) {
+          setDisplayText(text.slice(0, currentIndex + 1));
+          currentIndex++;
+        } else {
+          setIsDone(true);
+          clearInterval(interval);
+        }
+      }, speed);
+
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [text, speed, delay]);
+
+  return { displayText, isDone };
+}
+
+// Countdown Timer Hook
+function useCountdown(initialSeconds = 17540) {
+  const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSecondsLeft((prev) => (prev > 0 ? prev - 1 : initialSeconds));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [initialSeconds]);
+
+  const hrs = String(Math.floor(secondsLeft / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((secondsLeft % 3600) / 60)).padStart(2, '0');
+  const secs = String(secondsLeft % 60).padStart(2, '0');
+
+  return { hrs, mins, secs };
+}
 
 // Initial Reviews Data
 const INITIAL_REVIEWS = [
@@ -41,7 +91,7 @@ const INITIAL_REVIEWS = [
     name: "Hamza Iqbal",
     location: "Lahore",
     role: "Custom PC Builder",
-    text: "Ordered an RTX 4080 Super. Delivery took under 36 hours. 100% genuine part with official serial verification!",
+    text: "Ordered an RTX 4080 Super from Digi Dude. Delivery took under 36 hours. 100% genuine part with official serial verification!",
     rating: 5,
     avatar: "HI"
   },
@@ -50,7 +100,7 @@ const INITIAL_REVIEWS = [
     name: "Sana Malik",
     location: "Karachi",
     role: "Freelance Editor",
-    text: "My MacBook battery had swollen. Ordered OEM replacement screen & battery from PartDoc. Installed smoothly, performance is like new!",
+    text: "My MacBook battery had swollen. Ordered OEM replacement screen & battery from Digi Dude. Installed smoothly, performance is like new!",
     rating: 5,
     avatar: "SM"
   },
@@ -59,7 +109,7 @@ const INITIAL_REVIEWS = [
     name: "Bilal Ahmed",
     location: "Rawalpindi",
     role: "Repair Shop Owner",
-    text: "I buy wholesale mobile displays and motherboards from PartDoc. Market prices are competitive, zero defect rate, and fast customer response.",
+    text: "I buy wholesale mobile displays and motherboards from Digi Dude. Market prices are competitive, zero defect rate, and fast customer response.",
     rating: 5,
     avatar: "BA"
   }
@@ -154,6 +204,11 @@ export default function Home() {
   const [reviewsList, setReviewsList] = useState([]);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: "", role: "Customer", location: "Pakistan", text: "", rating: 5 });
+
+  // Typewriter & Countdown Hooks
+  const headlineText = "Genuine Tech Parts & Hardware Diagnostic & Upgradation Services";
+  const { displayText, isDone } = useTypewriter(headlineText, 30, 150);
+  const { hrs, mins, secs } = useCountdown(19420);
 
   // One-Time Loader Per Session
   const [showInitialLoader, setShowInitialLoader] = useState(() => {
@@ -279,7 +334,7 @@ export default function Home() {
   });
 
   if (showInitialLoader) {
-    return <AestheticLoader text="Loading PartDoc Experience..." />;
+    return <AestheticLoader text="Loading Digi Dude Experience..." />;
   }
 
   return (
@@ -287,65 +342,100 @@ export default function Home() {
       
       <Toast message={toastMsg} isOpen={showToast} onClose={() => setShowToast(false)} />
 
-      {/* Top Banner Announcement Strip */}
-      <div className="bg-slate-900 text-slate-200 text-xs py-2 px-4 text-center font-medium flex items-center justify-center gap-2">
-        <span className="bg-indigo-600 text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">
-          FAST DELIVERY
-        </span>
+      {/* Top Banner Announcement Strip with Live Countdown */}
+      <div className="bg-slate-900 text-slate-200 text-xs py-2.5 px-4 text-center font-medium flex flex-wrap items-center justify-center gap-3 border-b border-slate-800 shadow-inner">
+        <div className="flex items-center gap-1.5 bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider animate-pulse">
+          <Zap className="w-3 h-3 fill-white" />
+          <span>Special Flash Offer</span>
+        </div>
         <span>Free Express Delivery Across Pakistan On Orders Above PKR 15,000 | 100% Genuine Guaranteed</span>
+        
+        {/* Ticking Countdown Timer */}
+        <div className="flex items-center gap-1.5 font-mono font-extrabold text-amber-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 text-xs">
+          <Clock className="w-3.5 h-3.5 text-amber-400" />
+          <span>Ends In: {hrs}:{mins}:{secs}</span>
+        </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (RICH 2-COLUMN MODERN LIGHT THEME) */}
+      {/* 1. HERO SECTION (BENTO GRID WITH TYPEWRITER & DECONSTRUCTED GRAPHICS) */}
       {/* ========================================================================= */}
-      <section className="pt-10 pb-20 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="pt-10 pb-16 px-4 sm:px-8 max-w-7xl mx-auto overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
           
-          {/* Left Hero Content */}
+          {/* Left Hero Content Bento Block (7 Columns) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-7 flex flex-col items-start text-left"
+            className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl flex flex-col justify-between items-start text-left relative overflow-hidden"
           >
-            {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-5 shadow-sm">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span>Original Spare Parts & Priority Repair Services</span>
-            </div>
+            {/* Background Soft Gradient */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-50/80 rounded-full blur-3xl -z-10 pointer-events-none" />
 
-            {/* Main Headline */}
-            <h1 className="font-grotesk text-3xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] mb-5">
-              Genuine Tech Parts & <br className="hidden sm:inline" />
-              <span className="text-indigo-600">Hardware & Software Diagnostic</span> Services
-            </h1>
+            <div>
+              {/* Pill Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-5 shadow-sm">
+                <Sparkles className="w-4 h-4 text-indigo-600" />
+                <span>Original Spare Parts & Priority Lab Repair & Upgradation</span>
+              </div>
 
-            {/* Sub-headline */}
-            <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
-              GPUs, CPUs, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Warranty across Pakistan.
-            </p>
+              {/* Smooth Typewriter Main Headline */}
+              <h1 className="font-grotesk text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.18] mb-5 min-h-[110px] sm:min-h-[135px]">
+                {displayText}
+                {!isDone && <span className="inline-block w-2 h-7 sm:h-9 bg-indigo-600 ml-1 animate-pulse" />}
+              </h1>
 
-            {/* Action CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 mb-8 w-full sm:w-auto">
-              <Link
-                to="/computerparts"
-                className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all flex-1 sm:flex-none"
-              >
-                <ShoppingBag className="w-4 h-4 text-amber-400" />
-                <span>Explore Catalog</span>
-              </Link>
+              {/* Sub-headline */}
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl mb-6">
+                GPUs, CPUs, RAM, SSDs, screens, batteries, and logic boards — 100% genuine parts with 1 Year Official Warranty across Pakistan.
+              </p>
 
-              <Link
-                to="/appointment"
-                className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all flex-1 sm:flex-none"
-              >
-                <Wrench className="w-4 h-4 text-indigo-600" />
-                <span>Book Appointment</span>
-              </Link>
+              {/* SLOW BLINKING DEAL BADGES */}
+              <div className="flex flex-wrap items-center gap-2.5 mb-8 w-full">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-400/40 text-amber-900 text-xs font-extrabold shadow-sm animate-pulse">
+                  <RefreshCw className="w-3.5 h-3.5 text-amber-600 animate-spin" style={{ animationDuration: '7s' }} />
+                  <span>⚡ Exchange Policy Available</span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>🛡️ 1 Year Official Warranty</span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold shadow-sm">
+                  <Truck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>🚚 24-48h Express Shipping</span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs font-bold shadow-sm">
+                  <Award className="w-3.5 h-3.5 text-purple-600" />
+                  <span>💵 Best Market Price Guarantee</span>
+                </div>
+              </div>
+
+              {/* Action CTA Buttons */}
+              <div className="flex flex-wrap items-center gap-3.5 mb-8 w-full sm:w-auto">
+                <Link
+                  to="/computerparts"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all flex-1 sm:flex-none"
+                >
+                  <ShoppingBag className="w-4 h-4 text-amber-400" />
+                  <span>Explore Catalog</span>
+                </Link>
+
+                <Link
+                  to="/appointment"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-7 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all flex-1 sm:flex-none"
+                >
+                  <Wrench className="w-4 h-4 text-white" />
+                  <span>Book Repair & Upgradation</span>
+                </Link>
+              </div>
             </div>
 
             {/* Quick Metrics Bar */}
-            <div className="pt-6 border-t border-slate-200 w-full grid grid-cols-3 gap-4">
+            <div className="pt-6 border-t border-slate-100 w-full grid grid-cols-3 gap-4">
               <div>
                 <div className="font-grotesk font-extrabold text-lg sm:text-xl text-slate-900">10,000+</div>
                 <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Parts Shipped</div>
@@ -362,80 +452,144 @@ export default function Home() {
 
           </motion.div>
 
-          {/* Right Hero Product Card Showcase */}
+          {/* Right Hero Bento Block: 4 Fragmented Deconstructed Tech Components Grid (5 Columns) */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-5 relative"
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="lg:col-span-5 grid grid-cols-2 gap-3.5 sm:gap-4 h-full"
           >
-            {/* Background Soft Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-100 rounded-full blur-3xl -z-10" />
-
-            {/* Featured Dynamic Product Card */}
-            <Link
-              to={`/product/${heroPart._id}`}
-              className="block bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 relative group hover:border-indigo-300 transition-all"
+            
+            {/* Component 1: DDR5 High-Speed RAM Module */}
+            <motion.div
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-slate-900 border border-indigo-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
             >
-              
-              {/* Product Badge Header */}
-              <div className="flex items-center justify-between mb-4">
-                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{heroPart.countInStock > 0 ? "In Stock & Ready To Ship" : "Available On Request"}</span>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl group-hover:bg-indigo-500/20 transition-all" />
+              <div className="flex items-center justify-between z-10">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 bg-indigo-950/80 border border-indigo-700/50 px-2 py-0.5 rounded-md">
+                  DDR5 RAM
                 </span>
-                <span className="text-xs font-mono font-bold text-slate-400">SKU: #PD-{heroPart._id?.slice(-5)?.toUpperCase() || 'GPU79'}</span>
+                <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping" />
+              </div>
+              
+              <div className="my-2 z-10">
+                <div className="text-white font-grotesk font-extrabold text-sm sm:text-base leading-tight">6000 MHz RGB</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">High-Speed Desktop Memory</div>
               </div>
 
-              {/* Product Image */}
-              <div className="w-full h-56 rounded-2xl bg-slate-100 overflow-hidden mb-5 relative">
-                <img
-                  src={getImageUrl(heroPart.image)}
-                  alt={heroPart.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=600&q=80'; }}
-                />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-xs font-bold text-slate-900 shadow-md">
-                  ⭐ {heroPart.rating || 4.9} (Verified)
+              <div className="space-y-1 z-10">
+                <div className="flex justify-between text-[10px] text-indigo-300 font-mono">
+                  <span>CL36 Speed</span>
+                  <span>100% OK</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-4/5 animate-pulse" />
                 </div>
               </div>
+            </motion.div>
 
-              {/* Product Info */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-indigo-600">{heroPart.category || 'Computer Parts'}</div>
-                  <h3 className="font-grotesk font-extrabold text-slate-900 text-base sm:text-lg line-clamp-1">{heroPart.name}</h3>
-                </div>
-                <div className="text-right flex-shrink-0 ml-2">
-                  <div className="text-xs text-slate-400">Official Price</div>
-                  <div className="font-grotesk text-lg sm:text-xl font-extrabold text-slate-900">PKR {Number(heroPart.price).toLocaleString()}</div>
-                </div>
+            {/* Component 2: Powerful GPU & Processor Engine */}
+            <motion.div
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-slate-900 border border-amber-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all" />
+              <div className="flex items-center justify-between z-10">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400 bg-amber-950/80 border border-amber-700/50 px-2 py-0.5 rounded-md">
+                  GPU Engine
+                </span>
+                <Cpu className="w-4 h-4 text-amber-400" />
               </div>
 
-              {/* Trust Status Strip */}
-              <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-2 gap-3">
-                <div className="bg-indigo-50/70 p-2.5 rounded-xl border border-indigo-100 flex items-center gap-2.5">
-                  <Truck className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-                  <div>
-                    <div className="text-[11px] font-bold text-slate-900">Express Shipping</div>
-                    <div className="text-[10px] text-slate-500">Shipped in 24-48h</div>
-                  </div>
-                </div>
-
-                <div className="bg-amber-50/70 p-2.5 rounded-xl border border-amber-100 flex items-center gap-2.5">
-                  <ShieldCheck className="w-5 h-5 text-amber-600 flex-shrink-0" />
-                  <div>
-                    <div className="text-[11px] font-bold text-slate-900">100% Genuine</div>
-                    <div className="text-[10px] text-slate-500">Official Warranty</div>
-                  </div>
-                </div>
+              <div className="my-2 z-10">
+                <div className="text-white font-grotesk font-extrabold text-sm sm:text-base leading-tight">16GB GDDR6X</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">Ray Tracing & 4K Gaming</div>
               </div>
 
-            </Link>
+              <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold z-10 pt-1 border-t border-slate-800">
+                <span className="flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-amber-400" /> CUDA Cores
+                </span>
+                <span className="text-amber-400 font-extrabold">Active</span>
+              </div>
+            </motion.div>
+
+            {/* Component 3: PC Repair & Diagnostic Tools Visual */}
+            <motion.div
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all" />
+              <div className="flex items-center justify-between z-10">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-700/50 px-2 py-0.5 rounded-md">
+                  Repair Tools
+                </span>
+                <Wrench className="w-4 h-4 text-emerald-400" />
+              </div>
+
+              <div className="my-2 z-10">
+                <div className="text-white font-grotesk font-extrabold text-sm sm:text-base leading-tight">Lab Tools & Kits</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">Precision Repair Hardware</div>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold z-10 pt-1 border-t border-slate-800">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <span>100% Calibrated</span>
+              </div>
+            </motion.div>
+
+            {/* Component 4: Real PC & Mobile Repair Workshop Photo Card */}
+            <motion.div
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-slate-900 border border-cyan-500/30 rounded-3xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
+            >
+              {/* Photo Background */}
+              <img
+                src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
+                alt="PC & Mobile Repair Technician"
+                className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-300 bg-cyan-950/90 border border-cyan-700/60 px-2 py-0.5 rounded-md">
+                  Tech Workshop
+                </span>
+                <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-700/60 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  Live Lab
+                </span>
+              </div>
+
+              <div className="relative z-10 mt-auto">
+                <div className="text-white font-grotesk font-extrabold text-xs sm:text-sm">Hardware & Upgradation</div>
+                <div className="text-[10px] text-cyan-200 mt-0.5 font-medium">Certified Engineers</div>
+              </div>
+            </motion.div>
+
           </motion.div>
 
         </div>
       </section>
+
+      {/* BRAND PARTNER & ASSURANCE MARQUEE TICKER */}
+      <div className="bg-slate-900 border-y border-slate-800 py-3.5 overflow-hidden shadow-inner mb-8">
+        <div className="flex whitespace-nowrap animate-marquee gap-8 items-center text-xs font-extrabold uppercase tracking-wider text-slate-400">
+          {['NVIDIA GeForce RTX', 'Intel Core Processors', 'AMD Radeon & Ryzen', 'Apple OEM Displays', 'Samsung OLED & Batteries', 'Corsair Vengeance DDR5', 'Asus ROG Components', 'Kingston NVMe SSDs'].map((brand, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+              <span className="hover:text-white transition-colors">{brand}</span>
+            </div>
+          ))}
+          {['NVIDIA GeForce RTX', 'Intel Core Processors', 'AMD Radeon & Ryzen', 'Apple OEM Displays', 'Samsung OLED & Batteries', 'Corsair Vengeance DDR5', 'Asus ROG Components', 'Kingston NVMe SSDs'].map((brand, i) => (
+            <div key={`duplicate-${i}`} className="flex items-center gap-3">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+              <span className="hover:text-white transition-colors">{brand}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* ========================================================================= */}
       {/* 2. CATEGORY CARDS */}

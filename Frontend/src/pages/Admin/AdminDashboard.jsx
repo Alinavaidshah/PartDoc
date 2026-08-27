@@ -150,7 +150,7 @@ const AdminDashboard = () => {
 
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Topbar title="PartDoc Console" adminName="Ali Navaid Shah" onMenuClick={() => setMobileOpen(true)} />
+        <Topbar title="Digi Dude Console" adminName="Ali Navaid Shah" onMenuClick={() => setMobileOpen(true)} />
         <main style={{ padding: 24 }}>
           <div style={{ marginBottom: 28, animation: 'fadeSlideUp 0.5s ease both', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>

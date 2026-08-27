@@ -53,7 +53,7 @@ export default function OrderConfirmation() {
           Order Confirmed! 🎉
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mb-6 relative z-10">
-          Thank you for shopping with PartDoc. Your order has been logged and is being prepared.
+          Thank you for shopping with Digi Dude. Your order has been logged and is being prepared.
         </p>
 
         {/* Order Details Card */}

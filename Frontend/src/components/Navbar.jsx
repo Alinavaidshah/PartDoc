@@ -53,10 +53,10 @@ const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-grotesk font-extrabold uppercase tracking-wider text-xl text-slate-900 leading-none">
-                Part<span className="text-indigo-600">Doc</span>
+                Digi<span className="text-indigo-600">Dude</span>
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
-                Official Parts
+              <span className="text-[9px] font-bold uppercase tracking-widest text-indigo-600 mt-0.5">
+                Tech Parts & Lab
               </span>
             </div>
           </Link>

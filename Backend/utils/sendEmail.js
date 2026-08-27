@@ -15,7 +15,7 @@ const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: `"PartDoc Support" <${process.env.EMAIL_USER}>`, // Dynamically email le raha hai
+    from: `"Digi Dude Support" <${process.env.EMAIL_USER}>`, // Dynamically email le raha hai
     to: options.email,
     subject: options.subject,
     // Yahan maine 'html' property daal di hai

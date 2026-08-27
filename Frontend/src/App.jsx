@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import SyncUser from './components/SyncUser'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import WhatsAppButton from './components/WhatsAppButton';
 
 // Pages
 import Home from './pages/Home'; 
@@ -78,6 +79,7 @@ function App() {
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
               </Routes>
               <Footer />
+              <WhatsAppButton />
             </div>
           } />
         </Routes>
