@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wrench, X, CheckCircle2, User, Phone, Briefcase, Sparkles, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../api/axiosConfig';
 
 const TechnicianModal = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -14,6 +18,10 @@ const TechnicianModal = () => {
     specialization: 'Mobile OLED & Screen Repair',
     experience: '2-3 Years',
   });
+
+  if (!isHomePage && !isOpen) {
+    return null;
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,89 +55,80 @@ const TechnicianModal = () => {
 
   return (
     <>
-      {/* BOTTOM-RIGHT HIRING TECHNICIAN TRIGGER */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2">
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              key="hiring-card"
-              initial={{ opacity: 0, y: 15, scale: 0.92 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 15, scale: 0.92 }}
-              transition={{ type: 'spring', damping: 22, stiffness: 280 }}
-              className="bg-slate-900/95 text-white p-4 rounded-3xl shadow-2xl border border-indigo-500/50 backdrop-blur-xl flex flex-col gap-3 min-w-[280px] max-w-xs mb-1"
+      {/* DOCKED RIGHT-EDGE SLIDE-OUT HIRING TRIGGER (ONLY ON HOME PAGE) */}
+      {isHomePage && (
+        <div className="fixed right-0 bottom-24 sm:bottom-28 z-40 flex items-center">
+        <AnimatePresence mode="wait">
+          {!isExpanded ? (
+            /* COLLAPSED / TUCKED IN: MINIMAL EDGE HANDLE (Does NOT occupy screen space) */
+            <motion.button
+              key="tucked-tab"
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 20, opacity: 0 }}
+              whileHover={{ x: -3 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsExpanded(true)}
+              className="bg-slate-900/95 hover:bg-slate-900 text-white pl-2.5 pr-2 py-3 rounded-l-2xl shadow-2xl border-y border-l border-indigo-500/50 backdrop-blur-md flex items-center gap-1.5 cursor-pointer group transition-all"
+              aria-label="Expand Technician Hiring Info"
+              title="Click to view Technician Hiring"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md">
-                    <Wrench size={16} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
-                      Technicians Required
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
-                    </span>
-                    <span className="text-[10px] text-indigo-300 font-semibold mt-0.5">Karachi All Over</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
-                  aria-label="Close"
-                >
-                  <X size={16} />
-                </button>
+              {/* Animated Left Arrow */}
+              <motion.div
+                animate={{ x: [0, -3, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                className="text-indigo-400 group-hover:text-indigo-300"
+              >
+                <ChevronLeft size={16} />
+              </motion.div>
+
+              {/* Wrench Icon */}
+              <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
+                <Wrench size={14} />
               </div>
 
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                We are recruiting mobile and computer repair specialists across all areas of Karachi.
-              </p>
-
+              {/* Hiring label */}
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-white pr-0.5 flex items-center gap-1">
+                Hiring <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
+              </span>
+            </motion.button>
+          ) : (
+            /* EXPANDED: SLIDES OUT FROM RIGHT WITH FULL DETAILS */
+            <motion.div
+              key="slid-out-card"
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 24, stiffness: 280 }}
+              className="bg-slate-900/95 text-white pl-4 pr-3 py-3.5 rounded-l-3xl shadow-2xl border-y border-l border-indigo-500/60 backdrop-blur-xl flex items-center gap-3"
+            >
+              <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
+                <Wrench size={16} />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
+                  <span>Technicians Required</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
+                </span>
+                <span className="text-[10px] text-indigo-300 font-semibold mt-1">Karachi All Over</span>
+              </div>
               <button
                 onClick={() => { setIsOpen(true); setIsExpanded(false); }}
-                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold rounded-xl shadow-md transition-all cursor-pointer text-center flex items-center justify-center gap-2"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-xl shadow-md transition-colors ml-1 cursor-pointer whitespace-nowrap"
               >
-                <span>Apply For Job Now</span>
-                <Send size={13} />
+                Apply Now
+              </button>
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+                aria-label="Tuck back inside edge"
+                title="Collapse"
+              >
+                <ChevronRight size={18} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* BOTTOM-RIGHT HIRING PILL BUTTON */}
-        <motion.button
-          onClick={() => setIsExpanded(prev => !prev)}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          className="relative group bg-slate-900/95 hover:bg-slate-900 text-white pl-3.5 pr-4 py-3 rounded-2xl shadow-2xl border border-indigo-500/50 backdrop-blur-xl flex items-center gap-3 cursor-pointer transition-all"
-          aria-label="Technicians Hiring Trigger"
-        >
-          {/* Subtle Glow Ring */}
-          <span className="absolute -inset-0.5 rounded-2xl bg-indigo-500/30 animate-pulse blur-sm pointer-events-none" />
-
-          {/* Left chevron arrow */}
-          <motion.div
-            animate={{ x: isExpanded ? 2 : [0, -3, 0] }}
-            transition={{ repeat: isExpanded ? 0 : Infinity, duration: 1.8, ease: "easeInOut" }}
-            className="text-indigo-400 flex-shrink-0"
-          >
-            <ChevronLeft size={16} />
-          </motion.div>
-
-          {/* Wrench Icon Badge */}
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md flex-shrink-0">
-            <Wrench size={16} />
-          </div>
-
-          {/* Text Labels */}
-          <div className="flex flex-col text-left">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5 leading-none">
-              <span>Hiring Technicians</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
-            </span>
-            <span className="text-[10px] text-indigo-300 font-semibold mt-1">Karachi All Over (Apply)</span>
-          </div>
-        </motion.button>
       </div>
 
       {/* LIGHT THEME FORM MODAL OVERLAY */}
