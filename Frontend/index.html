@@ -1,58 +1,212 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
+    <!-- CHARACTER ENCODING & VIEWPORT -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     
-    <!-- PRIMARY SEO TITLE & META FOR DIGIDUDE RANKING -->
-    <title>Digi Dude (DigiDude) | Genuine Tech Parts, Computer, Laptop & Mobile Repair Lab Pakistan</title>
-    <meta name="title" content="Digi Dude (DigiDude) | Genuine Tech Parts, Computer, Laptop & Mobile Repair Lab Pakistan" />
-    <meta name="description" content="Digi Dude (DigiDude) is Pakistan's #1 official store for 100% genuine computer parts, laptop components, mobile replacement displays, GPUs, CPUs, SSDs & doorstep fault tracing repair services across Karachi and Pakistan." />
-    <meta name="keywords" content="DigiDude, Digi Dude, Digi Dude Pakistan, DigiDude Karachi, Digi Dude Tech Parts, computer parts Pakistan, laptop spare parts Karachi, mobile replacement screens, GPU price Pakistan, custom PC components, laptop battery replacement, phone hardware repair, doorstep fault tracing Karachi" />
-    <meta name="author" content="Digi Dude Tech Parts & Lab" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <!-- PRIMARY SEARCH ENGINE TITLE -->
+    <title>Digi Dude | Genuine Computer & Mobile Spare Parts | Pakistan Tech Lab & Doorstep Repair</title>
+    <meta name="title" content="Digi Dude | Genuine Computer & Mobile Spare Parts | Pakistan Tech Lab & Doorstep Repair" />
+    
+    <!-- META DESCRIPTION -->
+    <meta 
+      name="description" 
+      content="Digi Dude (DigiDude) is Pakistan's premier platform for 100% genuine computer components, laptop screens, original batteries, GPUs, CPUs, NVMe SSDs & certified doorstep fault tracing hardware repair across Karachi, Lahore, Islamabad and all Pakistan." 
+    />
+    
+    <!-- META KEYWORDS (HIGH SEARCH VOLUME PAKISTANI TECH TERMS) -->
+    <meta 
+      name="keywords" 
+      content="DigiDude, Digi Dude, Digi Dude Pakistan, DigiDude Karachi, computer parts pakistan, laptop spare parts karachi, mobile screen replacement, ddr5 ram price pakistan, nvme ssd 1tb pakistan, graphics card repair, gpu price in pakistan, laptop battery original, mobile phone display repair, custom pc build parts, doorstep fault tracing karachi, technician appointment booking, authentic tech components, pc repair lab" 
+    />
+    
+    <!-- AUTHOR & BRAND IDENTITY -->
+    <meta name="author" content="Digi Dude Technologies" />
+    <meta name="publisher" content="Digi Dude Technologies" />
+    <meta name="copyright" content="Digi Dude Technologies" />
+    <meta name="application-name" content="Digi Dude" />
+    <meta name="apple-mobile-web-app-title" content="Digi Dude" />
     <meta name="theme-color" content="#4f46e5" />
+    <meta name="color-scheme" content="light dark" />
     
-    <!-- CANONICAL LINK -->
+    <!-- CRAWLER ROBOTS DIRECTIVES -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+    <meta name="rating" content="General" />
+    <meta name="revisit-after" content="2 days" />
+    
+    <!-- CANONICAL URL -->
     <link rel="canonical" href="https://part-doc-rrnn.vercel.app/" />
     
-    <!-- BRAND NEW CHIP FAVICON -->
+    <!-- GEO LOCAL SEO TAGS (KARACHI / SINDH / PAKISTAN) -->
+    <meta name="geo.region" content="PK-SD" />
+    <meta name="geo.placename" content="Karachi, Sindh, Pakistan" />
+    <meta name="geo.position" content="24.8607;67.0011" />
+    <meta name="ICBM" content="24.8607, 67.0011" />
+    <meta name="target_country" content="Pakistan" />
+
+    <!-- BRAND FAVICON & ICONS -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <!-- GOOGLE FONTS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- DNS PREFETCH & PERFORMANCE PRECONNECTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    
+    <!-- WEB FONTS -->
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" 
+      rel="stylesheet" 
+    />
 
     <!-- OPEN GRAPH / FACEBOOK / WHATSAPP PREVIEW CARDS -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Digi Dude (DigiDude)" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ur_PK" />
+    <meta property="og:site_name" content="Digi Dude" />
     <meta property="og:url" content="https://part-doc-rrnn.vercel.app/" />
-    <meta property="og:title" content="Digi Dude (DigiDude) | Genuine Tech Parts & Priority Lab Repair" />
-    <meta property="og:description" content="Buy 100% genuine computer parts, laptop screens, batteries, GPUs, and book doorstep fault tracing repair appointments online across Karachi & Pakistan." />
+    <meta property="og:title" content="Digi Dude | Genuine Computer & Mobile Spare Parts | Pakistan Repair Lab" />
+    <meta 
+      property="og:description" 
+      content="100% Genuine PC, Laptop & Mobile components with 1 Year Official Warranty. Book doorstep hardware diagnostic & repair appointments across Karachi & Pakistan." 
+    />
     <meta property="og:image" content="https://part-doc-rrnn.vercel.app/partdoc-og-banner.jpg" />
+    <meta property="og:image:secure_url" content="https://part-doc-rrnn.vercel.app/partdoc-og-banner.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Digi Dude Genuine Tech Parts & Priority Diagnostic Lab" />
 
-    <!-- TWITTER CARDS -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://part-doc-rrnn.vercel.app/" />
-    <meta property="twitter:title" content="Digi Dude (DigiDude) | Genuine Tech Parts & Lab Repair Pakistan" />
-    <meta property="twitter:description" content="Buy 100% genuine computer parts, laptop screens, batteries, GPUs, and book doorstep fault tracing repair appointments online across Karachi & Pakistan." />
+    <!-- TWITTER / X SUMMARY CARD -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@DigiDudePK" />
+    <meta name="twitter:creator" content="@DigiDudePK" />
+    <meta name="twitter:url" content="https://part-doc-rrnn.vercel.app/" />
+    <meta name="twitter:title" content="Digi Dude | Genuine Tech Parts & Hardware Lab Pakistan" />
+    <meta 
+      name="twitter:description" 
+      content="Buy 100% genuine computer, laptop & mobile spare parts with official warranty. Certified lab repairs & doorstep fault tracing." 
+    />
+    <meta name="twitter:image" content="https://part-doc-rrnn.vercel.app/partdoc-og-banner.jpg" />
+    <meta name="twitter:image:alt" content="Digi Dude Tech Parts" />
 
-    <!-- GOOGLE STRUCTURED DATA SCHEMA (JSON-LD) -->
+    <!-- ========================================================================= -->
+    <!-- GOOGLE STRUCTURED DATA SCHEMA (JSON-LD MULTI-ENTITY GRAPH) -->
+    <!-- ========================================================================= -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Store",
-        "name": "Digi Dude",
-        "alternateName": ["DigiDude", "Digi Dude Tech Parts & Lab"],
-        "url": "https://part-doc-rrnn.vercel.app/",
-        "logo": "https://part-doc-rrnn.vercel.app/favicon.svg",
-        "description": "Pakistan's premier store for genuine computer parts, laptop replacement components, mobile displays, and certified doorstep diagnostic repair services.",
-        "telephone": "+92-310-2193694",
-        "priceRange": "PKR"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://part-doc-rrnn.vercel.app/#organization",
+            "name": "Digi Dude",
+            "alternateName": ["DigiDude", "Digi Dude Tech Parts & Lab"],
+            "url": "https://part-doc-rrnn.vercel.app/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://part-doc-rrnn.vercel.app/favicon.svg"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+92-310-2193694",
+              "contactType": "customer service",
+              "email": "digidude.online@gmail.com",
+              "areaServed": "PK",
+              "availableLanguage": ["English", "Urdu"]
+            }
+          },
+          {
+            "@type": "LocalBusiness",
+            "@id": "https://part-doc-rrnn.vercel.app/#localbusiness",
+            "name": "Digi Dude Tech Store & Repair Lab",
+            "image": "https://part-doc-rrnn.vercel.app/partdoc-og-banner.jpg",
+            "url": "https://part-doc-rrnn.vercel.app/",
+            "telephone": "+92-310-2193694",
+            "email": "digidude.online@gmail.com",
+            "priceRange": "PKR",
+            "currenciesAccepted": "PKR",
+            "paymentAccepted": "Cash on Delivery, Direct Bank Transfer, EasyPaisa, JazzCash",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Tech Parts Distribution Center",
+              "addressLocality": "Karachi",
+              "addressRegion": "Sindh",
+              "postalCode": "74200",
+              "addressCountry": "PK"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 24.8607,
+              "longitude": 67.0011
+            },
+            "openingHoursSpecification": [
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "10:00",
+                "closes": "21:00"
+              }
+            ],
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "5.0",
+              "reviewCount": "10000",
+              "bestRating": "5",
+              "worstRating": "1"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://part-doc-rrnn.vercel.app/#website",
+            "url": "https://part-doc-rrnn.vercel.app/",
+            "name": "Digi Dude",
+            "description": "Genuine Computer & Mobile Replacement Spare Parts and Diagnostics Lab",
+            "publisher": {
+              "@id": "https://part-doc-rrnn.vercel.app/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://part-doc-rrnn.vercel.app/computerparts?search={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://part-doc-rrnn.vercel.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Are Digi Dude computer and mobile parts 100% genuine?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, every spare component supplied by Digi Dude is authentic with verified serial numbers and comes with an official 1-Year Warranty."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does doorstep fault tracing repair work in Karachi?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can book an appointment online on Digi Dude. Our certified hardware technician arrives at your location with calibrated testing equipment to inspect and diagnose your computer, laptop, or phone on-site."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is the delivery time across Pakistan?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Digi Dude delivers within 24-48 hours via express courier across Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, and all cities of Pakistan."
+                }
+              }
+            ]
+          }
+        ]
       }
     </script>
   </head>
